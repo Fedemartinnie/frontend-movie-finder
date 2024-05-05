@@ -1,0 +1,13 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "cSpell.words": [
+        "buscado",
+        "Búsqueda",
+        "ingresa",
+        "linebreak",
+        "realizada",
+        "término",
+        "vacío"
+    ],
+    "files.eol": "\n"
+}
