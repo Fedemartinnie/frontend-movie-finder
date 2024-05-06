@@ -32,7 +32,7 @@ function HomeScreen(): React.JSX.Element {
         }
     }
 
-  
+
     return (
         <SafeAreaView style={[backgroundStyle, { flex: 1}]}>
             <StatusBar

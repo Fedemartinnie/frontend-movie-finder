@@ -2,13 +2,14 @@ import React from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
 import { Movie } from '../../types'
 
+
 export function ListOfMovies({ movies }: { movies: Movie[] }) {
     return (
         <View style={styles.container}>
-            {movies.map((movie) => (                
-                <View style={styles.movieContainer} key={movie.id}>
+            {movies.map((movie, index) => (
+                <View style={styles.movieContainer} key={index}>
                     <Image source={{ uri: movie.image }} style={styles.movieImage} />
-                    <Text>{movie.title}</Text>
+                    {/*<Text style={styles.movieTitle}>{movie.title}</Text>*/}
                 </View>
             ))}
         </View>
@@ -30,14 +31,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        paddingHorizontal: 10,
+        padding: 10,
     },
     movieContainer: {
+        width: '30%', // Para mostrar 3 películas por fila
         marginBottom: 20,
-        alignItems: 'center',
     },
     movieImage: {
-        width: 200,
-        height: 300,
+        width: '100%',
+        height: 200,
+        resizeMode: 'cover',
+        borderRadius: 8,
+    },
+    movieTitle: {
+        marginTop: 5,
+        textAlign: 'center',
     },
 })
