@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, TextInput, Button, Alert, ScrollView } from 'react-native'
+import { View, TextInput, Button, Alert, ScrollView, Text, StyleSheet } from 'react-native'
 import { InputRefProps } from '../../types'
 import { useSearch } from '../../hooks/useSearch'
 import { useMovies } from '../../hooks/useMovies'
@@ -10,25 +10,28 @@ const colors = {
     black: '#282828',
     blue: '#336699', 
     red: '#993333', 
-    white: '#F2F2F2'
+    white: '#F2F2F2',
+    dark: '#201E1E',
 }
 
 
 const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
-    const { search, updateSearch } = useSearch()
+    const { search, updateSearch, error } = useSearch()
     const { movies, getMovies } = useMovies( {searchText: search} )
     
 
     const handleSearch = () => {
-        // Logic of search text
+
         if (search.trim() !== '') {            
             getMovies(search)
-            console.log(search)
-            console.log(movies)
             Alert.alert('Búsqueda realizada', `Has buscado: ${search}`)
         } else {
             Alert.alert('Campo de búsqueda vacío', 'Por favor ingresa un término de búsqueda')
         }
+    }
+
+    const handleChange = (text: string) => {
+        updateSearch(text)
     }
 
     return (
@@ -40,11 +43,13 @@ const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
                     placeholder="Avengers, The Matrix, Shrek ..."
                     placeholderTextColor={colors.black}
                     value={search}
-                    onChangeText={text => updateSearch(text)}
+                    onChangeText={handleChange}
                 />
                 <Button title="Search" onPress={handleSearch} />
             </View>
-            
+            <View style={styles.sectionError}>
+                {error && <Text style={{color: colors.red}}>{error}</Text>}
+            </View>
             <ScrollView contentContainerStyle={{ flexDirection: 'row', padding: 10 }}>
                 <Movies movies={movies?? []}/>
             </ScrollView>
@@ -52,5 +57,11 @@ const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
         
     )
 }
+
+const styles = StyleSheet.create({
+    sectionError:{
+        alignItems: 'center'
+    }
+})
 
 export default SearchBar

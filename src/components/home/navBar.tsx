@@ -1,27 +1,17 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Animated, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Home } from '../../assets/home'
 import { Searcher } from '../../assets/search'
 import { Profile } from '../../assets/profile'
 import { InputRefProps } from '../../types'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-//import { Screen } from 'react-native-screens'
+import useKeyboardStatus from '../../hooks/useKeyboardStatus'
+import { useScrollNavBar } from '../../hooks/useNavBar'
 
-type RootStackParamList = {
-    Home: undefined
-    Profile: undefined
-}
-
-type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile' | 'Home'>;
 
 
 const NavBar: React.FC<InputRefProps> = ({inputRef}) => {    
-    const navigation = useNavigation<ProfileScreenNavigationProp>()    
-
-    const handleScreen = (screenName: 'Profile' | 'Home') => {
-        navigation.navigate(screenName)
-    }
+    const { keyboardStatus } = useKeyboardStatus()
+    const { navbarTranslateY, panResponder, handleScreen } = useScrollNavBar()    
 
     const handleSearcherPress = () => {
         if(inputRef.current){
@@ -29,8 +19,18 @@ const NavBar: React.FC<InputRefProps> = ({inputRef}) => {
         }
     }
 
-    return (
-        <View style={styles.navbar}>  
+    if (keyboardStatus) {
+        return null
+    }
+
+    return (        
+        <Animated.View style={[
+            styles.navbar,
+            {
+                transform: [{ translateY: navbarTranslateY}]
+            }
+        ]}
+        {...panResponder.panHandlers}>  
             <TouchableOpacity style={styles.iconContainer} onPress={() => handleScreen('Home')}>
                 <View style={{ width: 35, height: 35 }}>
                     <Home />
@@ -46,10 +46,9 @@ const NavBar: React.FC<InputRefProps> = ({inputRef}) => {
                     <Profile />
                 </View>
             </TouchableOpacity>
-        </View>
+        </Animated.View>
     )
 }
-
 
 const styles = StyleSheet.create({
     navbar: {
@@ -57,7 +56,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         height: 60,
-        backgroundColor: '#282828',                
+        backgroundColor: '#201E1E',                
         borderColor: '#F2F2F2',
         borderStyle: 'solid',
         borderTopWidth: 1, 
@@ -66,6 +65,5 @@ const styles = StyleSheet.create({
         padding: 5,
     },
 })
-
 
 export default NavBar

@@ -14,18 +14,23 @@ export function useSearch (){
 
         if(search === ''){
             setError('El campo esta vacío... Ingresa una película')
+            return
         }
 
         if(search.match(/^\d+$/)){
             setError('No se puede buscar una película con un número')
+            return
+
         }
 
         if(search.length<3){
             setError('La búsqueda debe tener al menos 3 caracteres')
+            return
+
         }
 
         setError(null)
     }, [search])
 
-    return { search, updateSearch, error}
+    return { search, updateSearch, error, isFirstInput}
 }

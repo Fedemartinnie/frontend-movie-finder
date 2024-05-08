@@ -11,7 +11,7 @@ export function useMovies({searchText} : {searchText: string}){
     const previousSearch = useRef<string | null>(searchText)
 
     const getMovies = useCallback (async(searchText: string) => {
-        if(searchText === previousSearch.current) return
+        if(searchText === previousSearch.current) return console.log('no repite busqueda')
 
         try{
             setLoading(true)

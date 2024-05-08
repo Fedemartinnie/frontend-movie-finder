@@ -3,12 +3,12 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import { Movie } from '../../types'
 
 
-export function ListOfMovies({ movies }: { movies: Movie[] }) {
+function ListOfMovies({ movies }: { movies: Movie[] }) {
     return (
         <View style={styles.container}>
-            {movies.map((movie, index) => (
-                <View style={styles.movieContainer} key={index}>
-                    <Image source={{ uri: movie.image }} style={styles.movieImage} />
+            {movies.map((movie) => (
+                <View style={styles.movieContainer} key={movie.id}>
+                    <Image source={{ uri: movie.image }} style={styles.movieImage} alt={movie.title}/>
                     {/*<Text style={styles.movieTitle}>{movie.title}</Text>*/}
                 </View>
             ))}
@@ -16,8 +16,8 @@ export function ListOfMovies({ movies }: { movies: Movie[] }) {
     )
 }
 
-export function NoMoviesResults() {
-    return <Text>No se encontraron resultados</Text>
+function NoMoviesResults() {
+    return <View><Text>No se encontraron resultados</Text></View>
 }
 
 export function Movies({ movies }: { movies: Movie[] }) {
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     movieContainer: {
-        width: '30%', // Para mostrar 3 películas por fila
-        marginBottom: 20,
+        width: '30%',
+        marginBottom: 30,
     },
     movieImage: {
         width: '100%',
