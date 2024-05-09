@@ -1,18 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, TextInput, Button, Alert, ScrollView, Text, StyleSheet } from 'react-native'
 import { InputRefProps } from '../../types'
 import { useSearch } from '../../hooks/useSearch'
 import { useMovies } from '../../hooks/useMovies'
 import { Movies } from './movies'
-
-
-const colors = {
-    black: '#282828',
-    blue: '#336699', 
-    red: '#993333', 
-    white: '#F2F2F2',
-    dark: '#201E1E',
-}
 
 
 const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
@@ -56,6 +47,14 @@ const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
         </View>
         
     )
+}
+
+const colors = {
+    black: '#282828',
+    blue: '#336699', 
+    red: '#993333', 
+    white: '#F2F2F2',
+    dark: '#201E1E',
 }
 
 const styles = StyleSheet.create({

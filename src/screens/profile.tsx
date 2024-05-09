@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 
 
 
-const ProfileScreen = () => {
+function ProfileScreen () {
     return (
         <View>
             <Text>Estás en la pantalla Profile</Text>

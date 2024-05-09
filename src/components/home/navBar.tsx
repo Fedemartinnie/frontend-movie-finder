@@ -1,24 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Animated, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Home } from '../../assets/home'
 import { Searcher } from '../../assets/search'
 import { Profile } from '../../assets/profile'
-import { InputRefProps } from '../../types'
 import useKeyboardStatus from '../../hooks/useKeyboardStatus'
 import { useScrollNavBar } from '../../hooks/useNavBar'
+//import { InputRefProps } from '../../types'
 
 
 
-const NavBar: React.FC<InputRefProps> = ({inputRef}) => {    
+const NavBar: React.FC = (/*{inputRef}*/) => {    
     const { keyboardStatus } = useKeyboardStatus()
     const { navbarTranslateY, panResponder, handleScreen } = useScrollNavBar()    
 
-    const handleSearcherPress = () => {
+    /*const handleSearcherPress = () => {
         if(inputRef.current){
             inputRef.current.focus()
         }
-    }
+    }*/
 
+    
     if (keyboardStatus) {
         return null
     }
@@ -26,17 +27,16 @@ const NavBar: React.FC<InputRefProps> = ({inputRef}) => {
     return (        
         <Animated.View style={[
             styles.navbar,
-            {
-                transform: [{ translateY: navbarTranslateY}]
-            }
-        ]}
-        {...panResponder.panHandlers}>  
+            { transform: [{ translateY: navbarTranslateY }] },            
+        ]}  
+        {...panResponder.panHandlers}
+        >  
             <TouchableOpacity style={styles.iconContainer} onPress={() => handleScreen('Home')}>
                 <View style={{ width: 35, height: 35 }}>
                     <Home />
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconContainer} onPress={handleSearcherPress}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => handleScreen('Search')}>
                 <View style={{ width: 35, height: 35 }}>
                     <Searcher/>
                 </View>

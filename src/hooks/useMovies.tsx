@@ -26,7 +26,7 @@ export function useMovies({searchText} : {searchText: string}){
         finally{
             setLoading(false)
         }
-    }, [])
+    }, [searchText])
 
     return { movies, getMovies, loading }
 

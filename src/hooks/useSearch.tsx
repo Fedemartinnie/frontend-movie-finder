@@ -26,7 +26,6 @@ export function useSearch (){
         if(search.length<3){
             setError('La búsqueda debe tener al menos 3 caracteres')
             return
-
         }
 
         setError(null)
