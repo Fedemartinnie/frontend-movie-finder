@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Animated, SafeAreaView, ScrollView, StatusBar,
     StyleSheet, Text, useColorScheme, View} from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
-import NavBar from '../components/home/navBar'
+import NavBar from '../components/home/navBar.tsx'
 import { Movies } from '../components/home/movies.tsx'
 import { useMovies } from '../hooks/useMovies.tsx'
 import { useSearch } from '../hooks/useSearch.tsx'

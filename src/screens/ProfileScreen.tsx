@@ -33,7 +33,10 @@ const styles = StyleSheet.create({
     },
     sectionNavbar: {
 
-    }
+    },
+    container: {
+        backgroundColor: '#052539',
+    },
 })
 
 

@@ -35,11 +35,11 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
 
     return (
         <ImageBackground
-            source={require('./assets/background_desenfocado.png')}
+            source={require('../assets/background_desenfocado.png')}
             style={styles.container}
         >
             <View style={styles.content}>
-                <Image style={styles.splashIcon} source={require('./assets/splash_icon.png')} />
+                <Image style={styles.splashIcon} source={require('../assets/splash_icon.png')} />
             </View>
         </ImageBackground>
     )
