@@ -15,6 +15,10 @@ export function useScrollNavBar() {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     const navbarTranslateY = useRef(new Animated.Value(0)).current
 
+    const handleScreen = (screenName: 'Profile' | 'Home' | 'Search') => {
+        navigation.navigate(screenName)
+    }
+    
     const hideNavBar = () => {
         Animated.timing(navbarTranslateY, {
             toValue: 30, // incrementar al height del navbar
@@ -31,9 +35,6 @@ export function useScrollNavBar() {
         }).start()
     }
 
-    const handleScreen = (screenName: 'Profile' | 'Home' | 'Search') => {
-        navigation.navigate(screenName)
-    }
 
     const handleScroll = (gestureState: any) => {
         if (gestureState.dy < 0) {

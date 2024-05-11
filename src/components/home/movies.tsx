@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
 import { Movie } from '../../types'
+import { MovieNotFound } from '../../assets/movieNotFound'
 
 
 function ListOfMovies({ movies }: { movies: Movie[] }) {
@@ -17,7 +18,11 @@ function ListOfMovies({ movies }: { movies: Movie[] }) {
 }
 
 function NoMoviesResults() {
-    return <View><Text>No se encontraron resultados</Text></View>
+    return (
+        <View style={styles.noResult}>
+            <MovieNotFound/>
+        </View>
+    )
 }
 
 export function Movies({ movies }: { movies: Movie[] }) {
@@ -47,4 +52,6 @@ const styles = StyleSheet.create({
         marginTop: 5,
         textAlign: 'center',
     },
+    noResult:{
+    }
 })

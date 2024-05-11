@@ -7,6 +7,7 @@ import { Movies } from '../components/home/movies.tsx'
 import { useMovies } from '../hooks/useMovies.tsx'
 import { useSearch } from '../hooks/useSearch.tsx'
 import { Carousel } from '../components/carrusel.tsx'
+import { useScrollNavBar } from '../hooks/useNavBar.tsx'
 
 
 function HomeScreen(): React.JSX.Element {
@@ -29,7 +30,7 @@ function HomeScreen(): React.JSX.Element {
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
                 backgroundColor={backgroundStyle.backgroundColor}
-            />                
+            />            
             <Animated.ScrollView                
                 {...panResponder.panHandlers}
                 contentInsetAdjustmentBehavior="automatic"
@@ -51,7 +52,6 @@ function HomeScreen(): React.JSX.Element {
         </SafeAreaView>
     )
 }
-import { useScrollNavBar } from '../hooks/useNavBar.tsx'
 
 const colors = {
     black: '#282828',

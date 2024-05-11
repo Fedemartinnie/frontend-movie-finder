@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width
 export function Carousel ({ movies }: { movies: Movie[] }) {
     const scrollRef = useRef<ScrollView>(null)
     let scrollX = 0
-
+    
     useEffect(() => {
         const interval = setInterval(() => {
             scrollX += screenWidth

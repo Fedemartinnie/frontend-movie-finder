@@ -6,7 +6,7 @@ import { Profile } from '../../assets/profile'
 import useKeyboardStatus from '../../hooks/useKeyboardStatus'
 import { useScrollNavBar } from '../../hooks/useNavBar'
 //import { InputRefProps } from '../../types'
-
+import { HeartFav } from '../../assets/heartFav'
 
 
 const NavBar: React.FC = (/*{inputRef}*/) => {    
@@ -41,6 +41,11 @@ const NavBar: React.FC = (/*{inputRef}*/) => {
                     <Searcher/>
                 </View>
             </TouchableOpacity>
+            <TouchableOpacity style={[styles.iconContainer, { marginTop: 10 }]} onPress={() => handleScreen('Search')}>
+                <View style={{ width: 35, height: 35 }}>
+                    <HeartFav/>
+                </View>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.iconContainer} onPress={() => handleScreen('Profile')}>
                 <View style={{ width: 35, height: 35 }}>
                     <Profile />
@@ -55,7 +60,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        height: 60,
+        height: 56,
         backgroundColor: '#201E1E',                
         borderColor: '#F2F2F2',
         borderStyle: 'solid',
