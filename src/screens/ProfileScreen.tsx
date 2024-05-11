@@ -36,9 +36,9 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: '#052539',
-      },
+    },
 })
 
 
 
-export default ProfileScreen;
+export default ProfileScreen
