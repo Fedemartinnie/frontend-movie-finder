@@ -2,7 +2,7 @@ import React from 'react'
 import Svg, { Path } from 'react-native-svg'
 
 export const Logo = () => {
-    <Svg width='161' height="169" viewBox="0 0 161 169" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <Svg width='161' height="169" viewBox="0 0 161 169" fill="none">
         <rect width="161" height="169" fill="url(#pattern0_619_3412)"/>
         <defs>
             <pattern id="pattern0_619_3412" patternContentUnits="objectBoundingBox" width="1" height="1">
