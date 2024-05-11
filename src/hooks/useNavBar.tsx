@@ -38,10 +38,10 @@ export function useScrollNavBar() {
 
     const handleScroll = (gestureState: any) => {
         if (gestureState.dy < 0) {
-            console.log(gestureState.dy)
+            //console.log(gestureState.dy)
             hideNavBar()
         } else {
-            console.log(gestureState.dy)
+            //console.log(gestureState.dy)
             showNavBar()
         }
     }

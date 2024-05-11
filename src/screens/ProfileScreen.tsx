@@ -33,9 +33,12 @@ const styles = StyleSheet.create({
     },
     sectionNavbar: {
 
-    }
+    },
+    container: {
+        backgroundColor: '#052539',
+      },
 })
 
 
 
-export default ProfileScreen
+export default ProfileScreen;
