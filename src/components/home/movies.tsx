@@ -1,17 +1,31 @@
 import React from 'react'
-import { View, Image, StyleSheet } from 'react-native'
-import { Movie } from '../../types'
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { FullMovie, Movie } from '../../types'
 import { MovieNotFound } from '../../assets/movieNotFound'
-
+import { useNavigation } from '@react-navigation/native'
+import { searchMovie } from '../../services/movies'
+import { ProfileScreenNavigationProp } from '../../types'
 
 function ListOfMovies({ movies }: { movies: Movie[] }) {
+    const navigation = useNavigation<ProfileScreenNavigationProp>()
+    
+    const handlePress = async (id: string) => {
+        console.log(id)
+        const movie = await searchMovie({id})
+        navigation.navigate('MovieScreen', {id})
+    }
+
     return (
         <View style={styles.container}>
             {movies.map((movie) => (
-                <View style={styles.movieContainer} key={movie.id}>
+                <TouchableOpacity 
+                    key={movie.id}                    
+                    style={styles.movieContainer}
+                    onPress={() => handlePress(movie.id)}
+                >
                     <Image source={{ uri: movie.image }} style={styles.movieImage} alt={movie.title}/>
                     {/*<Text style={styles.movieTitle}>{movie.title}</Text>*/}
-                </View>
+                </TouchableOpacity>
             ))}
         </View>
     )

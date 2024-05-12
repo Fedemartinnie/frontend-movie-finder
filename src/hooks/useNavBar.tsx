@@ -2,14 +2,8 @@ import React, { useRef } from 'react'
 import { Animated, PanResponder } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { ProfileScreenNavigationProp } from '../types'
 
-type RootStackParamList = {
-    Home: undefined
-    Search: undefined
-    Profile: undefined
-}
-
-type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile' | 'Home' | 'Search'>
 
 export function useScrollNavBar() {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
@@ -21,7 +15,7 @@ export function useScrollNavBar() {
     
     const hideNavBar = () => {
         Animated.timing(navbarTranslateY, {
-            toValue: 30, // incrementar al height del navbar
+            toValue: 46,
             duration: 300,
             useNativeDriver: true
         }).start()

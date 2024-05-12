@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { Animated, SafeAreaView, ScrollView, StatusBar,
-    StyleSheet, Text, useColorScheme, View} from 'react-native'
+import { Animated, SafeAreaView, StatusBar,
+    StyleSheet, Text, TouchableOpacity, useColorScheme, View} from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import NavBar from '../components/home/navBar.tsx'
 import { Movies } from '../components/home/movies.tsx'
@@ -8,6 +8,7 @@ import { useMovies } from '../hooks/useMovies.tsx'
 import { useSearch } from '../hooks/useSearch.tsx'
 import { Carousel } from '../components/carrusel.tsx'
 import { useScrollNavBar } from '../hooks/useNavBar.tsx'
+import { Filter } from '../assets/filtrar.tsx'
 
 
 function HomeScreen(): React.JSX.Element {
@@ -37,9 +38,12 @@ function HomeScreen(): React.JSX.Element {
                 style={[backgroundStyle, {flex: 1}]}
             >
                 <Carousel movies={movies ?? []}/>
-                <View style={styles.textView}>
-                    <Text style={styles.textStyle}>TOP 5 ESTRENOS</Text>
-                </View>
+                <TouchableOpacity>
+                    <View style={styles.textView}>
+                        <Filter/>
+                        <Text style={styles.textStyle}>Géneros</Text>
+                    </View>
+                </TouchableOpacity>
                 {loading ? (
                     <View style={styles.sectionMovies}>
                         <Text>Loading...</Text>
@@ -70,10 +74,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: '600',
     },
-    sectionError: {
-        alignItems: 'center',
-    },
     sectionMovies: {
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -86,20 +88,22 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     textView: {
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent:'center',
         margin: 60,
         marginTop: 5,
         marginBottom: 15,
-        padding: 15,
+        padding: 5,
         backgroundColor: 'yellow',
-        borderTopColor: 'black',
-        borderTopWidth: 2,
+        borderColor: 'black',
+        borderWidth: 3,
         borderRadius: 20,
     },
     textStyle: {
         fontSize: 30,
         fontWeight: 'bold',
-        color: 'black'
+        color: 'black',
     }
 })
 

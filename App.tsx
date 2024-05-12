@@ -19,6 +19,7 @@ import LoginScreen from './src/screens/loginScreen'
 import HomeScreen from './src/screens/HomeScreen'
 import SearchScreen from './src/screens/searchScreen'
 import ProfileScreen from './src/screens/ProfileScreen'
+import { MovieScreen } from './src/screens/MovieScreen'
 
 const Stack = createStackNavigator()
 
@@ -44,6 +45,11 @@ const App = () => {
                             name='Profile'
                             component={ProfileScreen}
                             options={{ title: 'Profile' }}
+                        />
+                        <Stack.Screen
+                            name='MovieScreen'
+                            component={MovieScreen}
+                            options={{ title: 'Movie' }}
                         />
                     </>
                 ) : (
