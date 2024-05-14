@@ -1,5 +1,5 @@
-import React from 'react'
-import { Share, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Share, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking, Image, Dimensions } from 'react-native'
 import { FullMovie, RootStackParamList } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { Carousel } from '../components/carrusel'
@@ -12,6 +12,7 @@ import { Year } from '../assets/year'
 import { Genre } from '../assets/genre'
 import { Time } from '../assets/time'
 import { ShareSvg } from '../assets/share'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 
 type MovieScreenProps = RouteProp<{
@@ -20,10 +21,13 @@ type MovieScreenProps = RouteProp<{
 
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
+    const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')
     const { movie } = route.params
     const [title, subtitle] = movie.title.split(': ')
     const [day, month, year] = movie.released.split(' ')    
     const [genre, ...restGenre] = movie.genre.split(',')
+
+    const items = ['Sinópsis', 'Actors', 'Directors']
 
     const handleShare = async () => {
         try{
@@ -37,14 +41,27 @@ export const MovieScreen: React.FC = () => {
         }
     }
 
+    const handleSelectedItem = (item: string) => {
+        setSelectedItem(item)
+    }
+
+
     return(
         <View style={styles.container}>
             <ScrollView>
+                <View>
+                    <Image 
+                        key={movie.imdbID} 
+                        src={movie.poster} 
+                        alt={movie.title}
+                        style={styles.image}
+                    />
+                </View>
                 <View style={styles.movieInfo}>
                     <Text style={styles.title}>{title}</Text>
                     <Text style={styles.subtitle}>{subtitle}</Text>
                     <Text style={styles.rating}><Star/>   {movie.imdbRating/2}</Text>
-                    <Text><Year/>  {year} -  <Time/>  {movie.runtime} -  <Genre/>  {genre}</Text>
+                    <Text><Year/>  {year}      -      <Time/>  {movie.runtime}      -      <Genre/>  {genre}</Text>
                 </View>            
                 <View style={styles.interactions}>
                     <Trailer/>
@@ -55,14 +72,24 @@ export const MovieScreen: React.FC = () => {
                     <Rate/>
                 </View>
                 <View style={styles.details}>
-                    <Text style={styles.items}>
-                        Sinópsis
-                    </Text>
-                    <Text style={styles.items}>
-                        Actors
-                    </Text>
-                    <Text style={styles.items}>
-                        Directors
+                    {items.map((item, index) => (
+                        <TouchableWithoutFeedback
+                            key={index}
+                            onPress={() => handleSelectedItem(item)}
+                        >
+                            <Text style={selectedItem === item ? styles.selectedItem : styles.items}>
+                                {item}
+                            </Text>
+                        </TouchableWithoutFeedback>
+                    ))}
+                </View>
+                <View > 
+                    <Text style={styles.detailsInfo}>
+                        {selectedItem === 'Sinópsis' 
+                            ? movie.plot 
+                            : (selectedItem === 'Actors') 
+                                ? movie.actors
+                                : movie.directors}                                                
                     </Text>                    
                 </View>
             </ScrollView>
@@ -74,48 +101,76 @@ export const MovieScreen: React.FC = () => {
     )
 }
 
+
+
 const styles= StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#052539'
+    },
+    image: {
+        width: '100%',
+        height: 250,
+        resizeMode: 'cover', 
     },
     movieInfo: {  
         flexDirection: 'column',      
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#052539',
-        padding: 30
+        paddingBottom: 20
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
         marginHorizontal: 20, 
-        color: 'white'
+        color: '#EDE3E3'
     },
     subtitle: {
         fontSize: 18
     },
     rating: {
-        padding: 10,
+        padding: 15,
         fontSize: 25,
     },
     interactions: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        margin: 20     
+        backgroundColor: '#1C4F70',
+        padding:20,
     },
     details:{
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 20
+        paddingTop: 20,
+        paddingBottom: 0,
     },
     items:{
-        borderColor: 'white',
+        fontSize: 19,
+        borderColor: '#EDE3E3',
         padding: 10,
-        borderRadius: 2,
         borderWidth: 2,
-        paddingHorizontal: 30,        
+        paddingHorizontal: '7%',        
+    },
+    selectedItem:{
+        fontSize: 19,
+        backgroundColor: '#EDE3E3',
+        color: 'black',
+        padding: 10,
+        borderWidth: 2,
+        borderColor: '#EDE3E3',
+        paddingHorizontal: '7%',
+    },
+    detailsInfo: {
+        fontSize: 20, 
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingHorizontal: '7%', 
+        marginHorizontal: '2%', 
+        borderColor: '#EDE3E3', 
+        borderWidth: 2,
+        marginBottom: 60,
     },
     navbar: {
         flex: 1,

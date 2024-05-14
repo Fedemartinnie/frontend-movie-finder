@@ -23,7 +23,7 @@ function HomeScreen(): React.JSX.Element {
     
 
     useEffect (() => {
-        getMovies('Disney')            
+        getMovies('X-Men')            
     },[])
 
     return (
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent:'center',
         margin: 60,
-        marginTop: 5,
+        marginTop: 20,
         marginBottom: 15,
         padding: 5,
         backgroundColor: 'yellow',
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         color: 'black',
+        paddingHorizontal: 10
     }
 })
 

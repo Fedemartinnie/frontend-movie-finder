@@ -4,6 +4,7 @@ import { Movie } from '../types'
 
 const screenWidth = Dimensions.get('window').width
 
+
 //! puse Movies para hacer prueba => esto va solo en el home (primeras 5 movies de la busqueda)
 export function Carousel ({ movies }: { movies: Movie[] }) {
     const scrollRef = useRef<ScrollView>(null)
