@@ -121,7 +121,7 @@ const styles= StyleSheet.create({
         paddingBottom: 20
     },
     title: {
-        fontSize: 28,
+        fontSize: 38,
         fontWeight: 'bold',
         textAlign: 'center',
         marginHorizontal: 20, 
@@ -145,13 +145,14 @@ const styles= StyleSheet.create({
         justifyContent: 'center',
         paddingTop: 20,
         paddingBottom: 0,
+        
     },
     items:{
         fontSize: 19,
         borderColor: '#EDE3E3',
         padding: 10,
         borderWidth: 2,
-        paddingHorizontal: '7%',        
+        paddingHorizontal: '7%',      
     },
     selectedItem:{
         fontSize: 19,
