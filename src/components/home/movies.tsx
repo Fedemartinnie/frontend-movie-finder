@@ -10,9 +10,9 @@ function ListOfMovies({ movies }: { movies: Movie[] }) {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     
     const handlePress = async (id: string) => {
-        console.log(id)
         const movie = await searchMovie({id})
-        navigation.navigate('MovieScreen', {id})
+        //navigation.navigate('MovieScreen', {id: id})
+        navigation.navigate('MovieScreen', {movie})
     }
 
     return (

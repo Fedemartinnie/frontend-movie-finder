@@ -10,7 +10,8 @@ export type RootStackParamList = {
     Home: undefined
     Search: undefined
     Profile: undefined
-    MovieScreen: undefined
+    //MovieScreen: {id: string}
+    MovieScreen: {movie: FullMovie | null}
 }
 
 export type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile' | 'Home' | 'Search' | 'MovieScreen'>
@@ -49,7 +50,7 @@ export interface FullMovie {
     writer: string;
     year: string;
     imdbID: string;
-    imdbRating: string;
+    imdbRating: number;
     imdbVotes: string;
     totalSeasons: string;
 }

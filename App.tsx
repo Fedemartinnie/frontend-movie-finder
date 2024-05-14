@@ -50,6 +50,7 @@ const App = () => {
                             name='MovieScreen'
                             component={MovieScreen}
                             options={{ title: 'Movie' }}
+                            //initialParams={{MovieScreen: (id: string)=> id}}
                         />
                     </>
                 ) : (

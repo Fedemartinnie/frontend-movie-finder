@@ -14,7 +14,7 @@ function ProfileScreen(): React.JSX.Element {
             <View style={styles.sectionError}>
                 <Text style={{color: colors.red}}></Text>
             </View>          
-            <NavBar/>                          
+            <NavBar/>                       
         </SafeAreaView>
     )
 }
