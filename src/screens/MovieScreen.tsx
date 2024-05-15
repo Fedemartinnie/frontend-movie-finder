@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Share, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking, Image, Dimensions } from 'react-native'
+import { Modal, Share, ScrollView, StyleSheet, 
+    Text, TouchableOpacity, View, 
+    Linking, Image, Dimensions} 
+    from 'react-native'
 import { FullMovie, RootStackParamList } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { Carousel } from '../components/carrusel'
@@ -13,6 +16,7 @@ import { Genre } from '../assets/genre'
 import { Time } from '../assets/time'
 import { ShareSvg } from '../assets/share'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { CloseButton } from '../assets/closeButton'
 
 
 type MovieScreenProps = RouteProp<{
@@ -21,13 +25,18 @@ type MovieScreenProps = RouteProp<{
 
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
-    const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')
     const { movie } = route.params
+    const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')
     const [title, subtitle] = movie.title.split(': ')
     const [day, month, year] = movie.released.split(' ')    
     const [genre, ...restGenre] = movie.genre.split(',')
-
     const items = ['Sinópsis', 'Actors', 'Directors']
+
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible)
+    }
 
     const handleShare = async () => {
         try{
@@ -48,14 +57,27 @@ export const MovieScreen: React.FC = () => {
 
     return(
         <View style={styles.container}>
+            <Modal visible={isModalVisible} style={styles.modal}>
+                <Image
+                    style={styles.imageFullScreen}
+                    source={{ uri: movie.poster }}
+                />
+                <View style={styles.closeButton}>
+                    <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+                        <CloseButton/>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
             <ScrollView>
                 <View>
-                    <Image 
-                        key={movie.imdbID} 
-                        src={movie.poster} 
-                        alt={movie.title}
-                        style={styles.image}
-                    />
+                    <TouchableOpacity onPress={toggleModal}>
+                        <Image 
+                            key={movie.imdbID} 
+                            src={movie.poster} 
+                            alt={movie.title}
+                            style={styles.image}
+                        />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.movieInfo}>
                     <Text style={styles.title}>{title}</Text>
@@ -104,10 +126,27 @@ export const MovieScreen: React.FC = () => {
 
 
 const styles= StyleSheet.create({
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 0,
+    },
+    closeButton: {
+        position: 'absolute',
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    imageFullScreen: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+        resizeMode: 'cover',
+    },
     container: {
         flex: 1,
         backgroundColor: '#052539'
-    },
+    },    
     image: {
         width: '100%',
         height: 250,
