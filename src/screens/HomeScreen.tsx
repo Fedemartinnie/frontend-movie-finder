@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Animated, FlatList, Modal, SafeAreaView, StatusBar,
-    StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, useColorScheme, View} from 'react-native'
+    StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, 
+    useColorScheme, View, ScrollView} 
+    from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import NavBar from '../components/home/navBar.tsx'
 import { Movies } from '../components/home/movies.tsx'
@@ -17,8 +19,8 @@ function HomeScreen(): React.JSX.Element {
     const { movies, loading, getMovies } = useMovies({searchText: search})
     const { panResponder, navbarTranslateY } = useScrollNavBar()
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
-    const genres = ['Action', 'Adventure', 'Comedy', 'Drama', 'Horror'] // Ejemplo de array de géneros
-    const [genreType, setGenreType] = useState<string | null>(null)
+    const genres = ['Géneros', 'Action', 'Animation', 'Adventure', 'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'History', 'Horror','Music','Mystery', 'Romance', 'Science Fiction', 'Thriller', 'War']
+    const [genreType, setGenreType] = useState<string>('Géneros')
 
     const backgroundStyle = {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
@@ -53,10 +55,7 @@ function HomeScreen(): React.JSX.Element {
                 <TouchableOpacity onPress={toggleModal}>
                     <View style={styles.textView}>
                         <Filter/>
-                        {genreType 
-                            ? <Text style={styles.textStyle}>{genreType}</Text>
-                            : <Text style={styles.textStyle}>Géneros</Text>
-                        } 
+                        <Text style={styles.textStyle}>{genreType}</Text>                        
                     </View>
                 </TouchableOpacity>
                 {loading ? (
@@ -68,13 +67,15 @@ function HomeScreen(): React.JSX.Element {
                 )}                
             </Animated.ScrollView>            
             <NavBar/>             
-            <Modal visible={isModalVisible} style={styles.modal}>
+            <Modal visible={isModalVisible} style={styles.modal} transparent={true}>
                 <View style={styles.modalBackground}>
-                    {genres.map((genre, index) => (
-                        <TouchableOpacity key={index} onPress={() => handleGenreType(genre)}>
-                            <Text style={styles.genreItem}>{genre}</Text>
-                        </TouchableOpacity>
-                    ))}
+                    <ScrollView showsVerticalScrollIndicator={false} style={styles.genres}>
+                        {genres.map((genre, index) => (
+                            <TouchableOpacity key={index} onPress={() => handleGenreType(genre)}>
+                                <Text style={styles.genreItem}>{genre}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                     <View style={styles.closeButton}>
                         <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
                             <CloseButton/>
@@ -134,40 +135,33 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
         paddingHorizontal: 10
-    },
-    closeButton: {
-        position: 'absolute',
-        bottom: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-    },
+    },    
     modal: {
-        flex: 1,
-        backgroundColor: '#052539',
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 0,
+
     },
     modalBackground: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1F2224', // Color de fondo del modal
+        backgroundColor: '#1F2224DD',
+    },
+    closeButton: {
+        // position: 'relative',
+        paddingBottom: 10,
+        paddingTop: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    genres:{
+        paddingTop: 150,
     },
     genreItem: {
-        // paddingVertical: 10,
-        // paddingHorizontal: 20,
-        // fontSize: 18,
-        // color: 'black',
-        // justifyContent:'center',
-        // alignItems: 'center',    
-        paddingVertical: 30,
+        paddingVertical: 25,
         paddingHorizontal: 20,
-        fontSize: 18,
-        color: '#F3E7E7', // Color de los items de género
-        justifyContent: 'center',
-        alignItems: 'center',      
+        fontSize: 21,
+        color: '#F3E7E7',
+        textAlign: 'center',
     },
 })
 

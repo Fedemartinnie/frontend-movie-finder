@@ -22,13 +22,8 @@ export function SearchScreen(): React.JSX.Element {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
     }
 
-    const handleSearch = () => {        // Logic of search text
-        if (search.trim() !== '') {            
-            getMovies(search)
-            Alert.alert('Búsqueda realizada', `Has buscado: ${search}`)
-        } else {
-            Alert.alert('Campo de búsqueda vacío', 'Por favor ingresa un término de búsqueda')
-        }
+    const handleSearch = () => {
+        getMovies(search)
     }
 
 

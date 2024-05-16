@@ -34,12 +34,18 @@ const App = () => {
                         <Stack.Screen
                             name='Home'
                             component={HomeScreen}
-                            options={{ title: 'Home' }}
+                            options={{ 
+                                title: 'Home',
+                                headerShown: false
+                            }}
                         />
                         <Stack.Screen
                             name='Search'
                             component={SearchScreen}
-                            options={{ title: 'Search' }}
+                            options={{ 
+                                title: 'Search',
+                                headerShown: false
+                            }}
                         />
                         <Stack.Screen
                             name='Profile'

@@ -2,6 +2,7 @@
 import { useState, useRef, useMemo, useCallback } from 'react'
 import { searchMovies } from '../services/movies'
 import { Movie } from '../types'
+import { Keyboard } from 'react-native'
 
 
 export function useMovies({searchText} : {searchText: string}){
@@ -11,7 +12,8 @@ export function useMovies({searchText} : {searchText: string}){
     const previousSearch = useRef<string | null>(searchText)
 
     const getMovies = useCallback (async(searchText: string) => {
-        if(searchText === previousSearch.current) return //console.log('no repite busqueda')
+        if(searchText === previousSearch.current) 
+            return console.log('no repite busqueda')
 
         try{
             setLoading(true)
@@ -24,7 +26,8 @@ export function useMovies({searchText} : {searchText: string}){
             setError((e instanceof Error ? e.message : 'Ocurrió un Error en la búsqueda'))
         }
         finally{
-            setLoading(false)
+            setLoading(false)            
+            Keyboard.dismiss()
         }
     }, [searchText])
 
