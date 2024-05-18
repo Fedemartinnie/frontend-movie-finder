@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Animated, FlatList, Modal, SafeAreaView, StatusBar,
     StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, 
-    useColorScheme, View, ScrollView} 
+    useColorScheme, View, ScrollView,
+    ActivityIndicator} 
     from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import NavBar from '../components/home/navBar.tsx'
@@ -19,8 +20,8 @@ function HomeScreen(): React.JSX.Element {
     const { movies, loading, getMovies } = useMovies({searchText: search})
     const { panResponder, navbarTranslateY } = useScrollNavBar()
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
-    const genres = ['Géneros', 'Action', 'Animation', 'Adventure', 'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'History', 'Horror','Music','Mystery', 'Romance', 'Science Fiction', 'Thriller', 'War']
-    const [genreType, setGenreType] = useState<string>('Géneros')
+    const genres = ['Genres', 'Action', 'Animation', 'Adventure', 'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'History', 'Horror','Music','Mystery', 'Romance', 'Science Fiction', 'Thriller', 'War']
+    const [genreType, setGenreType] = useState<string>('Genres')
 
     const backgroundStyle = {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
@@ -61,6 +62,7 @@ function HomeScreen(): React.JSX.Element {
                 {loading ? (
                     <View style={styles.sectionMovies}>
                         <Text>Loading...</Text>
+                        <ActivityIndicator size={200} color="#0000ff" />
                     </View>
                 ) : (                
                     <Movies movies={movies ?? []}/>                    
@@ -114,9 +116,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '400',
     },
-    highlight: {
-        fontWeight: '700',
-    },
     textView: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -131,9 +130,9 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     textStyle: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: 'bold',
-        color: 'black',
+        color: '#052539',
         paddingHorizontal: 10
     },    
     modal: {

@@ -11,14 +11,8 @@ const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
     const { movies, getMovies } = useMovies( {searchText: search} )
     
 
-    const handleSearch = () => {
-
-        if (search.trim() !== '') {            
-            getMovies(search)
-            Alert.alert('Búsqueda realizada', `Has buscado: ${search}`)
-        } else {
-            Alert.alert('Campo de búsqueda vacío', 'Por favor ingresa un término de búsqueda')
-        }
+    const handleSearch = () => {       
+        getMovies(search)        
     }
 
     const handleChange = (text: string) => {
@@ -34,7 +28,7 @@ const SearchBar: React.FC<InputRefProps> = ({inputRef}) => {
                     placeholder="Avengers, The Matrix, Shrek ..."
                     placeholderTextColor={colors.black}
                     value={search}
-                    onChangeText={handleChange}
+                    onChangeText={search => updateSearch(search)}
                 />
                 <Button title="Search" onPress={handleSearch} />
             </View>

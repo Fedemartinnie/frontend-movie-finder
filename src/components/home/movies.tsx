@@ -23,8 +23,7 @@ function ListOfMovies({ movies }: { movies: Movie[] }) {
                     style={styles.movieContainer}
                     onPress={() => handlePress(movie.id)}
                 >
-                    <Image source={{ uri: movie.image }} style={styles.movieImage} alt={movie.title}/>
-                    {/*<Text style={styles.movieTitle}>{movie.title}</Text>*/}
+                    <Image source={{ uri: movie.image }} style={styles.movieImage} alt={movie.title}/>                    
                 </TouchableOpacity>
             ))}
         </View>

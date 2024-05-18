@@ -11,6 +11,7 @@ export function useMovies({searchText} : {searchText: string}){
     const [error, setError] = useState<string | null>(null)
     const previousSearch = useRef<string | null>(searchText)
 
+
     const getMovies = useCallback (async(searchText: string) => {
         if(searchText === previousSearch.current) 
             return console.log('no repite busqueda')

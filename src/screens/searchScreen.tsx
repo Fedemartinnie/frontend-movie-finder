@@ -1,7 +1,9 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Button, Alert, SafeAreaView,ScrollView,
     StatusBar,StyleSheet,Text,TextInput,
-    useColorScheme,View} from 'react-native'
+    useColorScheme,View,
+    ActivityIndicator,
+    Animated} from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 //import SearchBar from '../components/home/searcher'
 import NavBar from '../components/home/navBar.tsx'
@@ -12,7 +14,7 @@ import { useScrollNavBar } from '../hooks/useNavBar.tsx'
 
 
 export function SearchScreen(): React.JSX.Element {
-    const inputRef = useRef<TextInput>(null)
+    const inputRef = useRef<TextInput>(null)    
     const isDarkMode = useColorScheme() === 'dark'
     const { search, updateSearch, error } = useSearch()
     const { movies, loading, getMovies } = useMovies({searchText: search})
@@ -42,7 +44,6 @@ export function SearchScreen(): React.JSX.Element {
                     placeholderTextColor={colors.black}
                     value={search}
                     onChangeText={search => updateSearch(search)}
-                    //onChangeText={handleChange}
                 />
                 <Button title="Search" onPress={handleSearch} />
             </View>            
@@ -57,12 +58,15 @@ export function SearchScreen(): React.JSX.Element {
                 {loading ? (
                     <View style={styles.sectionMovies}>
                         <Text>Loading...</Text>
+                        <ActivityIndicator size={200} color="#0000ff" />
                     </View>
                 ) : (                
                     <Movies movies={movies ?? []}/>                    
                 )}                
-            </ScrollView>            
-            <NavBar/>                          
+            </ScrollView>    
+            
+            <NavBar/>
+            
         </SafeAreaView>
     )
 }
@@ -88,6 +92,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     sectionMovies: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -96,9 +101,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '400',
     },
-    highlight: {
-        fontWeight: '700',
-    },
+
 })
 
 export default SearchScreen

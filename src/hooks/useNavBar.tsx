@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { Animated, PanResponder } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+// import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ProfileScreenNavigationProp } from '../types'
 
 
@@ -32,10 +32,10 @@ export function useScrollNavBar() {
 
     const handleScroll = (gestureState: any) => {
         if (gestureState.dy < 0) {
-            //console.log(gestureState.dy)
+            console.log(gestureState.dy)
             hideNavBar()
         } else {
-            //console.log(gestureState.dy)
+            console.log(gestureState.dy)
             showNavBar()
         }
     }
@@ -43,6 +43,7 @@ export function useScrollNavBar() {
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dy) > 0,
+            // onPanResponderMove: (_, gestureState) => handleScroll(gestureState),
             onPanResponderRelease: (_, gestureState) => handleScroll(gestureState)
         })
     ).current

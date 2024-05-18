@@ -55,7 +55,9 @@ const App = () => {
                         <Stack.Screen
                             name='MovieScreen'
                             component={MovieScreen}
-                            options={{ title: 'Movie' }}
+                            options={{ 
+                                title: 'Movie'                                
+                            }}
                             //initialParams={{MovieScreen: (id: string)=> id}}
                         />
                     </>
@@ -64,10 +66,18 @@ const App = () => {
                         <Stack.Screen
                             name="Splash"
                             component={SplashScreen}
+                            options={{
+                                title: 'Splash',
+                                headerShown: false
+                            }}
                         />
                         <Stack.Screen
                             name="Login"
                             component={LoginScreen}
+                            options={{
+                                title: 'Login',
+                                headerShown: false
+                            }}
                             initialParams={{ setIsLoggedIn: (value: boolean) => setIsLoggedIn(value) }}
                         />
                     </>

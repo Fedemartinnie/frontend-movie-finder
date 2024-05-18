@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
+
 export function useSearch (){
     const [search, updateSearch] = useState<string>('')
     const [error, setError] = useState<null | string>(null)
@@ -9,6 +10,7 @@ export function useSearch (){
     useEffect(() => {
         if(isFirstInput.current){
             isFirstInput.current = search === ''
+            console.log('isFirstInput? ',isFirstInput)
             return
         }
 
