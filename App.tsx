@@ -1,15 +1,4 @@
-/*import React from 'react'
-import MyStack from './src/stack'
 
-function App(): React.JSX.Element {
-    return(    
-        <MyStack/>
-        
-    )
-}
-
-export default App
-*/
 
 import React, { useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
@@ -20,6 +9,7 @@ import HomeScreen from './src/screens/HomeScreen'
 import SearchScreen from './src/screens/searchScreen'
 import ProfileScreen from './src/screens/ProfileScreen'
 import { MovieScreen } from './src/screens/MovieScreen'
+import { FavsScreen } from './src/screens/FavsScreen'
 
 const Stack = createStackNavigator()
 
@@ -53,10 +43,16 @@ const App = () => {
                             options={{ title: 'Profile' }}
                         />
                         <Stack.Screen
+                            name='Favs'
+                            component={FavsScreen}
+                            options={{ title: 'Favs' }}
+                        />
+                        <Stack.Screen
                             name='MovieScreen'
                             component={MovieScreen}
                             options={{ 
-                                title: 'Movie'                                
+                                title: 'Movie',
+                                headerShown: false                               
                             }}
                             //initialParams={{MovieScreen: (id: string)=> id}}
                         />

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 import { Dimensions, Image, StyleSheet, ScrollView } from 'react-native'
-import { Movie } from '../types'
+import { Movie2Base } from '../types'
 
 const screenWidth = Dimensions.get('window').width
 
 
 //! puse Movies para hacer prueba => esto va solo en el home (primeras 5 movies de la busqueda)
-export function Carousel ({ movies }: { movies: Movie[] }) {
+export function Carousel ({ movies }: { movies: Movie2Base[] }) {
     const scrollRef = useRef<ScrollView>(null)
     
     let scrollX = 0
@@ -39,7 +39,7 @@ export function Carousel ({ movies }: { movies: Movie[] }) {
         >
             {movies.map((movie, index) => (
                 <Image key={index} 
-                    source={{ uri: movie.image }} 
+                    source={{ uri: movie.images.backdrops[index] }} 
                     style={styles.image} 
                     alt={movie.title}
                 />

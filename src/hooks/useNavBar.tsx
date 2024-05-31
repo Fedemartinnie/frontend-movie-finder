@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Animated, PanResponder } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 // import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -8,45 +8,47 @@ import { ProfileScreenNavigationProp } from '../types'
 export function useScrollNavBar() {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     const navbarTranslateY = useRef(new Animated.Value(0)).current
+    const [isNavBarHidden, setIsNavBarHidden] = useState<boolean>(false)
 
-    const handleScreen = (screenName: 'Profile' | 'Home' | 'Search') => {
+    const handleScreen = (screenName: 'Profile' | 'Home' | 'Search' | 'Favs') => {
+        setIsNavBarHidden(false)
         navigation.navigate(screenName)
     }
     
     const hideNavBar = () => {
-        Animated.timing(navbarTranslateY, {
-            toValue: 46,
-            duration: 300,
-            useNativeDriver: true
-        }).start()
+        setIsNavBarHidden(true)
     }
 
     const showNavBar = () => {
-        Animated.timing(navbarTranslateY, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true
-        }).start()
+        setIsNavBarHidden(false)
     }
 
-
-    const handleScroll = (gestureState: any) => {
-        if (gestureState.dy < 0) {
-            console.log(gestureState.dy)
-            hideNavBar()
-        } else {
-            console.log(gestureState.dy)
-            showNavBar()
-        }
-    }
 
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dy) > 0,
-            // onPanResponderMove: (_, gestureState) => handleScroll(gestureState),
-            onPanResponderRelease: (_, gestureState) => handleScroll(gestureState)
+            onPanResponderMove: (_, gestureState) => {
+                if (gestureState.dy > 0) {
+                    // console.log('SHOW NAVBAR: \n',gestureState.dy)
+                    showNavBar()
+                } 
+                if(gestureState.dy < 0) {
+                    // console.log('HIDE NAVBAR: ',gestureState.dy)
+                    hideNavBar()
+                }
+            },
         })
     ).current
+
+    useEffect(() => {
+        // console.log('\n --> isnavbarhidden? ',isNavBarHidden)
+        Animated.timing(navbarTranslateY, {
+            toValue: isNavBarHidden ? 56 : 0, // Ajusta este valor según sea necesario
+            duration: 300,
+            useNativeDriver: true,
+        }).start()
+    }, [isNavBarHidden])
+
 
     return { navbarTranslateY, panResponder, handleScreen }
 }

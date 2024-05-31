@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Animated, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Home } from '../../assets/home'
 import { Searcher } from '../../assets/search'
@@ -11,14 +11,13 @@ import { HeartFav } from '../../assets/heartFav'
 
 const NavBar: React.FC = (/*{inputRef}*/) => {    
     const { keyboardStatus } = useKeyboardStatus()
-    const { navbarTranslateY, panResponder, handleScreen } = useScrollNavBar()    
-
+    const { navbarTranslateY, handleScreen } = useScrollNavBar()
+    
     /*const handleSearcherPress = () => {
         if(inputRef.current){
             inputRef.current.focus()
         }
     }*/
-
     
     if (keyboardStatus) {
         return null
@@ -28,8 +27,7 @@ const NavBar: React.FC = (/*{inputRef}*/) => {
         <Animated.View style={[
             styles.navbar,
             { transform: [{ translateY: navbarTranslateY }] },            
-        ]}  
-        {...panResponder.panHandlers}
+        ]}        
         >  
             <TouchableOpacity style={styles.iconContainer} onPress={() => handleScreen('Home')}>
                 <View style={{ width: 35, height: 35 }}>
@@ -41,7 +39,7 @@ const NavBar: React.FC = (/*{inputRef}*/) => {
                     <Searcher/>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.iconContainer, { marginTop: 10 }]} onPress={() => handleScreen('Search')}>
+            <TouchableOpacity style={[styles.iconContainer, { marginTop: 10 }]} onPress={() => handleScreen('Favs')}>
                 <View style={{ width: 35, height: 35 }}>
                     <HeartFav/>
                 </View>

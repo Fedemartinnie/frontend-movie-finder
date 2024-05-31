@@ -1,0 +1,142 @@
+{ "data":[
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792e9b",
+        "title": "The Shawshank Redemption",
+        "releaseYear": "1994",
+        "overallRating": 9.3
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792e9c",
+        "title": "The Godfather",
+        "releaseYear": "1972",
+        "overallRating": 9.2
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792e9d",
+        "title": "The Dark Knight",
+        "releaseYear": "2008",
+        "overallRating": 9
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792e9e",
+        "title": "The Godfather: Part II",
+        "releaseYear": "1974",
+        "overallRating": 9
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792e9f",
+        "title": "12 Angry Men",
+        "releaseYear": "1957",
+        "overallRating": 8.9
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea0",
+        "title": "Schindler's List",
+        "releaseYear": "1993",
+        "overallRating": 8.9
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea1",
+        "title": "The Lord of the Rings: The Return of the King",
+        "releaseYear": "2003",
+        "overallRating": 8.9
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea2",
+        "title": "Pulp Fiction",
+        "releaseYear": "1994",
+        "overallRating": 8.9
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea3",
+        "title": "The Lord of the Rings: The Fellowship of the Ring",
+        "releaseYear": "2001",
+        "overallRating": 8.8
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea4",
+        "title": "Forrest Gump",
+        "releaseYear": "1994",
+        "overallRating": 8.8
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea5",
+        "title": "Inception",
+        "releaseYear": "2010",
+        "overallRating": 8.8
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea6",
+        "title": "The Lord of the Rings: The Two Towers",
+        "releaseYear": "2002",
+        "overallRating": 8.7
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea7",
+        "title": "Fight Club",
+        "releaseYear": "1999",
+        "overallRating": 8.8
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea8",
+        "title": "The Matrix",
+        "releaseYear": "1999",
+        "overallRating": 8.7
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ea9",
+        "title": "Goodfellas",
+        "releaseYear": "1990",
+        "overallRating": 8.7
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792eaa",
+        "title": "The Lord of the Rings: The Fellowship of the Ring",
+        "releaseYear": "2001",
+        "overallRating": 8.8
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792eab",
+        "title": "Star Wars: Episode V - The Empire Strikes Back",
+        "releaseYear": "1990",
+        "overallRating": 8.8
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792eac",
+        "title": "The Green Mile",
+        "releaseYear": "1999",
+        "overallRating": 8.6
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792ead",
+        "title": "The Silence of the Lambs",
+        "releaseYear": "1991",
+        "overallRating": 8.6
+    },
+    {
+        "genres": [],
+        "_id": "660799b269ffa47ea2792eae",
+        "title": "Se7en",
+        "releaseYear": "1995",
+        "overallRating": 8.6
+    }
+]}

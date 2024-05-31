@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Modal, Share, ScrollView, StyleSheet, 
     Text, TouchableOpacity, View, 
-    Linking, Image, Dimensions} 
+    Image, Dimensions} 
     from 'react-native'
-import { FullMovie, RootStackParamList } from '../types'
+import { FullMovie2 } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { Carousel } from '../components/carrusel'
 import NavBar from '../components/home/navBar'
@@ -20,16 +20,17 @@ import { CloseButton } from '../assets/closeButton'
 
 
 type MovieScreenProps = RouteProp<{
-    MovieScreen: { movie: FullMovie }
+    MovieScreen: { movie: FullMovie2 }
 }, 'MovieScreen'>
 
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
     const { movie } = route.params
     const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')
-    const [title, subtitle] = movie.title.split(': ')
-    const [day, month, year] = movie.released.split(' ')    
-    const [genre, ...restGenre] = movie.genre.split(',')
+    
+    // const [title, subtitle] = movie.title.split(':')
+    // const [year, month, day] = movie.releaseYear.split('-')    
+    // const [genre, ...restGenre] = movie.genres.split(',')
     const items = ['Sinópsis', 'Actors', 'Directors']
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
@@ -58,10 +59,10 @@ export const MovieScreen: React.FC = () => {
     return(
         <View style={styles.container}>
             <Modal visible={isModalVisible} style={styles.modal}>
-                <Image
+                {/* <Image
                     style={styles.imageFullScreen}
-                    source={{ uri: movie.poster }}
-                />
+                    source={{ uri: movie.images.backdrops[0] }}
+                /> */}
                 <View style={styles.closeButton}>
                     <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
                         <CloseButton/>
@@ -70,20 +71,21 @@ export const MovieScreen: React.FC = () => {
             </Modal>
             <ScrollView>
                 <View>
-                    <TouchableOpacity onPress={toggleModal}>
+                    {/* <TouchableOpacity onPress={toggleModal}>
                         <Image 
-                            key={movie.imdbID} 
-                            src={movie.poster} 
+                            key={movie._id} 
+                            src={'https://image.tmdb.org/t/p/w500'+movie.images.backdrops[0]}
                             alt={movie.title}
                             style={styles.image}
                         />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <View style={styles.movieInfo}>
-                    <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.subtitle}>{subtitle}</Text>
-                    <Text style={styles.rating}><Star/>   {movie.imdbRating/2}</Text>
-                    <Text><Year/>  {year}      -      <Time/>  {movie.runtime}      -      <Genre/>  {genre}</Text>
+                    <Text style={styles.title}>{movie.title}</Text>
+                    {/* <Text style={styles.subtitle}>{subtitle}</Text> */}
+                    
+                    <Text style={styles.rating}><Star/>   {movie.rating}</Text>
+                    <Text><Year/>  {movie.releaseYear}  -      <Time/>  {movie.duration}      -      <Genre/>  {/*movie.genres[0]*/}</Text>
                 </View>            
                 <View style={styles.interactions}>
                     <Trailer/>
@@ -110,8 +112,8 @@ export const MovieScreen: React.FC = () => {
                         {selectedItem === 'Sinópsis' 
                             ? movie.plot 
                             : (selectedItem === 'Actors') 
-                                ? movie.actors
-                                : movie.directors}                                                
+                                ? movie.cast[0]?.name
+                                : movie.director[0]?.name}                                                
                     </Text>                    
                 </View>
             </ScrollView>

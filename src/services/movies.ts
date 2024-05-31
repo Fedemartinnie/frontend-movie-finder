@@ -1,59 +1,96 @@
-import { FullMovie, Movie, MovieDB } from '../types'
+import { useState } from 'react'
+import { SearchParams, FullMovie2, Movie2Base, Movie, MovieDB } from '../types'
+import axios from 'axios'
 
-//const URI = 'localhost:8000/'
-const API_KEY = '5883c0bc' // delete this when change api to endpoint URL
+const URI = 'http://192.168.0.73:8000'
+const API_KEY = '5883c0bc' // delete this when change public api to endpoint URL
 
-export const searchMovies = async ({searchText}: {searchText: string}): Promise<Movie[] | null> => {
-    if(searchText === '') return null
+//*function para traer todos los resultados de una búsqueda
+export const search = async (params: SearchParams) : Promise<Movie2Base[] | null> => {
+    // if (params.name && params.name==='') return null
+    
+    console.log('\nparams from service: ',params)
+    
+    const searchParams = new URLSearchParams()
+
+    Object.keys(params).forEach((key) => {
+        const value = (params as any)[key]
+        if (value !== null && value !== undefined) {
+            searchParams.append(key, value.toString())
+        }
+    }) 
+
+    const finalUrl = `${URI}/movies/results?${searchParams.toString()}`
+    console.log('url final: ', finalUrl)
+
 
     try{
-        const response = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchText}`)
-        const json: {Search: MovieDB[]} = await response.json()
-        const movies = json.Search
-
-        return movies?.map(movie => ({
-            id: movie.imdbID,
-            title: movie.Title,
-            year: movie.Year,
-            image: movie.Poster
-        }))
-    }catch (e) {
-        throw new Error('Error searching the movie')
+        console.log('Realizando el Fetch ----> \n')
+        const response = await fetch('http://192.168.0.73:8000/movies/results?name=amigos', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // params
+        })
+        console.log(response)
+        // const response = await fetch(finalUrl)
+        const json = await response.json()
+        const movies = json.data
+        console.log('movies --> ', movies)
+        
+        return movies
+    }
+    catch{
+        console.log(Error)
+        throw new Error('Error Searching the Movie ')
     }
 }
 
-export const searchMovie = async ({id}: {id: string}): Promise<FullMovie | null> => {
+
+//* Function to search a Movie By Id
+export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null> => {
     try{
-        const response = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&i=${id}`)
-        const movie = await response.json()     
-        console.log(movie)
-        const transformedMovie = {
-            actors: movie.Actors,
-            awards: movie.Awards,
-            country: movie.Country,
-            directors: movie.Director,
-            genre: movie.Genre,
-            language: movie.Language,
-            metascore: movie.Metascore,
-            plot: movie.Plot,
-            poster: movie.Poster,
-            rated: movie.Rated,
-            ratings: movie.Ratings,
-            released: movie.Released,
-            response: movie.Response,
-            runtime: movie.Runtime,
-            title: movie.Title,
-            type: movie.Type,
-            writer: movie.Writer,
-            year: movie.Year,
-            imdbID: movie.imdbID,
-            imdbRating: movie.imdbRating,
-            imdbVotes: movie.imdbVotes,
-            totalSeasons: movie.totalSeasons
+        console.log('search movie: ',id)
+        const response = await fetch(`http://192.168.0.73:8000/movies/${id}`,{
+            headers: {
+                'Content-Type': 'application/json',                
+            }
+        })
+        console.log('*************************************************')
+        if(!response.ok){
+            console.log('*************************************************')
+            throw new Error()
+
         }
-        return transformedMovie    
+        console.log('response --------> ', response)
+        const movies = await response.json()
+
+        return movies
     } catch (e) {
         throw new Error('Error opening Movie data')
     }
 
 }
+
+
+
+
+// export const searchMovies = async ({searchText}: {searchText: string}): Promise<Movie[] | null> => {
+//     if(searchText === '') return null
+
+//     try{
+//         const response = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchText}`)
+//         const json: {Search: MovieDB[]} = await response.json()
+//         const movies = json.Search
+
+//         return movies?.map(movie => ({
+//             id: movie.imdbID,
+//             title: movie.Title,
+//             year: movie.Year,
+//             image: movie.Poster
+//         }))
+//     }catch (e) {
+//         throw new Error('Error searching the movie')
+//     }
+// }
+

@@ -13,12 +13,14 @@ import { Carousel } from '../components/carrusel.tsx'
 import { useScrollNavBar } from '../hooks/useNavBar.tsx'
 import { Filter } from '../assets/filtrar.tsx'
 import { CloseButton } from '../assets/closeButton.tsx'
+import { HomeParams } from '../types.ts'
 
 function HomeScreen(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark'
-    const { search } = useSearch()
-    const { movies, loading, getMovies } = useMovies({searchText: search})
-    const { panResponder, navbarTranslateY } = useScrollNavBar()
+    // const { search } = useSearch()
+    const [params, setParams] = useState<HomeParams>({ sortByDate: -1, page: 1 })
+    const { movies, loading, getMovies } = useMovies({params})
+    // const { panResponder, navbarTranslateY } = useScrollNavBar()
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
     const genres = ['Genres', 'Action', 'Animation', 'Adventure', 'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'History', 'Horror','Music','Mystery', 'Romance', 'Science Fiction', 'Thriller', 'War']
     const [genreType, setGenreType] = useState<string>('Genres')
@@ -27,10 +29,11 @@ function HomeScreen(): React.JSX.Element {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
     }
     
-
-    useEffect (() => {
-        getMovies('X-Men')            
-    },[])
+    //! params.sortByDate: 1, page (incrementar con cada endScroll)
+    // useEffect (() => {
+    //     console.log(params)
+    //     getMovies(params)            
+    // },[])
 
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible)
@@ -46,13 +49,16 @@ function HomeScreen(): React.JSX.Element {
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
                 backgroundColor={backgroundStyle.backgroundColor}
-            />                        
+            />
+
             <Animated.ScrollView                
-                {...panResponder.panHandlers}
+                // {...panResponder.panHandlers}
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle, {flex: 1}]}
             >
-                <Carousel movies={movies ?? []}/>
+                {/* ! habilitar el carousel */}
+                {/* <Carousel movies={movies ?? []}/> */}
+
                 <TouchableOpacity onPress={toggleModal}>
                     <View style={styles.textView}>
                         <Filter/>
@@ -67,8 +73,10 @@ function HomeScreen(): React.JSX.Element {
                 ) : (                
                     <Movies movies={movies ?? []}/>                    
                 )}                
-            </Animated.ScrollView>            
-            <NavBar/>             
+            </Animated.ScrollView>
+
+            <NavBar/>
+
             <Modal visible={isModalVisible} style={styles.modal} transparent={true}>
                 <View style={styles.modalBackground}>
                     <ScrollView showsVerticalScrollIndicator={false} style={styles.genres}>

@@ -10,7 +10,7 @@ export function useSearch (){
     useEffect(() => {
         if(isFirstInput.current){
             isFirstInput.current = search === ''
-            console.log('isFirstInput? ',isFirstInput)
+            // console.log('isFirstInput? ',isFirstInput)
             return
         }
 

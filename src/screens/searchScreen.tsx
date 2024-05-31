@@ -1,33 +1,45 @@
-import React, { useEffect, useRef } from 'react'
-import { Button, Alert, SafeAreaView,ScrollView,
-    StatusBar,StyleSheet,Text,TextInput,
-    useColorScheme,View,
-    ActivityIndicator,
-    Animated} from 'react-native'
+import React, { useState } from 'react'
+import { SafeAreaView, ScrollView,
+    StatusBar, StyleSheet, Text,
+    useColorScheme, View,
+    ActivityIndicator} 
+    from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
-//import SearchBar from '../components/home/searcher'
+import SearchBar from '../components/home/searcher'
 import NavBar from '../components/home/navBar.tsx'
 import { Movies } from '../components/home/movies.tsx'
 import { useMovies } from '../hooks/useMovies.tsx'
 import { useSearch } from '../hooks/useSearch.tsx'
 import { useScrollNavBar } from '../hooks/useNavBar.tsx'
+import { SearchParams } from '../types.ts'
+
 
 
 export function SearchScreen(): React.JSX.Element {
-    const inputRef = useRef<TextInput>(null)    
+    // const inputRef = useRef<TextInput>(null)    
     const isDarkMode = useColorScheme() === 'dark'
-    const { search, updateSearch, error } = useSearch()
-    const { movies, loading, getMovies } = useMovies({searchText: search})
+    const { search } = useSearch()
+    // const { movies, loading, getMovies } = useMovies({searchText: search})
+    const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: null, sortByRating: null })
+    const { movies, loading, getMovies } = useMovies({params})
     const { panResponder } = useScrollNavBar()
 
+    
     const backgroundStyle = {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
     }
 
-    const handleSearch = () => {
-        getMovies(search)
+
+    const handleSearch = (searchText: string) => {
+        console.log('searchText ----------> ',searchText)
+        const newParams = {...params, name: searchText, page: 1}
+        setParams(newParams)
+        getMovies(newParams)
     }
 
+    // const handleSearch = (searchText: string) => {
+    //     getMovies(searchText)
+    // }
 
     return (
         <SafeAreaView style={[backgroundStyle, { flex: 1}]}>
@@ -35,23 +47,12 @@ export function SearchScreen(): React.JSX.Element {
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
                 backgroundColor={backgroundStyle.backgroundColor}
             />
-            <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-                <TextInput                    
-                    ref={inputRef}
-                    style={{ borderColor: error? 'red' : 'transparent',                        
-                        flex: 1, height: 40, backgroundColor: colors.white , borderRadius: 10, borderWidth: 1,marginRight: 10, paddingHorizontal: 10, color: colors.black }}
-                    placeholder="Avengers, The Matrix, Shrek ..."
-                    placeholderTextColor={colors.black}
-                    value={search}
-                    onChangeText={search => updateSearch(search)}
-                />
-                <Button title="Search" onPress={handleSearch} />
-            </View>            
-            <View style={styles.sectionError}>
-                {error && <Text style={{color: colors.red}}>{error}</Text>}
-            </View>
+
+            <SearchBar onSearch={handleSearch} />
+
             <ScrollView                
                 {...panResponder.panHandlers}
+                scrollEventThrottle={16}
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle, {flex: 1}]}
             >
@@ -60,10 +61,10 @@ export function SearchScreen(): React.JSX.Element {
                         <Text>Loading...</Text>
                         <ActivityIndicator size={200} color="#0000ff" />
                     </View>
-                ) : (                
-                    <Movies movies={movies ?? []}/>                    
+                ) : (
+                    <Movies movies={movies ?? []}/>
                 )}                
-            </ScrollView>    
+            </ScrollView>
             
             <NavBar/>
             
