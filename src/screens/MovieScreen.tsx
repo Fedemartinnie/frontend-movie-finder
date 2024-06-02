@@ -63,6 +63,7 @@ export const MovieScreen: React.FC = () => {
 
     return(
         <View style={styles.container}>
+
             <Modal visible={isModalVisible} style={styles.modal}>
                 <Image
                     style={styles.imageFullScreen}
@@ -74,23 +75,25 @@ export const MovieScreen: React.FC = () => {
                     </TouchableOpacity>
                 </View>
             </Modal>
+
             <ScrollView>
-                <View>
-                    
-                    <Carousel movies={movie.images.backdrops}/>
-                    
+                <View>                    
+                    <Carousel movies={movie.images.backdrops}/>                    
                 </View>
+
                 <View style={styles.movieInfo}>
                     <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.subtitle}>{subtitle}</Text>                    
+                    {subtitle && (
+                        <Text style={styles.subtitle}>{subtitle}</Text>
+                    )}             
                     <Text style={styles.rating}><Star/>   {movie.overallRating}</Text>
-                    {/* <Text><Year/>  {movie.releaseYear}  -    <Time/>  {movie.duration}     -   <Genre/>  {movie.genres[0]}</Text> */}
                     <View style={styles.microDetails}>
                         <Text><Year/>  {movie.releaseYear}  -    </Text>
                         <Text><Time/>  {movie.duration} min.   -   </Text>
                         <Text><Genre/>  {movie.genres[0]}</Text>
                     </View>
-                </View>            
+                </View>
+
                 <View style={styles.interactions}>
                     <TouchableOpacity onPress={handleTrailer}>
                         <Trailer/>
@@ -101,6 +104,7 @@ export const MovieScreen: React.FC = () => {
                     </TouchableOpacity>
                     <Rate/>
                 </View>
+
                 <View style={styles.info}>
                     <View style={styles.details}>
                         {items.map((item, index) => (
@@ -114,6 +118,7 @@ export const MovieScreen: React.FC = () => {
                             </TouchableWithoutFeedback>
                         ))}
                     </View>
+
                     <View > 
                         <Text style={styles.detailsInfo}>
                             {selectedItem === 'Sinópsis' 
@@ -124,10 +129,13 @@ export const MovieScreen: React.FC = () => {
                         </Text>                    
                     </View>
                 </View>
+
             </ScrollView>
+
             <View style={styles.navbar}>
                 <NavBar/>
             </View>
+            
         </View>
 
     )

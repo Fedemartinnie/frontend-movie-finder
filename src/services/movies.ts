@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import { SearchParams, FullMovie2, Movie2Base, Movie, MovieDB } from '../types'
-import axios from 'axios'
+import { SearchParams, FullMovie2, Movie2Base } from '../types'
 
 const URI = 'http://192.168.0.73:8000'
 const API_KEY = '5883c0bc' // delete this when change public api to endpoint URL
@@ -26,13 +24,7 @@ export const search = async (params: SearchParams) : Promise<Movie2Base[] | null
 
     try{
         console.log('Realizando el Fetch ----> \n')
-        // const response = await fetch('http://192.168.0.73:8000/movies/results?name=kong', {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     // params
-        // })
-        // console.log(response)
+
         const response = await fetch(finalUrl)
         const json = await response.json()
         const movies = json.data

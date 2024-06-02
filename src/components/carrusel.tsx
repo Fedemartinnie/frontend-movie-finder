@@ -34,12 +34,12 @@ export const Carousel: React.FC<CarouselProps> = ({ movies }) => {
     }, [movies])
     
     const getImageUri = (item: Movie2Base | string, index: number): string => {
-        console.log('image.backdrops ---> ',item)
+        // console.log('image.backdrops ---> ',item)
         if (typeof item === 'string') {
             return item
         } else {
-            
-            return item.images.backdrops.length > 0 ? item.images.backdrops[index] : item.images.posters[index]
+            console.log(item.images.backdrops)
+            return item.images.posters[index]
         }
     }
     

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {  } from 'react'
 import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { Movie2Base } from '../../types'
 import { MovieNotFound } from '../../assets/movieNotFound'
