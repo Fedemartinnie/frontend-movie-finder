@@ -12,9 +12,11 @@ export type RootStackParamList = {
     Profile: undefined
     Favs: undefined
     MovieScreen: {movie: FullMovie2 | null}
+    Splash: undefined,
+    Login: undefined
 }
 
-export type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile' | 'Home' | 'Search' | 'MovieScreen'>
+export type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile' | 'Home' | 'Search' | 'MovieScreen' | 'Splash' | 'Login'>
 
 export interface Movie {
     id: string
@@ -84,10 +86,11 @@ export interface FullMovie2 {
     director: Director[];
     cast: Cast[];
     images: Images;
+    overallRating: number,
     rating: number
 }
 
-export type Movie2Base = Pick<FullMovie2, '_id' | 'title' | 'genres' | 'releaseYear' | 'images'>
+export type Movie2Base = Pick<FullMovie2, '_id' | 'title' | 'genres' | 'releaseYear' | 'images' | 'overallRating'>
 
 
 // Parámetros de Búsqueda (title, actor, genre, sortBy: Date / Rate)

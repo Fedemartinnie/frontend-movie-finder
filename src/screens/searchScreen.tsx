@@ -33,6 +33,7 @@ export function SearchScreen(): React.JSX.Element {
     const handleSearch = (searchText: string) => {
         console.log('searchText ----------> ',searchText)
         const newParams = {...params, name: searchText, page: 1}
+        console.log (newParams)
         setParams(newParams)
         getMovies(newParams)
     }
@@ -80,7 +81,7 @@ const colors = {
     blueDark: '#052539',
 }
 
-const styles = StyleSheet.create({    
+const styles = StyleSheet.create({
     sectionContainer: {
         marginTop: 32,
         paddingHorizontal: 24,

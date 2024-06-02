@@ -30,10 +30,9 @@ function HomeScreen(): React.JSX.Element {
     }
     
     //! params.sortByDate: 1, page (incrementar con cada endScroll)
-    // useEffect (() => {
-    //     console.log(params)
-    //     getMovies(params)            
-    // },[])
+    useEffect (() => {
+        getMovies(params)            
+    },[params])
 
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible)
@@ -41,6 +40,9 @@ function HomeScreen(): React.JSX.Element {
 
     const handleGenreType = (genre: string) => {
         setGenreType(genre)
+        const newParams = { ...params, genre: genre }
+        setParams(newParams)
+        console.log(params)
         toggleModal()
     }
 
@@ -57,7 +59,7 @@ function HomeScreen(): React.JSX.Element {
                 style={[backgroundStyle, {flex: 1}]}
             >
                 {/* ! habilitar el carousel */}
-                {/* <Carousel movies={movies ?? []}/> */}
+                <Carousel movies={movies ?? []}/>
 
                 <TouchableOpacity onPress={toggleModal}>
                     <View style={styles.textView}>

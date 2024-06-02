@@ -26,14 +26,14 @@ export const search = async (params: SearchParams) : Promise<Movie2Base[] | null
 
     try{
         console.log('Realizando el Fetch ----> \n')
-        const response = await fetch('http://192.168.0.73:8000/movies/results?name=amigos', {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            // params
-        })
-        console.log(response)
-        // const response = await fetch(finalUrl)
+        // const response = await fetch('http://192.168.0.73:8000/movies/results?name=kong', {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     // params
+        // })
+        // console.log(response)
+        const response = await fetch(finalUrl)
         const json = await response.json()
         const movies = json.data
         console.log('movies --> ', movies)
@@ -58,11 +58,8 @@ export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null
         })
         console.log('*************************************************')
         if(!response.ok){
-            console.log('*************************************************')
             throw new Error()
-
         }
-        console.log('response --------> ', response)
         const movies = await response.json()
 
         return movies

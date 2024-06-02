@@ -28,8 +28,8 @@ export const MovieScreen: React.FC = () => {
     const { movie } = route.params
     const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')
     
-    // const [title, subtitle] = movie.title.split(':')
-    // const [year, month, day] = movie.releaseYear.split('-')    
+    const [title, subtitle] = movie.title.split(':')
+    const [year, month, day] = movie.releaseYear.split('-')    
     // const [genre, ...restGenre] = movie.genres.split(',')
     const items = ['Sinópsis', 'Actors', 'Directors']
 
@@ -38,6 +38,7 @@ export const MovieScreen: React.FC = () => {
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible)
     }
+    
 
     const handleShare = async () => {
         try{
@@ -56,13 +57,17 @@ export const MovieScreen: React.FC = () => {
     }
 
 
+    const handleTrailer = () => {
+        const uri = 'https://www.youtube.com/watch?v='
+    }
+
     return(
         <View style={styles.container}>
             <Modal visible={isModalVisible} style={styles.modal}>
-                {/* <Image
+                <Image
                     style={styles.imageFullScreen}
-                    source={{ uri: movie.images.backdrops[0] }}
-                /> */}
+                    source={{ uri: 'https://image.tmdb.org/t/p/w500'+movie.images.backdrops[0] }}
+                />
                 <View style={styles.closeButton}>
                     <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
                         <CloseButton/>
@@ -71,50 +76,53 @@ export const MovieScreen: React.FC = () => {
             </Modal>
             <ScrollView>
                 <View>
-                    {/* <TouchableOpacity onPress={toggleModal}>
-                        <Image 
-                            key={movie._id} 
-                            src={'https://image.tmdb.org/t/p/w500'+movie.images.backdrops[0]}
-                            alt={movie.title}
-                            style={styles.image}
-                        />
-                    </TouchableOpacity> */}
+                    
+                    <Carousel movies={movie.images.backdrops}/>
+                    
                 </View>
                 <View style={styles.movieInfo}>
-                    <Text style={styles.title}>{movie.title}</Text>
-                    {/* <Text style={styles.subtitle}>{subtitle}</Text> */}
-                    
-                    <Text style={styles.rating}><Star/>   {movie.rating}</Text>
-                    <Text><Year/>  {movie.releaseYear}  -      <Time/>  {movie.duration}      -      <Genre/>  {/*movie.genres[0]*/}</Text>
+                    <Text style={styles.title}>{title}</Text>
+                    <Text style={styles.subtitle}>{subtitle}</Text>                    
+                    <Text style={styles.rating}><Star/>   {movie.overallRating}</Text>
+                    {/* <Text><Year/>  {movie.releaseYear}  -    <Time/>  {movie.duration}     -   <Genre/>  {movie.genres[0]}</Text> */}
+                    <View style={styles.microDetails}>
+                        <Text><Year/>  {movie.releaseYear}  -    </Text>
+                        <Text><Time/>  {movie.duration} min.   -   </Text>
+                        <Text><Genre/>  {movie.genres[0]}</Text>
+                    </View>
                 </View>            
                 <View style={styles.interactions}>
-                    <Trailer/>
+                    <TouchableOpacity onPress={handleTrailer}>
+                        <Trailer/>
+                    </TouchableOpacity>
                     <HeartFav/>
                     <TouchableOpacity onPress={handleShare}>
                         <ShareSvg/>
                     </TouchableOpacity>
                     <Rate/>
                 </View>
-                <View style={styles.details}>
-                    {items.map((item, index) => (
-                        <TouchableWithoutFeedback
-                            key={index}
-                            onPress={() => handleSelectedItem(item)}
-                        >
-                            <Text style={selectedItem === item ? styles.selectedItem : styles.items}>
-                                {item}
-                            </Text>
-                        </TouchableWithoutFeedback>
-                    ))}
-                </View>
-                <View > 
-                    <Text style={styles.detailsInfo}>
-                        {selectedItem === 'Sinópsis' 
-                            ? movie.plot 
-                            : (selectedItem === 'Actors') 
-                                ? movie.cast[0]?.name
-                                : movie.director[0]?.name}                                                
-                    </Text>                    
+                <View style={styles.info}>
+                    <View style={styles.details}>
+                        {items.map((item, index) => (
+                            <TouchableWithoutFeedback
+                                key={index}
+                                onPress={() => handleSelectedItem(item)}
+                            >
+                                <Text style={selectedItem === item ? styles.selectedItem : styles.items}>
+                                    {item}
+                                </Text>
+                            </TouchableWithoutFeedback>
+                        ))}
+                    </View>
+                    <View > 
+                        <Text style={styles.detailsInfo}>
+                            {selectedItem === 'Sinópsis' 
+                                ? movie.plot 
+                                : (selectedItem === 'Actors') 
+                                    ? movie.cast[0]?.name
+                                    : movie.director[0]?.name}                                                
+                        </Text>                    
+                    </View>
                 </View>
             </ScrollView>
             <View style={styles.navbar}>
@@ -129,9 +137,11 @@ export const MovieScreen: React.FC = () => {
 
 const styles= StyleSheet.create({
     modal: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         margin: 0,
+        resizeMode: 'contain'
     },
     closeButton: {
         position: 'absolute',
@@ -169,50 +179,74 @@ const styles= StyleSheet.create({
         color: '#EDE3E3'
     },
     subtitle: {
-        fontSize: 18
+        fontSize: 18,
     },
     rating: {
         padding: 15,
         fontSize: 25,
     },
+    microDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingBottom: 20
+    },
+
+
     interactions: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         backgroundColor: '#1C4F70',
         padding:20,
     },
+    info:{
+        flex: 1,
+        flexDirection:'column',
+        borderWidth: 2,
+        borderColor: '#EDE3E3',
+        margin: '5%',
+        marginBottom: 60,
+        width: '90%'
+    },
     details:{
         flexDirection: 'row',
-        justifyContent: 'center',
-        paddingTop: 20,
-        paddingBottom: 0,
-        
+        justifyContent: 'space-between',
+        paddingTop: 0,
+        paddingBottom: 0,     
+        width: '100%' 
     },
     items:{
+        justifyContent: 'center',
         fontSize: 19,
         borderColor: '#EDE3E3',
         padding: 10,
-        borderWidth: 2,
-        paddingHorizontal: '7%',      
+        borderRightWidth: 2,
+        borderBottomWidth:2,
+        width: '100%',
+        paddingHorizontal: '7%', 
+        textAlign: 'center'
     },
     selectedItem:{
+        justifyContent: 'center',
         fontSize: 19,
         backgroundColor: '#EDE3E3',
         color: 'black',
         padding: 10,
-        borderWidth: 2,
+        borderRightWidth: 2,
+        borderBottomWidth:2,
         borderColor: '#EDE3E3',
         paddingHorizontal: '7%',
+        width: '100%',
+        textAlign: 'center'
     },
     detailsInfo: {
         fontSize: 20, 
         paddingTop: 20,
         paddingBottom: 20,
-        paddingHorizontal: '7%', 
-        marginHorizontal: '2%', 
+        // paddingHorizontal: '7%', 
+        marginHorizontal: '5%', 
         borderColor: '#EDE3E3', 
-        borderWidth: 2,
-        marginBottom: 60,
+        // borderWidth: 2,
+        // marginBottom: 60,
     },
     navbar: {
         flex: 1,
