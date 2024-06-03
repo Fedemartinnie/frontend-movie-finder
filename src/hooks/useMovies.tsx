@@ -13,10 +13,10 @@ export function useMovies({params} : {params: SearchParams}/*{searchText} : {sea
 
 
     const getMovies = useCallback (async(params: SearchParams) => {
-        // if(params.name?=== previousSearch.current) 
-        //     console.log('no se repite la búsqueda')
-        //     return 
-        // }
+        if(params.name && params.name === previousSearch.current) {
+            console.log('no se repite la búsqueda')
+            return 
+        }
 
         console.log('name--> ',params.name)
         try{
@@ -24,7 +24,6 @@ export function useMovies({params} : {params: SearchParams}/*{searchText} : {sea
             setLoading(true)
             setError(null)
             previousSearch.current = params.name ?? null
-            // const newMovies = await searchMovies({searchText})
             const newMovies = await search(params)
             setMovies(newMovies)
         }

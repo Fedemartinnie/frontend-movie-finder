@@ -111,7 +111,11 @@ function HomeScreen(): React.JSX.Element {
 
             <NavBar/>
 
-            <Modal visible={isModalVisible} style={styles.modal} transparent={true}>
+            <Modal 
+                animationType='slide'
+                visible={isModalVisible} 
+                style={styles.modal} 
+                transparent={true}>
                 <View style={styles.modalBackground}>
                     <ScrollView 
                         onScroll={handleScroll} 
@@ -182,7 +186,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'yellow',
         borderColor: 'white',
         borderWidth: 2,
-        borderRadius: 20,
+        borderRadius: 15,
     },
     textStyle: {
         fontSize: 25,
@@ -191,7 +195,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },    
     modal: {
-
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
     modalBackground: {
         flex: 1,

@@ -17,6 +17,7 @@ import { Time } from '../assets/time'
 import { ShareSvg } from '../assets/share'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
+import { Actors, Details, Sinopsis } from '../components/movieInfo'
 
 
 type MovieScreenProps = RouteProp<{
@@ -26,14 +27,14 @@ type MovieScreenProps = RouteProp<{
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
     const { movie } = route.params
-    const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')
-    
+    const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')    
     const [title, subtitle] = movie.title.split(':')
     const [year, month, day] = movie.releaseYear.split('-')    
-    // const [genre, ...restGenre] = movie.genres.split(',')
-    const items = ['Sinópsis', 'Actors', 'Directors']
+    const items = ['Sinópsis', 'Actores', 'Detalles']
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+
+    const directors = Array.from(new Set(movie.director))
 
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible)
@@ -120,13 +121,14 @@ export const MovieScreen: React.FC = () => {
                     </View>
 
                     <View > 
-                        <Text style={styles.detailsInfo}>
+                        <View>
                             {selectedItem === 'Sinópsis' 
-                                ? movie.plot 
-                                : (selectedItem === 'Actors') 
-                                    ? movie.cast[0]?.name
-                                    : movie.director[0]?.name}                                                
-                        </Text>                    
+                                ? <Sinopsis plot ={movie.plot}/>
+                                : (selectedItem === 'Actores') 
+                                    ? <Actors actors={movie.cast} directors={directors}/>
+                                    : <Details movie={movie}/>
+                            }
+                        </View>                    
                     </View>
                 </View>
 
@@ -246,16 +248,16 @@ const styles= StyleSheet.create({
         width: '100%',
         textAlign: 'center'
     },
-    detailsInfo: {
-        fontSize: 20, 
-        paddingTop: 20,
-        paddingBottom: 20,
-        // paddingHorizontal: '7%', 
-        marginHorizontal: '5%', 
-        borderColor: '#EDE3E3', 
-        // borderWidth: 2,
-        // marginBottom: 60,
-    },
+    // detailsInfo: {
+    //     fontSize: 20, 
+    //     paddingTop: 20,
+    //     paddingBottom: 20,
+    //     // paddingHorizontal: '7%', 
+    //     marginHorizontal: '5%', 
+    //     borderColor: '#EDE3E3', 
+    //     // borderWidth: 2,
+    //     // marginBottom: 60,
+    // },
     navbar: {
         flex: 1,
         justifyContent: 'flex-end'

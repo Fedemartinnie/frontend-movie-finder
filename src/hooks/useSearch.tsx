@@ -22,7 +22,11 @@ export function useSearch (){
         if(search.match(/^\d+$/)){
             setError('No se puede buscar una película con un número')
             return
+        }
 
+        if(search.match(/%$#"+-_/)){
+            setError('No se puede buscar una película con un caracteres especiales')
+            return
         }
 
         if(search.length<3){

@@ -21,7 +21,6 @@ export function SearchScreen(): React.JSX.Element {
     // const inputRef = useRef<TextInput>(null)    
     const isDarkMode = useColorScheme() === 'dark'
     const { search } = useSearch()
-    // const { movies, loading, getMovies } = useMovies({searchText: search})
     const [sortByRate, setSortByRate] = useState<number | null>(null)
     const [sortDate, setSortDate] = useState<number | null>(null)
     const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: sortDate, sortByRating: sortByRate })
@@ -32,34 +31,22 @@ export function SearchScreen(): React.JSX.Element {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
     }
 
-
+    //* get movies onPress Search
     const handleSearch = (searchText: string) => {
-        const newParams = {...params, name: searchText, page: 1}
+        setSortByRate(null)
+        setSortDate(null)
+        const newParams = {...params, name: searchText, page: 1, sortByDate: sortDate ,sortByRating: sortByRate}
         console.log (newParams)
         setParams(newParams)
         getMovies(newParams)
     }
 
+    //* get Movies if params change
     useEffect(() => {
         getMovies(params)
     },[params])
 
-    // const handleSortRate = () => {
-    //     if(sortByRate === null){
-    //         setSortByRate(-1)
-    //     }
-    //     if(sortByRate === -1){
-    //         setSortByRate(1)
-    //     }
-    //     if(sortByRate === 1){
-    //         setSortByRate(null)
-    //     }
-
-    //     const newParams = { ...params, sortByRating: sortByRate, page: 1}
-    //     setParams(newParams)
-    //     console.log('sortByRate: ',params)
-    // }
-
+    //* Sort by Rating
     const handleSortRate = () => {
         setSortByRate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
@@ -69,6 +56,7 @@ export function SearchScreen(): React.JSX.Element {
         })
     }
     
+    //* Sort by Date
     const handleSortDate = () => {
         setSortDate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
@@ -77,27 +65,7 @@ export function SearchScreen(): React.JSX.Element {
             return newValue
         })
     }
-    
 
-    // const handleSortDate = () => {
-    //     console.log(sortDate === null)
-    //     if(sortDate === null){
-    //         setSortDate(-1)
-    //     }
-    //     if(sortDate === -1){
-    //         setSortDate(1)
-    //     }
-    //     if(sortDate === 1){
-    //         setSortDate(null)
-    //     }        
-    //     const newParams = { ...params, sortByDate: sortDate, page: 1}
-    //     setParams(newParams)
-    //     console.log('sortByDate: ',params)
-    // }
-
-    // const handleSearch = (searchText: string) => {
-    //     getMovies(searchText)
-    // }
 
     return (
         <SafeAreaView style={[backgroundStyle, { flex: 1}]}>
@@ -112,7 +80,7 @@ export function SearchScreen(): React.JSX.Element {
                 <TouchableOpacity onPress={handleSortDate}>
                     <View style={styles.button}>
                         <Text style={styles.textButtonStyles}>Sort By Date</Text>
-                        {sortDate !== null && (
+                        {sortDate && (
                             <View>
                                 {sortDate === -1 ? <SortDesc/> : <SortAsc/>}
                             </View>
@@ -167,7 +135,8 @@ const colors = {
 const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
-        justifyContent: 'space-around',        
+        justifyContent: 'space-around',
+        paddingBottom: 10    
     },
     button: {
         textAlign: 'center',
@@ -182,7 +151,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#3C0C79',
         borderColor: 'white',
         borderWidth: 2,
-        borderRadius: 20,        
+        borderRadius: 10,        
     },
     textButtonStyles: {
         fontSize: 15,

@@ -16,6 +16,12 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
         navigation.navigate('MovieScreen', {movie})
     }
 
+    const remainder = movies.length % 3
+    const placeholders = Array.from({ length: remainder === 0 ? 0 : 3 - remainder }, (_, i) => (
+        <View key={`placeholder-${i}`} style={styles.movieContainer}>
+            <View style={styles.placeholderImage}></View>
+        </View>
+    ))
 
     return (
         <View style={styles.container}>
@@ -38,6 +44,7 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
                     
                 </TouchableOpacity>
             ))}
+            {placeholders}
         </View>
     )
 }
@@ -64,22 +71,28 @@ export function Movies({ movies }: { movies: Movie2Base[] }) {
 //*styles
 const styles = StyleSheet.create({
     container: {
+        flex : 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        // justifyContent: 'flex-start',
+        // justifyContent: 'center',    
+        justifyContent: 'space-around',
         padding: 10,
     },
     movieContainer: {
         width: '30%',
         marginBottom: 30,
-        
+        // paddingHorizontal: '2%'
     },
     movieImage: {
         width: '100%',
         height: 200,
         resizeMode: 'cover',
         borderRadius: 8,
+    },
+    placeholderImage: {
+        width: '100%',
+        height: 200,
+        backgroundColor: '#052539', // Color de fondo para los rectángulos placeholder
     },
     movieTitle: {
         marginTop: 5,

@@ -23,6 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({onSearch}) => {
     }
 
     const handleSearch = () => {
+        if (error) return
         onSearch(search)
     }
 
@@ -37,7 +38,7 @@ const SearchBar: React.FC<SearchBarProps> = ({onSearch}) => {
             <KeyboardAvoidingView style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
                 <TextInput
                     // ref={inputRef}
-                    style={{ flex: 1, height: 40, backgroundColor: colors.white , borderColor: 'gray', borderRadius: 10, borderWidth: 1,marginRight: 10, paddingHorizontal: 10, color: colors.black }}
+                    style={{ flex: 1, height: 40, backgroundColor: colors.white , borderColor: error ? 'red' : 'grey', borderRadius: 10, borderWidth: 1,marginRight: 10, paddingHorizontal: 10, color: colors.black }}
                     placeholder="Avengers, The Matrix, Shrek ..."
                     placeholderTextColor={colors.black}
                     value={search}
