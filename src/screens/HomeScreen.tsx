@@ -82,6 +82,7 @@ function HomeScreen(): React.JSX.Element {
 
             <Animated.ScrollView                
                 // {...panResponder.panHandlers}
+                onScroll={handleScroll} 
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle, {flex: 1}]}
                 stickyHeaderIndices={[1]}
@@ -118,7 +119,6 @@ function HomeScreen(): React.JSX.Element {
                 transparent={true}>
                 <View style={styles.modalBackground}>
                     <ScrollView 
-                        onScroll={handleScroll} 
                         scrollEventThrottle={16}
                         showsVerticalScrollIndicator={false} 
                         style={styles.genres}>

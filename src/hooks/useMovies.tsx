@@ -11,13 +11,19 @@ export function useMovies({params} : {params: SearchParams}/*{searchText} : {sea
     const [error, setError] = useState<string | null>(null)
     const previousSearch = useRef<string | null>(params.name ?? null)
     const previousPage = useRef<number | null>(params.page ?? null)
+    const previousParams = useRef(params)
     const [isFirstSearch, setIsFirstSearch] = useState<boolean>(true)
 
     const getMovies = useCallback (async(params: SearchParams) => {
-        if( params.page === previousPage.current && params.name && params.name === previousSearch.current) {
-            console.log('no se repite la búsqueda')
+        // if( params.page === previousPage.current && params.name && params.name === previousSearch.current) {
+        //     console.log('no se repite la búsqueda')
 
-            return 
+        //     return 
+        // }
+
+        if(params.name === previousParams.current.name && params === previousParams.current){
+            console.log('no se repite la misma búsqueda')
+            return
         }
 
         //! Revisar si este codigo funciona para incrementar en 1 el previousPage si es != al params.page (cambio de pagina)
@@ -32,6 +38,7 @@ export function useMovies({params} : {params: SearchParams}/*{searchText} : {sea
             setLoading(true)
             setError(null)
             previousSearch.current = params.name ?? null
+            previousParams.current = params
             const newMovies = await search(params)
             setMovies(newMovies)
         }

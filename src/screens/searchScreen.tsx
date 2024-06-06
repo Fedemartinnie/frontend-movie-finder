@@ -128,7 +128,10 @@ export function SearchScreen(): React.JSX.Element {
                         <Text style={styles.textButtonStyles}>Sort By Date</Text>
                         {sortDate && (
                             <View>
-                                {sortDate === -1 ? <SortDesc/> : <SortAsc/>}
+                                {sortDate === -1 
+                                    ? <SortDesc/> 
+                                    : <SortAsc/>
+                                }
                             </View>
                         )}
                     </View>
