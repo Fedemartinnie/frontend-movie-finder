@@ -87,9 +87,10 @@ function HomeScreen(): React.JSX.Element {
                 style={[backgroundStyle, {flex: 1}]}
                 stickyHeaderIndices={[1]}
             >
-
-                <Carousel movies={movies ?? []}/>
-
+                <View >
+                    <Carousel movies={movies?.slice(0, 5) ?? []}/>
+                    <Text style={{position: 'relative', textAlign: 'center', fontSize: 40, fontWeight: 'bold'}}>TOP 5</Text>
+                </View>
                 <View style={styles.stickyButton}>
                     <TouchableOpacity onPress={toggleModal}>                    
                         <View style={styles.textView}>

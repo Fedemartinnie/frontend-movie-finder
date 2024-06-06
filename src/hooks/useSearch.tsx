@@ -24,7 +24,7 @@ export function useSearch (){
             return
         }
 
-        if(search.match(/%$#"+-_/)){
+        if(search.match(/%#"'+-_/)){
             setError('No se puede buscar una película con un caracteres especiales')
             return
         }

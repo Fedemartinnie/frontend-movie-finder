@@ -5,7 +5,7 @@ import { Movie, Movie2Base, SearchParams } from '../types'
 import { Keyboard } from 'react-native'
 
 
-export function useMovies({params} : {params: SearchParams}/*{searchText} : {searchText: string}*/){
+export function useMovies({params} : {params: SearchParams}){
     const [movies,setMovies] = useState<Movie2Base[] | null>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
@@ -15,23 +15,11 @@ export function useMovies({params} : {params: SearchParams}/*{searchText} : {sea
     const [isFirstSearch, setIsFirstSearch] = useState<boolean>(true)
 
     const getMovies = useCallback (async(params: SearchParams) => {
-        // if( params.page === previousPage.current && params.name && params.name === previousSearch.current) {
-        //     console.log('no se repite la búsqueda')
+        if( params.page === previousPage.current && params.name && params.name === previousSearch.current && params.sortByDate === previousParams.current.sortByDate && params.sortByRating === previousParams.current.sortByRating) {
+            console.log('no se repite la búsqueda')
 
-        //     return 
-        // }
-
-        if(params.name === previousParams.current.name && params === previousParams.current){
-            console.log('no se repite la misma búsqueda')
-            return
+            return 
         }
-
-        //! Revisar si este codigo funciona para incrementar en 1 el previousPage si es != al params.page (cambio de pagina)
-        if(params.page !== previousPage.current){
-            previousPage.current = params.page ?? null
-            console.log('*******************\n',previousPage.current)
-        }
-
 
         try{
             console.log('getMovies: params ',params)
@@ -39,6 +27,8 @@ export function useMovies({params} : {params: SearchParams}/*{searchText} : {sea
             setError(null)
             previousSearch.current = params.name ?? null
             previousParams.current = params
+            console.log(previousParams.current)
+            console.log('*** ***',params)
             const newMovies = await search(params)
             setMovies(newMovies)
         }

@@ -29,7 +29,7 @@ export const MovieScreen: React.FC = () => {
     const { movie } = route.params
     const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')    
     const [title, subtitle] = movie.title.split(':')
-    const [year, month, day] = movie.releaseYear.split('-')    
+    // const [year, month, day] = movie.releaseYear.split('-')    
     const items = ['Sinópsis', 'Actores', 'Detalles']
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
@@ -123,7 +123,7 @@ export const MovieScreen: React.FC = () => {
                     <View > 
                         <View>
                             {selectedItem === 'Sinópsis' 
-                                ? <Sinopsis plot ={movie.plot}/>
+                                ? <Sinopsis plot={movie.plot}/>
                                 : (selectedItem === 'Actores') 
                                     ? <Actors actors={movie.cast} directors={directors}/>
                                     : <Details movie={movie}/>

@@ -56,7 +56,7 @@ export function SearchScreen(): React.JSX.Element {
         page.current = 1
         setSortByRate(null)
         setSortDate(null)
-        const newParams = {...params, name: searchText, page: 1, sortByDate: sortDate ,sortByRating: sortByRate}
+        const newParams = {...params, name: searchText, page: 1, sortByDate: null ,sortByRating: null}
         console.log (newParams)
         setParams(newParams)
         // getMovies(newParams)
@@ -80,7 +80,7 @@ export function SearchScreen(): React.JSX.Element {
     const handleSortRate = () => {
         setSortByRate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
-            const newParams = { ...params, sortByRating: newValue, page: 1}
+            const newParams = { ...params, sortByRating: newValue}
             setParams(newParams)
             return newValue
         })
@@ -90,7 +90,7 @@ export function SearchScreen(): React.JSX.Element {
     const handleSortDate = () => {
         setSortDate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
-            const newParams = { ...params, sortByDate: newValue, page: 1}
+            const newParams = { ...params, sortByDate: newValue}
             setParams(newParams)
             return newValue
         })

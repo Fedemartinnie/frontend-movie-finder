@@ -3,15 +3,18 @@ import { Animated, PanResponder } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 // import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ProfileScreenNavigationProp } from '../types'
+import { useMovies } from './useMovies'
 
 
 export function useScrollNavBar() {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     const navbarTranslateY = useRef(new Animated.Value(0)).current
     const [isNavBarHidden, setIsNavBarHidden] = useState<boolean>(false)
+    const [selected, setSelected] = useState<string>('Home')
 
     const handleScreen = (screenName: 'Profile' | 'Home' | 'Search' | 'Favs') => {
         setIsNavBarHidden(false)
+        setSelected(screenName)
         navigation.navigate(screenName)
     }
     
@@ -50,5 +53,5 @@ export function useScrollNavBar() {
     }, [isNavBarHidden])
 
 
-    return { navbarTranslateY, panResponder, handleScreen }
+    return { navbarTranslateY, panResponder, handleScreen, selected }
 }

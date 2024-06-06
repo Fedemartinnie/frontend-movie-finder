@@ -9,9 +9,9 @@ import { useScrollNavBar } from '../../hooks/useNavBar'
 import { HeartFav } from '../../assets/heartFav'
 
 
-const NavBar: React.FC = (/*{inputRef}*/) => {    
+const NavBar: React.FC = () => {    
     const { keyboardStatus } = useKeyboardStatus()
-    const { navbarTranslateY, handleScreen } = useScrollNavBar()
+    const { navbarTranslateY, handleScreen, selected } = useScrollNavBar()
     
     /*const handleSearcherPress = () => {
         if(inputRef.current){
