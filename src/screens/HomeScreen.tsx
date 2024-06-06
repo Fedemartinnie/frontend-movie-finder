@@ -15,7 +15,7 @@ import { Carousel } from '../components/carrusel.tsx'
 import { useScrollNavBar } from '../hooks/useNavBar.tsx'
 import { Filter } from '../assets/filtrar.tsx'
 import { CloseButton } from '../assets/closeButton.tsx'
-import { HomeParams } from '../types.ts'
+import { HomeParams, Movie2Base } from '../types.ts'
 
 function HomeScreen(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark'
@@ -27,6 +27,7 @@ function HomeScreen(): React.JSX.Element {
     const genres = ['Genres', 'Action', 'Animation', 'Adventure', 'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'History', 'Horror','Music','Mystery', 'Romance', 'Science Fiction', 'Thriller', 'War']
     const [genreType, setGenreType] = useState<string>('Genres')
     const pageRef = useRef<number>(1)
+    const [concatMovies, setConcatMovies] = useState<Movie2Base[]>([])
 
     const backgroundStyle = {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
@@ -34,8 +35,16 @@ function HomeScreen(): React.JSX.Element {
     
     //* renderiza movies cada vez queu cambien los params (genre or page)
     useEffect (() => {
-        getMovies(params)            
+        getMovies(params)
     },[params])
+
+
+    useEffect (() => {
+        if(movies && movies?.length > 0){
+            setConcatMovies(prevConcatMovies => [...prevConcatMovies, ...movies])
+        }
+        console.log('moviesConcat ----> ',concatMovies.length)
+    }, [movies])
 
     //* open or close modal to select Genre
     const toggleModal = () => {
@@ -53,7 +62,7 @@ function HomeScreen(): React.JSX.Element {
         } else {
             newParams.genre = genre
         }
-
+        setConcatMovies([])
         pageRef.current = 1 // Reset page to 1 when changing genre
         setParams(newParams)       
         toggleModal()
@@ -67,7 +76,6 @@ function HomeScreen(): React.JSX.Element {
             pageRef.current += 1
             setParams((prevParams) => ({ ...prevParams, page: pageRef.current }))
         }
-        console.log(params)
     }
 
 
@@ -88,7 +96,7 @@ function HomeScreen(): React.JSX.Element {
                 stickyHeaderIndices={[1]}
             >
                 <View >
-                    <Carousel movies={movies?.slice(0, 5) ?? []}/>
+                    <Carousel movies={concatMovies?.slice(0, 5) ?? []}/>
                     <Text style={{position: 'relative', textAlign: 'center', fontSize: 40, fontWeight: 'bold'}}>TOP 5</Text>
                 </View>
                 <View style={styles.stickyButton}>
@@ -100,19 +108,31 @@ function HomeScreen(): React.JSX.Element {
                     </TouchableOpacity>
                 </View>
 
-                {loading ? (
-                    <View style={styles.sectionMovies}>
-                        <Text>Loading...</Text>
-                        <ActivityIndicator size={200} color="#0000ff" />
-                    </View>
-                ) : (          
-                    <Movies movies={movies ?? []}/>
-                )}                
+                {concatMovies.length > 0 
+                    ? (
+                        <>
+                            <Movies movies={concatMovies ?? []}/>
+                            <View style={styles.sectionMovies}>
+                                <Text>Loading...</Text>
+                                <ActivityIndicator size={200} color="#0000ff" />
+                            </View>
+                        </>
+                    )
+                    : (loading 
+                        ? (
+                            <View style={styles.sectionMovies}>
+                                <Text>Loading...</Text>
+                                <ActivityIndicator size={200} color="#0000ff" />
+                            </View>
+                        ) 
+                        : (<Movies movies={concatMovies ?? []}/>)) 
+                }                
 
             </Animated.ScrollView>
 
             <NavBar/>
-
+            
+            {/* Modal of Genre*/}
             <Modal 
                 animationType='slide'
                 visible={isModalVisible} 

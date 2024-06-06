@@ -42,7 +42,7 @@ export function SearchScreen(): React.JSX.Element {
     const scrollViewRef = useRef<ScrollView>(null)
     const previousParamName = useRef(params.name)
     //!TODO
-    const [moviesConcat, setMoviesConcat] = useState<Movie2Base[] | undefined>([])
+    const [moviesConcat, setMoviesConcat] = useState<Movie2Base[]>([])
     
     const backgroundStyle = {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
@@ -65,14 +65,17 @@ export function SearchScreen(): React.JSX.Element {
 
     //* get Movies if params change
     useEffect(() => {
-        getMovies(params)
-        // //* concatena newMovies con movies = getMovies(params)
-        // if(params.name===previousParamName.current && (movies?.length !== null || movies?.length > 0)){
-        //     if(movies){
-        //         setMoviesConcat(prevState => {[...currentMovies, ...movies ?? []]})
-        //     }
-        // }    
+        getMovies(params)        
     },[params])
+
+    useEffect (() => {
+        //* concatena newMovies con movies = getMovies(params)
+        if(params.name===previousParamName.current && (movies?.length !== null || movies?.length > 0)){
+            setMoviesConcat(prevMoviesConcat => [...prevMoviesConcat, ...movies ?? []])
+        }else {
+            previousParamName.current = params.name
+        }   
+    }, [movies])
 
 
 
@@ -183,15 +186,34 @@ export function SearchScreen(): React.JSX.Element {
                     ) 
                     : (<Movies movies={movies ?? []}/>)
                 } */}
-                {loading 
+                {moviesConcat.length > 0 
+                    ? (
+                        <>
+                            <Movies movies={moviesConcat ?? []}/>
+                            <View style={styles.sectionMovies}>
+                                <Text>Loading...</Text>
+                                <ActivityIndicator size={200} color="#0000ff" />
+                            </View>
+                        </>
+                    )
+                    : (loading 
+                        ? (
+                            <View style={styles.sectionMovies}>
+                                <Text>Loading...</Text>
+                                <ActivityIndicator size={200} color="#0000ff" />
+                            </View>
+                        ) 
+                        : (<Movies movies={moviesConcat ?? []}/>)) 
+                }
+                {/* {loading 
                     ? (
                         <View style={styles.sectionMovies}>
                             <Text>Loading...</Text>
                             <ActivityIndicator size={200} color="#0000ff" />
                         </View>
                     ) 
-                    : (<Movies movies={movies ?? []}/>)
-                }              
+                    : (<Movies movies={moviesConcat ?? []}/>)
+                }               */}
             </ScrollView>
             
             <NavBar/>
