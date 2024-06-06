@@ -87,7 +87,8 @@ export interface FullMovie2 {
     cast: Cast[];
     images: Images;
     overallRating: number,
-    rating: number
+    rating: number,
+    trailer: string
 }
 
 export type Movie2Base = Pick<FullMovie2, '_id' | 'title' | 'genres' | 'releaseYear' | 'images' | 'overallRating'>

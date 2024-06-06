@@ -25,7 +25,7 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
 
     return (
         <View style={styles.container}>
-            {movies.map((movie) => (
+            {movies.flatMap((movie) => (
                 <TouchableOpacity 
                     key={movie._id}                    
                     style={styles.movieContainer}
@@ -51,7 +51,8 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
 
 
 //* With No Results
-function NoMoviesResults() {
+function NoMoviesResults() {    
+
     return (
         <View style={styles.noResult}>
             <MovieNotFound/>
@@ -63,8 +64,9 @@ function NoMoviesResults() {
 //* return movies
 export function Movies({ movies }: { movies: Movie2Base[] }) {
     const hasMovies = movies?.length > 0
+    // const [isFirstSearch, setIsFirstSearch] = useState(true)
 
-    return hasMovies ? <ListOfMovies movies={movies} /> : <NoMoviesResults />
+    return hasMovies ? <ListOfMovies movies={movies} /> : <NoMoviesResults />    
 }
 
 

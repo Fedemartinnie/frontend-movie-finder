@@ -23,6 +23,8 @@ const NavBar: React.FC = (/*{inputRef}*/) => {
         return null
     }
 
+
+
     return (        
         <Animated.View style={[
             styles.navbar,

@@ -19,16 +19,16 @@ export const search = async (params: SearchParams) : Promise<Movie2Base[] | null
     }) 
 
     const finalUrl = `${URI}/movies/results?${searchParams.toString()}`
-    console.log('url final: ', finalUrl)
+    // console.log('url final: ', finalUrl)
 
 
     try{
-        console.log('Realizando el Fetch ----> \n')
+        // console.log('Realizando el Fetch ----> \n')
 
         const response = await fetch(finalUrl)
         const json = await response.json()
         const movies = json.data
-        console.log('movies --> ', movies)
+        // console.log('movies --> ', movies)
         
         return movies
     }

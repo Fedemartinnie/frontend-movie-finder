@@ -47,7 +47,7 @@ export const Carousel: React.FC<CarouselProps> = ({ movies }) => {
         if (typeof item === 'string') {
             return item
         } else {
-            console.log(item.images.backdrops)
+            // console.log(item.images.backdrops)
             return item.images.posters[index]
         }
     }
@@ -104,7 +104,6 @@ export const Carousel: React.FC<CarouselProps> = ({ movies }) => {
                     style={styles.fullScreenModal}
                     pagingEnabled={true}
                 >
-                    {/* <Text onPress={closeModal}>Close Modal</Text> */}
                     {selectedImage.map((image, index) => (
                         <Image
                             key={index}

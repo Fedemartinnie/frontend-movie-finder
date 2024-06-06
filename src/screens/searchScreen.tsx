@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, ScrollView,
     StatusBar, StyleSheet, Text,
     useColorScheme, View,
@@ -11,21 +11,38 @@ import { Movies } from '../components/home/movies.tsx'
 import { useMovies } from '../hooks/useMovies.tsx'
 import { useSearch } from '../hooks/useSearch.tsx'
 import { useScrollNavBar } from '../hooks/useNavBar.tsx'
-import { SearchParams } from '../types.ts'
+import { Movie2Base, SearchParams } from '../types.ts'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { SortAsc } from '../assets/sortAsc.tsx'
 import { SortDesc } from '../assets/sortDesc.tsx'
+
+interface ScrollEvent {
+    layoutMeasurement: {
+        height: number
+    }
+    contentOffset: {
+        y: number
+    }
+    contentSize: {
+        height: number
+    }
+}
 
 
 export function SearchScreen(): React.JSX.Element {
     // const inputRef = useRef<TextInput>(null)    
     const isDarkMode = useColorScheme() === 'dark'
     const { search } = useSearch()
+    const page = useRef<number>(1)
     const [sortByRate, setSortByRate] = useState<number | null>(null)
     const [sortDate, setSortDate] = useState<number | null>(null)
     const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: sortDate, sortByRating: sortByRate })
     const { movies, loading, getMovies } = useMovies({params})
     const { panResponder } = useScrollNavBar()
+    const scrollViewRef = useRef<ScrollView>(null)
+    const previousParamName = useRef(params.name)
+    //!TODO
+    const [moviesConcat, setMoviesConcat] = useState<Movie2Base[] | undefined>([])
     
     const backgroundStyle = {
         backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
@@ -33,18 +50,31 @@ export function SearchScreen(): React.JSX.Element {
 
     //* get movies onPress Search
     const handleSearch = (searchText: string) => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ y: 0, animated: false })
+        }
+        page.current = 1
         setSortByRate(null)
         setSortDate(null)
         const newParams = {...params, name: searchText, page: 1, sortByDate: sortDate ,sortByRating: sortByRate}
         console.log (newParams)
         setParams(newParams)
-        getMovies(newParams)
+        // getMovies(newParams)
+
     }
 
     //* get Movies if params change
     useEffect(() => {
         getMovies(params)
+        // //* concatena newMovies con movies = getMovies(params)
+        // if(params.name===previousParamName.current && (movies?.length !== null || movies?.length > 0)){
+        //     if(movies){
+        //         setMoviesConcat(prevState => {[...currentMovies, ...movies ?? []]})
+        //     }
+        // }    
     },[params])
+
+
 
     //* Sort by Rating
     const handleSortRate = () => {
@@ -64,6 +94,22 @@ export function SearchScreen(): React.JSX.Element {
             setParams(newParams)
             return newValue
         })
+    }
+
+    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }: ScrollEvent) : boolean=> {
+        const paddingToBottom = 20
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom
+    }
+
+
+    //! OJOOO AL CONCATENAR %21 puede ser === 0 pero podrían haber mas busquedas
+    const handleEndReached = () => {
+        if(!loading && (movies?.length ?? 0)%21 === 0){
+            page.current = page.current + 1
+            const newParams = { ...params, page: page.current }
+            console.log('page params ----------> ',params.page)
+            setParams(newParams)
+        }
     }
 
 
@@ -102,20 +148,47 @@ export function SearchScreen(): React.JSX.Element {
                     </View>
                 </TouchableOpacity>
             </View>
+
             <ScrollView                
                 {...panResponder.panHandlers}
+                ref={scrollViewRef}
+                onScroll={({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                        handleEndReached()
+                    }
+                }}
                 scrollEventThrottle={16}
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle, {flex: 1}]}
             >
-                {loading ? (
-                    <View style={styles.sectionMovies}>
-                        <Text>Loading...</Text>
-                        <ActivityIndicator size={200} color="#0000ff" />
-                    </View>
-                ) : (
-                    <Movies movies={movies ?? []}/>
-                )}                
+            
+                {/* {movies && movies.length > 0 && params.page && params.page === 1 } */}
+                {/* <Movies movies={moviesConcat ?? []}/> */}
+                {/*
+                * estoy tratando que NO muestre el movie not found si es la primera vez que se renderiza
+                * esto no parece funcionar pero es un avance de la lógica
+                */}
+                {/* {movies && movies.length === 0 
+                    ? (loading 
+                        ? (
+                            <View style={styles.sectionMovies}>
+                                <Text>Loading...</Text>
+                                <ActivityIndicator size={200} color="#0000ff" />
+                            </View>
+                        ) 
+                        : <Movies movies={movies ?? []}/>
+                    ) 
+                    : (<Movies movies={movies ?? []}/>)
+                } */}
+                {loading 
+                    ? (
+                        <View style={styles.sectionMovies}>
+                            <Text>Loading...</Text>
+                            <ActivityIndicator size={200} color="#0000ff" />
+                        </View>
+                    ) 
+                    : (<Movies movies={movies ?? []}/>)
+                }              
             </ScrollView>
             
             <NavBar/>
@@ -124,6 +197,8 @@ export function SearchScreen(): React.JSX.Element {
     )
 }
 
+
+//* STYLE SHEET
 const colors = {
     black: '#282828',
     blue: '#336699', 

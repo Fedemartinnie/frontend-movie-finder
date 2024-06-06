@@ -59,7 +59,7 @@ export const MovieScreen: React.FC = () => {
 
 
     const handleTrailer = () => {
-        const uri = 'https://www.youtube.com/watch?v='
+        const trailer = `https://www.youtube.com/watch?v=${movie.trailer}`
     }
 
     return(
