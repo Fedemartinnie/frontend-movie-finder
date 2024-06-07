@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, FlatList, Modal, SafeAreaView, StatusBar,
-    StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, 
+    StyleSheet, Text, TouchableOpacity, 
     useColorScheme, View, ScrollView,
     ActivityIndicator,
     NativeSyntheticEvent,

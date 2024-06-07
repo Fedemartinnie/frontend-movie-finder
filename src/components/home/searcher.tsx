@@ -26,7 +26,7 @@ const SearchBar: React.FC<SearchBarProps> = ({onSearch}) => {
         if (error) return
         onSearch(search)
     }
-
+    //! ajustar para que funcione el debounce con la ultima letra escrita
     // const debouncedOnSearch = debounce(onSearch, 600)
 
     // const handleKeyPress = (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {        

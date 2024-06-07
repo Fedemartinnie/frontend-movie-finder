@@ -1,28 +1,20 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { Animated, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Home } from '../../assets/home'
 import { Searcher } from '../../assets/search'
 import { Profile } from '../../assets/profile'
 import useKeyboardStatus from '../../hooks/useKeyboardStatus'
 import { useScrollNavBar } from '../../hooks/useNavBar'
-//import { InputRefProps } from '../../types'
 import { HeartFav } from '../../assets/heartFav'
 
 
 const NavBar: React.FC = () => {    
     const { keyboardStatus } = useKeyboardStatus()
-    const { navbarTranslateY, handleScreen, selected } = useScrollNavBar()
-    
-    /*const handleSearcherPress = () => {
-        if(inputRef.current){
-            inputRef.current.focus()
-        }
-    }*/
+    const { navbarTranslateY, handleScreen } = useScrollNavBar()
     
     if (keyboardStatus) {
         return null
     }
-
 
 
     return (        

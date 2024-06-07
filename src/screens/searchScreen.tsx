@@ -41,7 +41,6 @@ export function SearchScreen(): React.JSX.Element {
     const { panResponder } = useScrollNavBar()
     const scrollViewRef = useRef<ScrollView>(null)
     const previousParamName = useRef(params.name)
-    const [name, setName] = useState<string | undefined>(params.name)
     //!TODO
     const [moviesConcat, setMoviesConcat] = useState<Movie2Base[]>([])
     
@@ -182,7 +181,7 @@ export function SearchScreen(): React.JSX.Element {
                             {loading && (
                                 <View style={styles.sectionMovies}>
                                     <Text>Loading...</Text>
-                                    <ActivityIndicator size={100} color="#0000ff" />
+                                    <ActivityIndicator size={150} color="#0000ff" />
                                 </View>
                             )}
                         </>

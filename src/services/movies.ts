@@ -1,12 +1,10 @@
 import { SearchParams, FullMovie2, Movie2Base } from '../types'
 
 const URI = 'http://192.168.0.73:8000'
-const API_KEY = '5883c0bc' // delete this when change public api to endpoint URL
+// const URI = 'http://18.118.165.190:8000' //* AWS ip
 
 //*function para traer todos los resultados de una búsqueda
-export const search = async (params: SearchParams) : Promise<Movie2Base[] | null> => {
-    // if (params.name && params.name==='') return null
-    
+export const search = async (params: SearchParams) : Promise<Movie2Base[] | null> => {    
     console.log('\nparams from service: ',params)
     
     const searchParams = new URLSearchParams()
@@ -23,8 +21,6 @@ export const search = async (params: SearchParams) : Promise<Movie2Base[] | null
 
 
     try{
-        // console.log('Realizando el Fetch ----> \n')
-
         const response = await fetch(finalUrl)
         const json = await response.json()
         const movies = json.data
@@ -60,26 +56,3 @@ export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null
     }
 
 }
-
-
-
-
-// export const searchMovies = async ({searchText}: {searchText: string}): Promise<Movie[] | null> => {
-//     if(searchText === '') return null
-
-//     try{
-//         const response = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchText}`)
-//         const json: {Search: MovieDB[]} = await response.json()
-//         const movies = json.Search
-
-//         return movies?.map(movie => ({
-//             id: movie.imdbID,
-//             title: movie.Title,
-//             year: movie.Year,
-//             image: movie.Poster
-//         }))
-//     }catch (e) {
-//         throw new Error('Error searching the movie')
-//     }
-// }
-
