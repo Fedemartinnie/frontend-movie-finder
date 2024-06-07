@@ -13,13 +13,8 @@ export function useMovies({params} : {params: SearchParams}){
     const previousPage = useRef<number | null>(params.page ?? null)
     const previousParams = useRef(params)
 
-    const getMovies = useCallback (async(params: SearchParams) => {
-        if( 
-            params.page === previousParams.current.page
-            && params.name && params.name === previousParams.current.name 
-            && params.sortByDate === previousParams.current.sortByDate 
-            && params.sortByRating === previousParams.current.sortByRating
-        ) {
+    const getMovies = useCallback (async(params: SearchParams) => { //previousParams.current.name
+        if( params.page === previousParams.current.page && params.name && params.name === previousParams.current.name && params.sortByDate === previousParams.current.sortByDate && params.sortByRating === previousParams.current.sortByRating) {
             console.log('no se repite la búsqueda')
 
             return 
@@ -31,10 +26,11 @@ export function useMovies({params} : {params: SearchParams}){
             setError(null)
             previousSearch.current = params.name ?? null
             previousParams.current = params
-            console.log('previousParams.current --> ',previousParams.current)
+            console.log(previousParams.current)
             console.log('*** ***',params)
             const newMovies = await search(params)
             setMovies(newMovies)
+
         }
         catch (e){
             setError((e instanceof Error ? e.message : 'Ocurrió un Error en la búsqueda'))

@@ -30,16 +30,18 @@ interface ScrollEvent {
 
 
 export function SearchScreen(): React.JSX.Element {
+    // const inputRef = useRef<TextInput>(null)    
     const isDarkMode = useColorScheme() === 'dark'
     const { search } = useSearch()
     const page = useRef<number>(1)
     const [sortByRate, setSortByRate] = useState<number | null>(null)
     const [sortDate, setSortDate] = useState<number | null>(null)
-    const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: null, sortByRating: null })
+    const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: sortDate, sortByRating: sortByRate })
     const { movies, loading, getMovies } = useMovies({params})
     const { panResponder } = useScrollNavBar()
     const scrollViewRef = useRef<ScrollView>(null)
     const previousParamName = useRef(params.name)
+    const [name, setName] = useState<string | undefined>(params.name)
     //!TODO
     const [moviesConcat, setMoviesConcat] = useState<Movie2Base[]>([])
     
@@ -56,32 +58,32 @@ export function SearchScreen(): React.JSX.Element {
         page.current = 1
         setSortByRate(null)
         setSortDate(null)
-        const newParams = {...params, name: searchText, page: 1, sortByDate: null ,sortByRating: null}
-        console.log (newParams)
-        previousParamName.current = params.name
+        const newParams = { ...params, name: searchText, page: 1, sortByDate: null, sortByRating: null }
+        console.log('handleSearch - newParams:', newParams)
         setParams(newParams)
+
     }
 
     //* get Movies if params change
     useEffect(() => {
-        getMovies(params)        
+        getMovies(params)         
     },[params])
 
-    useEffect (() => {
-        //* concatena newMovies con movies = getMovies(params)
-        if(params.name===previousParamName.current && (movies?.length !== null || movies?.length > 0)){
-            setMoviesConcat(prevMoviesConcat => [...prevMoviesConcat, ...movies ?? []])
-            console.log('concatenando movies **********************')
-        }else {
+    useEffect(() => {
+        // //* concatena newMovies con movies = getMovies(params)
+        if( movies && params.name===previousParamName.current && (movies?.length !== null || movies?.length > 0)){            
+            setMoviesConcat(prevState => [...prevState, ...movies ?? []])
+        }else{
+            setMoviesConcat(prevMoviesConcat => [...prevMoviesConcat, ...movies ?? [] ])
             previousParamName.current = params.name
         }
-    }, [movies])
-
-
+        console.log('moviesConcat ---------> ', moviesConcat)
+    },[movies])
 
     //* Sort by Rating
     const handleSortRate = () => {
         setMoviesConcat([])
+        page.current = 1
         setSortByRate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
             const newParams = { ...params, sortByRating: newValue, page: 1}
@@ -93,8 +95,10 @@ export function SearchScreen(): React.JSX.Element {
     //* Sort by Date
     const handleSortDate = () => {
         setMoviesConcat([])
+        page.current = 1
         setSortDate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
+            
             const newParams = { ...params, sortByDate: newValue, page: 1}
             setParams(newParams)
             return newValue
@@ -109,7 +113,8 @@ export function SearchScreen(): React.JSX.Element {
 
     //! OJOOO AL CONCATENAR %21 puede ser === 0 pero podrían haber mas busquedas
     const handleEndReached = () => {
-        if(!loading && (movies?.length ?? 0)%21 === 0){
+        console.log('*****************************\n\n',(moviesConcat?.length ?? 0)%21 === 0)
+        if(!loading && (moviesConcat?.length ?? 0)%21 === 0){
             page.current = page.current + 1
             const newParams = { ...params, page: page.current }
             console.log('page params ----------> ',params.page)
@@ -174,10 +179,12 @@ export function SearchScreen(): React.JSX.Element {
                     ? (
                         <>
                             <Movies movies={moviesConcat ?? []}/>
-                            <View style={styles.sectionMovies}>
-                                <Text>Loading...</Text>
-                                <ActivityIndicator size={100} color="#0000ff" />
-                            </View>
+                            {loading && (
+                                <View style={styles.sectionMovies}>
+                                    <Text>Loading...</Text>
+                                    <ActivityIndicator size={100} color="#0000ff" />
+                                </View>
+                            )}
                         </>
                     )
                     : (loading 
