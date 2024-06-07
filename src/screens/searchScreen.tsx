@@ -30,13 +30,12 @@ interface ScrollEvent {
 
 
 export function SearchScreen(): React.JSX.Element {
-    // const inputRef = useRef<TextInput>(null)    
     const isDarkMode = useColorScheme() === 'dark'
     const { search } = useSearch()
     const page = useRef<number>(1)
     const [sortByRate, setSortByRate] = useState<number | null>(null)
     const [sortDate, setSortDate] = useState<number | null>(null)
-    const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: sortDate, sortByRating: sortByRate })
+    const [params, setParams] = useState<SearchParams>({ page: 1, name: search, sortByDate: null, sortByRating: null })
     const { movies, loading, getMovies } = useMovies({params})
     const { panResponder } = useScrollNavBar()
     const scrollViewRef = useRef<ScrollView>(null)
@@ -50,6 +49,7 @@ export function SearchScreen(): React.JSX.Element {
 
     //* get movies onPress Search
     const handleSearch = (searchText: string) => {
+        setMoviesConcat([])
         if (scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ y: 0, animated: false })
         }
@@ -58,9 +58,8 @@ export function SearchScreen(): React.JSX.Element {
         setSortDate(null)
         const newParams = {...params, name: searchText, page: 1, sortByDate: null ,sortByRating: null}
         console.log (newParams)
+        previousParamName.current = params.name
         setParams(newParams)
-        // getMovies(newParams)
-
     }
 
     //* get Movies if params change
@@ -72,15 +71,17 @@ export function SearchScreen(): React.JSX.Element {
         //* concatena newMovies con movies = getMovies(params)
         if(params.name===previousParamName.current && (movies?.length !== null || movies?.length > 0)){
             setMoviesConcat(prevMoviesConcat => [...prevMoviesConcat, ...movies ?? []])
+            console.log('concatenando movies **********************')
         }else {
             previousParamName.current = params.name
-        }   
+        }
     }, [movies])
 
 
 
     //* Sort by Rating
     const handleSortRate = () => {
+        setMoviesConcat([])
         setSortByRate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
             const newParams = { ...params, sortByRating: newValue, page: 1}
@@ -91,6 +92,7 @@ export function SearchScreen(): React.JSX.Element {
     
     //* Sort by Date
     const handleSortDate = () => {
+        setMoviesConcat([])
         setSortDate(prev => {
             const newValue = prev === 1 ? null : prev === -1 ? 1 : -1
             const newParams = { ...params, sortByDate: newValue, page: 1}
@@ -167,32 +169,14 @@ export function SearchScreen(): React.JSX.Element {
                 contentInsetAdjustmentBehavior="automatic"
                 style={[backgroundStyle, {flex: 1}]}
             >
-            
-                {/* {movies && movies.length > 0 && params.page && params.page === 1 } */}
-                {/* <Movies movies={moviesConcat ?? []}/> */}
-                {/*
-                * estoy tratando que NO muestre el movie not found si es la primera vez que se renderiza
-                * esto no parece funcionar pero es un avance de la lógica
-                */}
-                {/* {movies && movies.length === 0 
-                    ? (loading 
-                        ? (
-                            <View style={styles.sectionMovies}>
-                                <Text>Loading...</Text>
-                                <ActivityIndicator size={200} color="#0000ff" />
-                            </View>
-                        ) 
-                        : <Movies movies={movies ?? []}/>
-                    ) 
-                    : (<Movies movies={movies ?? []}/>)
-                } */}
+                        
                 {moviesConcat.length > 0 
                     ? (
                         <>
                             <Movies movies={moviesConcat ?? []}/>
                             <View style={styles.sectionMovies}>
                                 <Text>Loading...</Text>
-                                <ActivityIndicator size={200} color="#0000ff" />
+                                <ActivityIndicator size={100} color="#0000ff" />
                             </View>
                         </>
                     )
@@ -204,16 +188,7 @@ export function SearchScreen(): React.JSX.Element {
                             </View>
                         ) 
                         : (<Movies movies={moviesConcat ?? []}/>)) 
-                }
-                {/* {loading 
-                    ? (
-                        <View style={styles.sectionMovies}>
-                            <Text>Loading...</Text>
-                            <ActivityIndicator size={200} color="#0000ff" />
-                        </View>
-                    ) 
-                    : (<Movies movies={moviesConcat ?? []}/>)
-                }               */}
+                }                
             </ScrollView>
             
             <NavBar/>

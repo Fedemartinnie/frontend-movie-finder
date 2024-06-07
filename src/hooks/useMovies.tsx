@@ -12,10 +12,14 @@ export function useMovies({params} : {params: SearchParams}){
     const previousSearch = useRef<string | null>(params.name ?? null)
     const previousPage = useRef<number | null>(params.page ?? null)
     const previousParams = useRef(params)
-    const [isFirstSearch, setIsFirstSearch] = useState<boolean>(true)
 
     const getMovies = useCallback (async(params: SearchParams) => {
-        if( params.page === previousPage.current && params.name && params.name === previousSearch.current && params.sortByDate === previousParams.current.sortByDate && params.sortByRating === previousParams.current.sortByRating) {
+        if( 
+            params.page === previousParams.current.page
+            && params.name && params.name === previousParams.current.name 
+            && params.sortByDate === previousParams.current.sortByDate 
+            && params.sortByRating === previousParams.current.sortByRating
+        ) {
             console.log('no se repite la búsqueda')
 
             return 
@@ -27,7 +31,7 @@ export function useMovies({params} : {params: SearchParams}){
             setError(null)
             previousSearch.current = params.name ?? null
             previousParams.current = params
-            console.log(previousParams.current)
+            console.log('previousParams.current --> ',previousParams.current)
             console.log('*** ***',params)
             const newMovies = await search(params)
             setMovies(newMovies)

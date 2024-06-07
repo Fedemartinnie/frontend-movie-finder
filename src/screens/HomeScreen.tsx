@@ -19,8 +19,7 @@ import { HomeParams, Movie2Base } from '../types.ts'
 
 function HomeScreen(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark'
-    // const { search } = useSearch()
-    const [params, setParams] = useState<HomeParams>({ sortByDate: -1, page: 1 })
+    const [params, setParams] = useState<HomeParams>({ sortByDate: -1 })
     const { movies, loading, getMovies } = useMovies({params})
     // const { panResponder, navbarTranslateY } = useScrollNavBar()
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
@@ -54,6 +53,8 @@ function HomeScreen(): React.JSX.Element {
     //* handler of Genre Type
     const handleGenreType = (genre: string) => {
         setGenreType(genre)
+        setConcatMovies([])
+
         let newParams = { ...params, page: 1 }
 
         if (genre === 'Genres') {
@@ -62,7 +63,6 @@ function HomeScreen(): React.JSX.Element {
         } else {
             newParams.genre = genre
         }
-        setConcatMovies([])
         pageRef.current = 1 // Reset page to 1 when changing genre
         setParams(newParams)       
         toggleModal()
