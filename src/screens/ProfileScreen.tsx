@@ -104,8 +104,21 @@ function ProfileScreen(): React.JSX.Element {
         } else if (response.assets && response.assets.length > 0) {
             setImage(response.assets[0].uri)
             console.log('Selected image: ', response.assets[0].uri)
+            uploadImageToCloudinary(response.assets[0].uri)
         }    
     }
+
+    const uploadImageToCloudinary = async (imageUri: string | undefined) => {
+        const data = new FormData()
+        data.append('file', {
+            uri: imageUri,
+            type: 'image/jpeg', // or 'image/png'
+            name: 'upload.jpg',
+        })
+        data.append('upload_preset', 'YOUR_UPLOAD_PRESET') // Replace with your upload preset
+        data.append('cloud_name', 'YOUR_CLOUD_NAME')
+    }
+
 
     return (
         <SafeAreaView style={styles.safeContainer}>
@@ -121,7 +134,6 @@ function ProfileScreen(): React.JSX.Element {
                                     : ('https://www.pngitem.com/pimgs/m/501-5015090_ironman-helmet-png-image-iron-man-face-png.png') 
                                 
                             }}
-                            // source={{ uri: user.profileImage }}
                             style={styles.image}
                         />
                         <View style={styles.cameraIcon}>
@@ -135,7 +147,6 @@ function ProfileScreen(): React.JSX.Element {
                         ? (
                             <View style={[styles.userInfo, {marginLeft: '11%'}]}>
                                 <Text style={styles.userName}>{nickname}</Text>
-                                {/* <Text style={styles.userName}>{nickname}</Text> */}
                             
                                 <TouchableOpacity onPress={handleEdit}>
                                     <View style={styles.editIcon}>
@@ -185,12 +196,12 @@ function ProfileScreen(): React.JSX.Element {
                     }
                     <Text style={styles.optionText}>{email}</Text>
                     {/* <Text style={styles.optionText}>{user.email}</Text>  */}
-                    <TouchableOpacity>
+                    <TouchableWithoutFeedback>
                         <Text style={styles.optionText}>Cerrar Sesión</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback>
                         <Text style={styles.optionTextDanger}>Eliminar Cuenta</Text>
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
                     
                 </View>
                 {edit && (
@@ -227,7 +238,7 @@ const styles = StyleSheet.create({
     },
     profileContainer: {
         alignItems: 'center',
-        marginVertical: 50,
+        marginVertical: 40,
     },
     imageView: {
         justifyContent: 'center',
@@ -292,8 +303,9 @@ const styles = StyleSheet.create({
     saveContainer:{
         flex: 1,
         flexDirection: 'row',
-        margin: 20,
+        margin: 30,
         justifyContent: 'space-between',
+        alignItems: 'flex-end'
     },
     saveButton: {
         justifyContent: 'space-around',
@@ -312,7 +324,5 @@ const styles = StyleSheet.create({
 
 
 export default ProfileScreen
-function openCamera(): void {
-    throw new Error('Function not implemented.')
-}
+
 

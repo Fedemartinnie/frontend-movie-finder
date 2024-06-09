@@ -18,44 +18,44 @@ export type RootStackParamList = {
 
 export type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile' | 'Home' | 'Search' | 'MovieScreen' | 'Splash' | 'Login'>
 
-export interface Movie {
-    id: string
-    title: string
-    year: string
-    image: string
-}
+// export interface Movie {
+//     id: string
+//     title: string
+//     year: string
+//     image: string
+// }
 
-export interface MovieDB {
-    imdbID: string
-    Title: string
-    Year: string
-    Poster: string
-}
+// export interface MovieDB {
+//     imdbID: string
+//     Title: string
+//     Year: string
+//     Poster: string
+// }
 
-export interface FullMovie {
-    actors: string;
-    awards: string;
-    country: string;
-    directors: string;
-    genre: string;
-    language: string;
-    metascore: string;
-    plot: string;
-    poster: string;
-    rated: string;
-    ratings: { Source: string; Value: string }[];
-    released: string;
-    response: string;
-    runtime: string;
-    title: string;
-    type: string;
-    writer: string;
-    year: string;
-    imdbID: string;
-    imdbRating: number;
-    imdbVotes: string;
-    totalSeasons: string;
-}
+// export interface FullMovie {
+//     actors: string;
+//     awards: string;
+//     country: string;
+//     directors: string;
+//     genre: string;
+//     language: string;
+//     metascore: string;
+//     plot: string;
+//     poster: string;
+//     rated: string;
+//     ratings: { Source: string; Value: string }[];
+//     released: string;
+//     response: string;
+//     runtime: string;
+//     title: string;
+//     type: string;
+//     writer: string;
+//     year: string;
+//     imdbID: string;
+//     imdbRating: number;
+//     imdbVotes: string;
+//     totalSeasons: string;
+// }
 
 
 export interface Director {
@@ -88,7 +88,7 @@ export interface FullMovie2 {
     images: Images;
     overallRating: number,
     rating: number,
-    trailer: string
+    trailer: string[]
 }
 
 export type Movie2Base = Pick<FullMovie2, '_id' | 'title' | 'genres' | 'releaseYear' | 'images' | 'overallRating'>

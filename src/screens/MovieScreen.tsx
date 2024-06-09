@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, Share, ScrollView, StyleSheet, 
     Text, TouchableOpacity, View, 
     Image, Dimensions} 
@@ -18,6 +18,8 @@ import { ShareSvg } from '../assets/share'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
 import { Actors, Details, Sinopsis } from '../components/movieInfo'
+// import Video from 'react-native-video'
+import YoutubePlayer from 'react-native-youtube-iframe'
 
 
 type MovieScreenProps = RouteProp<{
@@ -29,8 +31,9 @@ export const MovieScreen: React.FC = () => {
     const { movie } = route.params
     const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')    
     const [title, subtitle] = movie.title.split(':')
-    // const [year, month, day] = movie.releaseYear.split('-')    
     const items = ['Sinópsis', 'Actores', 'Detalles']
+    const [showTrailer, setShowTrailer] = useState<boolean>(false)
+    const trailerId = movie.trailer[0]
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
@@ -39,7 +42,10 @@ export const MovieScreen: React.FC = () => {
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible)
     }
-    
+    useEffect(() => {
+        console.log(movie.trailer)
+
+    })
 
     const handleShare = async () => {
         try{
@@ -59,13 +65,44 @@ export const MovieScreen: React.FC = () => {
 
 
     const handleTrailer = () => {
-        const trailer = `https://www.youtube.com/watch?v=${movie.trailer}`
+        setShowTrailer(true)
+        console.log('showtrailer? ',showTrailer)
+        console.log('url trailer: ',`https://www.youtube.com/watch?v=${movie.trailer[0]}`)
     }
 
     return(
         <View style={styles.container}>
+            {/* <View style={styles.imageFullScreen}>
+                <YoutubePlayer
+                    height={Dimensions.get('window').height}
+                    width={Dimensions.get('window').width}
+                    play={true}
+                    videoId='Gx588FLU-mA' // Asegúrate de que movie.trailerUrl contiene el ID del tráiler de YouTube
+                />
+                <TouchableOpacity style={styles.closeButton} onPress={() => setShowTrailer(false)}>
+                    <Text style={styles.closeButton}>Close</Text>
+                </TouchableOpacity>
+            </View> */}
+            {/* <Modal
+                style={styles.modal}
+                visible={showTrailer}
+                animationType="slide"
+                onRequestClose={() => setShowTrailer(false)}
+            >
+                <View style={[styles.imageFullScreen]}>
+                    <YoutubePlayer
+                        height={Dimensions.get('window').height}
+                        width={Dimensions.get('window').width}
+                        play={true}
+                        videoId='Gx588FLU-mA' // Asegúrate de que movie.trailerUrl contiene el ID del tráiler de YouTube
+                    />
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setShowTrailer(false)}>
+                        <Text style={styles.closeButton}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal> */}
 
-            <Modal visible={isModalVisible} style={styles.modal}>
+            {/* <Modal visible={isModalVisible} style={styles.modal}>                                
                 <Image
                     style={styles.imageFullScreen}
                     source={{ uri: 'https://image.tmdb.org/t/p/w500'+movie.images.backdrops[0] }}
@@ -75,11 +112,24 @@ export const MovieScreen: React.FC = () => {
                         <CloseButton/>
                     </TouchableOpacity>
                 </View>
-            </Modal>
+            </Modal> */}
 
             <ScrollView>
-                <View>                    
-                    <Carousel movies={movie.images.backdrops}/>                    
+                <View>    
+                    {showTrailer 
+                        ? (<View style={[styles.image]}>
+                            <YoutubePlayer
+                                height={Dimensions.get('window').height}
+                                width={Dimensions.get('window').width}
+                                play={true}
+                                videoId={trailerId} // Asegúrate de que movie.trailerUrl contiene el ID del tráiler de YouTube
+                            />
+                            <TouchableOpacity style={styles.closeButton} onPress={() => setShowTrailer(false)}>
+                                <CloseButton/>
+                            </TouchableOpacity>
+                        </View>)
+                        : (<Carousel movies={movie.images.backdrops}/>)
+                    }                
                 </View>
 
                 <View style={styles.movieInfo}>
@@ -103,7 +153,9 @@ export const MovieScreen: React.FC = () => {
                     <TouchableOpacity onPress={handleShare}>
                         <ShareSvg/>
                     </TouchableOpacity>
-                    <Rate/>
+                    <TouchableOpacity >
+                        <Rate/>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.info}>
@@ -157,8 +209,9 @@ const styles= StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         justifyContent: 'center',
+        marginLeft: '30%',
         alignItems: 'center',
-        width: '100%',
+        // width: '10%',
     },
     imageFullScreen: {
         width: Dimensions.get('window').width,
