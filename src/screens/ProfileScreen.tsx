@@ -1,27 +1,110 @@
-import React, { useState } from 'react'
-import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import NavBar from '../components/home/navBar'
 import { CamAvatar } from '../assets/camAvatar'
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { EditProfile } from '../assets/lapiz'
+import { Asset, CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker'
 
 
 function ProfileScreen(): React.JSX.Element {
     const[edit, setEdit] = useState<boolean>(false)
     const [firstName, setFirstName] = useState('María José')
     const [lastName, setLastName] = useState('Diaz')
+    const [email, setEmail] = useState<string>('DiazCapo91@gmail.com')
+    const [nickname, setNickname] = useState<string>('Diaz Capo')
+    const [image, setImage] = useState<string | undefined>(undefined)
+    // const [nickname, setNickname] = useState<string>({user.nickname})
+    // const [firstName, setFirstName] = useState({user.name})
+    // const [lastName, setLastName] = useState({user.lastname})
+    // const [email, setEmail] = useState<string>({user.email})
+    const previousFirst = useRef(firstName)
+    const previousLast = useRef(lastName)
+    const previousNick = useRef(nickname)
+
 
     const handleEdit = () => {
+        previousFirst.current = firstName
+        previousLast.current = lastName
+        previousNick.current = nickname
         setEdit(!edit)
     }
 
-    //!!!TODO
-    const handleSubmit = () => {
-        // Aquí puedes manejar el envío de los datos, por ejemplo, una llamada a una API
-        console.log('First Name:', firstName)
-        console.log('Last Name:', lastName)
-        // Puedes desactivar el modo de edición después de enviar los datos
+    const handleCancel = () => {
+        setFirstName(previousFirst.current)
+        setLastName(previousLast.current)
+        setNickname(previousNick.current)        
         setEdit(false)
+    }
+
+    //!!!TODO
+    const handleSubmit = () => {       
+        previousFirst.current = firstName
+        previousLast.current = lastName
+        previousNick.current = nickname 
+        //TODO hacer llamado service para actualizar datos en db
+        setEdit(false)
+    }
+
+    //* seleccionar camara o galeria para la foto 
+    const openPicker = () => {
+        Alert.alert(            
+            'Select Image',
+            'Choose your image source',
+            [
+                {
+                    text: 'Camera',
+                    onPress: () => openCamera()
+                },
+                {
+                    text: 'Gallery',
+                    onPress: () => openGallery()
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel'
+                }
+            ],
+            { cancelable: true }
+        )
+    }
+        
+    const openCamera = () => {
+        const options: CameraOptions = {
+            mediaType: 'photo',
+            quality: 1,
+            includeBase64: false,
+            saveToPhotos: true,  // Optional: save photo in the gallery after capture
+        }
+
+        launchCamera(options, (response) => {
+            handleResponse(response)
+        })
+    }
+
+    const openGallery = () => {
+        const options: ImageLibraryOptions = {
+            mediaType: 'photo',
+            quality: 1,
+            includeBase64: false,
+            selectionLimit: 1,
+        }
+
+        launchImageLibrary(options, (response) => {
+            handleResponse(response)
+        })
+    }
+
+    //* setImage Uri of mobile
+    const handleResponse = (response: ImagePickerResponse) => {
+        if (response.didCancel) {
+            console.log('User cancelled the picker')
+        } else if (response.errorCode) {
+            console.log('ImagePicker Error: ', response.errorMessage)
+        } else if (response.assets && response.assets.length > 0) {
+            setImage(response.assets[0].uri)
+            console.log('Selected image: ', response.assets[0].uri)
+        }    
     }
 
     return (
@@ -32,18 +115,27 @@ function ProfileScreen(): React.JSX.Element {
 
                     <View style={styles.imageView}>
                         <Image
-                            source={{ uri: 'https://www.pngitem.com/pimgs/m/501-5015090_ironman-helmet-png-image-iron-man-face-png.png' }} // Cambia esto por la URL correcta de la imagen
+                            source={{ 
+                                uri: image 
+                                    ? image
+                                    : ('https://www.pngitem.com/pimgs/m/501-5015090_ironman-helmet-png-image-iron-man-face-png.png') 
+                                
+                            }}
+                            // source={{ uri: user.profileImage }}
                             style={styles.image}
                         />
                         <View style={styles.cameraIcon}>
-                            <CamAvatar />
+                            <TouchableOpacity onPress={openPicker}>
+                                <CamAvatar />
+                            </TouchableOpacity>
                         </View>
                     </View>
 
                     {!edit 
                         ? (
                             <View style={[styles.userInfo, {marginLeft: '11%'}]}>
-                                <Text style={styles.userName}>Fede Nie</Text>
+                                <Text style={styles.userName}>{nickname}</Text>
+                                {/* <Text style={styles.userName}>{nickname}</Text> */}
                             
                                 <TouchableOpacity onPress={handleEdit}>
                                     <View style={styles.editIcon}>
@@ -52,8 +144,13 @@ function ProfileScreen(): React.JSX.Element {
                                 </TouchableOpacity>                                           
                             </View>)
                         : (
-                            <View style={[styles.userInfo]}>
-                                <Text style={styles.userName}>Fede Nie</Text>
+                            <View style={[styles.userInfo, {marginLeft: '5%'}]}>
+                                <TextInput 
+                                    style={[styles.userName, {backgroundColor: colors.white,borderRadius: 5, color: colors.red, padding: 0}]}
+                                    value={nickname}
+                                    onChangeText={setNickname}
+                                />
+
                                 <View style={styles.editIcon}>
                                         
                                 </View>
@@ -64,42 +161,45 @@ function ProfileScreen(): React.JSX.Element {
                 <View style={styles.options}>
                     {!edit 
                         ? (<>
-                            <Text style={styles.optionText}>María José</Text>
-                            <Text style={styles.optionText}>Diaz</Text>
-                            <Text style={styles.optionText}>Cerrar Sesión</Text>
-                            <Text style={styles.optionTextDanger}>Eliminar Cuenta</Text>
+                            <Text style={styles.optionText}>{firstName}</Text>
+                            <Text style={styles.optionText}>{lastName}</Text>
+                            {/* <Text style={styles.optionText}>{user.name}</Text>
+                            <Text style={styles.optionText}>{user.lastname}</Text>
+                            */}                    
                         </>
                         )
-                        : (<>
+                        : (<View >
                             <TextInput 
-                                style={styles.optionText}
+                                style={[styles.optionTextInput, {backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10}]}
                                 value={firstName}
-                                onChangeText={setFirstName}
-                                onSubmitEditing={handleSubmit}
-                                returnKeyType="done"
-                            >
-                                María José
-                            </TextInput>
+                                onChangeText={setFirstName}                            
+                            />
+                            
                             <TextInput 
-                                style={styles.optionText}
+                                style={[styles.optionTextInput, {backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10}]}
                                 value={lastName}
-                                onChangeText={setLastName}
-                                onSubmitEditing={handleSubmit}
-                                returnKeyType="done"
-                            >
-                                    Diaz
-                            </TextInput>
-                            <Text style={styles.optionText}>Cerrar Sesión</Text>
-                            <Text style={styles.optionTextDanger}>Eliminar Cuenta</Text>
-                        </>
-                        )
-
+                                onChangeText={setLastName}                                
+                            />                            
+                        </View>
+                        )                        
                     }
+                    <Text style={styles.optionText}>{email}</Text>
+                    {/* <Text style={styles.optionText}>{user.email}</Text>  */}
+                    <TouchableOpacity>
+                        <Text style={styles.optionText}>Cerrar Sesión</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text style={styles.optionTextDanger}>Eliminar Cuenta</Text>
+                    </TouchableOpacity>
                     
                 </View>
                 {edit && (
                     //!* aca poner el button cancelar con space-between
                     <View style={styles.saveContainer}>
+                        <TouchableOpacity onPress={handleCancel}>
+                            <Text style={styles.saveButton}>Cancelar</Text>
+                        </TouchableOpacity>
+
                         <TouchableOpacity onPress={handleSubmit}>
                             <Text style={styles.saveButton}>Guardar</Text>
                         </TouchableOpacity>
@@ -163,31 +263,42 @@ const styles = StyleSheet.create({
     options: {
         marginTop: 20,
     },
-    optionText: {
-        color: '#fff',
+    optionTextInput: {
+        backgroundColor: colors.white,
         fontSize: 16,
-        borderBottomColor: '#fff',
+        color: colors.red,
+        paddingVertical: 10,
+        marginHorizontal: 25,
+        borderBottomColor: colors.red,
+        borderWidth: 1,
+    },
+    optionText: {
+        
+        color: colors.white,
+        fontSize: 16,
+        borderBottomColor: colors.white,
         borderBottomWidth: 1,
-        paddingVertical: 20,
+        paddingVertical: 15,
         marginHorizontal: 25,
     },
     optionTextDanger: {
         color: 'red',
         fontSize: 16,
-        borderBottomColor: '#fff',
+        borderBottomColor: colors.white,
         borderBottomWidth: 1,
-        paddingVertical: 20,
+        paddingVertical: 15,
         marginHorizontal: 25,
     },
     saveContainer:{
-        // alignContent: 'flex-end',
-        alignItems: 'flex-end',
-        margin: 30
+        flex: 1,
+        flexDirection: 'row',
+        margin: 20,
+        justifyContent: 'space-between',
     },
     saveButton: {
+        justifyContent: 'space-around',
         color: 'yellow',
         fontSize: 24,
-        // fontWeight: 'bold'
         textAlign: 'center',
         borderColor: 'white',
         borderWidth: 2,
@@ -201,3 +312,7 @@ const styles = StyleSheet.create({
 
 
 export default ProfileScreen
+function openCamera(): void {
+    throw new Error('Function not implemented.')
+}
+

@@ -1,3 +1,12 @@
+# Lista de Requerimientos
+1) MovieScreen.tsx --> cantidad de calificiaciones = ratingsCount
+2) MovieScreen.tsx --> hacer funcionar trailer
+3) MovieScreen.tsx --> Share                        
+4) MoviesScreem.tsx --> onSubmitEditing={handleSubmit} para ejecutar busqueda con el teclado
+5) MoviesScreem.tsx --> Guardar / Remover Favoritos
+6) NET INFO --> p/detectar si no tiene señal de internet
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
