@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Modal, Share, ScrollView, StyleSheet, 
     Text, TouchableOpacity, View, 
     Image, Dimensions} 
@@ -18,7 +18,6 @@ import { ShareSvg } from '../assets/share'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
 import { Actors, Details, Sinopsis } from '../components/movieInfo'
-// import Video from 'react-native-video'
 import YoutubePlayer from 'react-native-youtube-iframe'
 
 
@@ -33,7 +32,8 @@ export const MovieScreen: React.FC = () => {
     const [title, subtitle] = movie.title.split(':')
     const items = ['Sinópsis', 'Actores', 'Detalles']
     const [showTrailer, setShowTrailer] = useState<boolean>(false)
-    const trailerId = movie.trailer[0]
+    const actualTrailerNumber = useRef<number>(0)
+    const [trailerId, setTrailerId] = useState<string>(movie.trailer[actualTrailerNumber.current])
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
@@ -67,53 +67,19 @@ export const MovieScreen: React.FC = () => {
     const handleTrailer = () => {
         setShowTrailer(true)
         console.log('showtrailer? ',showTrailer)
-        console.log('url trailer: ',`https://www.youtube.com/watch?v=${movie.trailer[0]}`)
+    }
+
+    //* inrementa indice para pasar al siguiente trailer
+    const handleNextVideo = () => {
+        actualTrailerNumber.current = actualTrailerNumber.current + 1
+        if(actualTrailerNumber.current === movie.trailer.length){
+            actualTrailerNumber.current = 0
+        }
+        setTrailerId(movie.trailer[actualTrailerNumber.current])
     }
 
     return(
-        <View style={styles.container}>
-            {/* <View style={styles.imageFullScreen}>
-                <YoutubePlayer
-                    height={Dimensions.get('window').height}
-                    width={Dimensions.get('window').width}
-                    play={true}
-                    videoId='Gx588FLU-mA' // Asegúrate de que movie.trailerUrl contiene el ID del tráiler de YouTube
-                />
-                <TouchableOpacity style={styles.closeButton} onPress={() => setShowTrailer(false)}>
-                    <Text style={styles.closeButton}>Close</Text>
-                </TouchableOpacity>
-            </View> */}
-            {/* <Modal
-                style={styles.modal}
-                visible={showTrailer}
-                animationType="slide"
-                onRequestClose={() => setShowTrailer(false)}
-            >
-                <View style={[styles.imageFullScreen]}>
-                    <YoutubePlayer
-                        height={Dimensions.get('window').height}
-                        width={Dimensions.get('window').width}
-                        play={true}
-                        videoId='Gx588FLU-mA' // Asegúrate de que movie.trailerUrl contiene el ID del tráiler de YouTube
-                    />
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setShowTrailer(false)}>
-                        <Text style={styles.closeButton}>Close</Text>
-                    </TouchableOpacity>
-                </View>
-            </Modal> */}
-
-            {/* <Modal visible={isModalVisible} style={styles.modal}>                                
-                <Image
-                    style={styles.imageFullScreen}
-                    source={{ uri: 'https://image.tmdb.org/t/p/w500'+movie.images.backdrops[0] }}
-                />
-                <View style={styles.closeButton}>
-                    <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                        <CloseButton/>
-                    </TouchableOpacity>
-                </View>
-            </Modal> */}
-
+        <View style={styles.container}>            
             <ScrollView>
                 <View>    
                     {showTrailer 
@@ -122,7 +88,12 @@ export const MovieScreen: React.FC = () => {
                                 height={Dimensions.get('window').height}
                                 width={Dimensions.get('window').width}
                                 play={true}
-                                videoId={trailerId} // Asegúrate de que movie.trailerUrl contiene el ID del tráiler de YouTube
+                                videoId={trailerId}
+                                onChangeState={(state) => {
+                                    if (state === 'ended') {
+                                        handleNextVideo()
+                                    }
+                                }}
                             />
                             <TouchableOpacity style={styles.closeButton} onPress={() => setShowTrailer(false)}>
                                 <CloseButton/>
@@ -208,8 +179,8 @@ const styles= StyleSheet.create({
     closeButton: {
         position: 'absolute',
         bottom: 0,
+        marginLeft: '33%',
         justifyContent: 'center',
-        marginLeft: '30%',
         alignItems: 'center',
         // width: '10%',
     },
