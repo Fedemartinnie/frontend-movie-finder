@@ -113,3 +113,7 @@ export type Favorite = {
     movieId: 'string',
     poster: 'string'
 }
+
+export type User = {
+    
+}
