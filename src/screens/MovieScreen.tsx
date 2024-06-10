@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Modal, Share, ScrollView, StyleSheet, 
+import { Share, ScrollView, StyleSheet, 
     Text, TouchableOpacity, View, 
-    Image, Dimensions} 
+    Dimensions,
+    Alert} 
     from 'react-native'
-import { FullMovie2 } from '../types'
+import { Favorite, FullMovie2 } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { Carousel } from '../components/carrusel'
 import NavBar from '../components/home/navBar'
@@ -19,6 +20,9 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
 import { Actors, Details, Sinopsis } from '../components/movieInfo'
 import YoutubePlayer from 'react-native-youtube-iframe'
+import {addFavorite, removeFavorite, getFavorites} from '../services/movies'
+
+
 
 
 type MovieScreenProps = RouteProp<{
@@ -35,16 +39,10 @@ export const MovieScreen: React.FC = () => {
     const actualTrailerNumber = useRef<number>(0)
     const [trailerId, setTrailerId] = useState<string>(movie.trailer[actualTrailerNumber.current])
 
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
-
     const directors = Array.from(new Set(movie.director))
 
-    const toggleModal = () => {
-        setIsModalVisible(!isModalVisible)
-    }
     useEffect(() => {
         console.log(movie.trailer)
-
     })
 
     const handleShare = async () => {
@@ -77,6 +75,25 @@ export const MovieScreen: React.FC = () => {
         }
         setTrailerId(movie.trailer[actualTrailerNumber.current])
     }
+
+    //* FAVORITES ----> ADD - REMOVE - GET ALL
+    const handleFavorite = async() => {
+        const favorites: Favorite[] = await getFavorites() //* obtener user favs --> exists ? remove : add
+        const isFavorite = favorites.some(favorite => favorite.movieId === movie._id)
+        try{
+            if(isFavorite){
+                await removeFavorite(movie._id)
+                Alert.alert('se eliminó la película de la lista de favoritos')
+            }
+            else{
+                await addFavorite(movie._id, movie.images.posters[0])
+                Alert.alert('Se agregó la película a la lista de favoritos')
+            }
+        }catch{
+            Alert.alert('Ocurrió un error al actualizar la lista de favoritos')
+        }
+    }
+
 
     return(
         <View style={styles.container}>            
@@ -120,7 +137,9 @@ export const MovieScreen: React.FC = () => {
                     <TouchableOpacity onPress={handleTrailer}>
                         <Trailer/>
                     </TouchableOpacity>
-                    <HeartFav/>
+                    <TouchableOpacity onPress={handleFavorite}>                    
+                        <HeartFav/>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={handleShare}>
                         <ShareSvg/>
                     </TouchableOpacity>
@@ -178,11 +197,10 @@ const styles= StyleSheet.create({
     },
     closeButton: {
         position: 'absolute',
-        bottom: 0,
-        marginLeft: '33%',
+        top: 5,
+        right: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        // width: '10%',
     },
     imageFullScreen: {
         width: Dimensions.get('window').width,

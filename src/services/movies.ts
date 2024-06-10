@@ -1,19 +1,20 @@
-import { SearchParams, FullMovie2, Movie2Base } from '../types'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SearchParams, FullMovie2, Movie2Base, Favorite } from '../types'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 interface Config {
     headers?: {
-        [key: string]: string;
+        [key: string]: string
     }
     // Agrega otras propiedades relevantes según sea necesario
 }
-const URI = 'http://192.168.1.6:8000'
+// const URI = 'http://192.168.0.73:8000' //! ip fede
+const URI = 'http://192.168.1.6:8000'     //! ip jere
 // const URI = 'http://18.118.165.190:8000' //* AWS ip
 //*
 const token = async (config: Config = {}): Promise<Config> => {
     try {
         const authToken = await AsyncStorage.getItem('authToken')
-        console.log("token_movies_services:",authToken)
+        console.log('token_movies_services: ',authToken)
         if (authToken) {
             if (!config.headers) {
                 config.headers = {}
@@ -43,9 +44,9 @@ export const search = async (params: SearchParams): Promise<Movie2Base[] | null>
     const finalUrl = `${URI}/movies/results?${searchParams.toString()}`
     
     try {
-        const token = await AsyncStorage.getItem('authToken');
+        const token = await AsyncStorage.getItem('authToken')
         if (!token) {
-            throw new Error('No se pudo encontrar el token de autenticación');
+            throw new Error('No se pudo encontrar el token de autenticación')
         }
         
         const response = await fetch(finalUrl, {
@@ -53,18 +54,18 @@ export const search = async (params: SearchParams): Promise<Movie2Base[] | null>
                 'Content-Type': 'application/json',                    
                 'Authorization': `Bearer ${token}`            
             }
-        });
+        })
         console.log(response)
         if (!response.ok) {
-            throw new Error('La solicitud no fue exitosa');
+            throw new Error('La solicitud no fue exitosa')
         }
 
         const json = await response.json()
         const movies = json.data
         return movies
     } catch (error) {
-        console.error('Error en la búsqueda de películas:', error);
-        throw new Error('Error en la búsqueda de películas');
+        console.error('Error en la búsqueda de películas:', error)
+        throw new Error('Error en la búsqueda de películas')
     }
 }
 
@@ -72,9 +73,9 @@ export const search = async (params: SearchParams): Promise<Movie2Base[] | null>
 export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null> => {
     try{
         console.log('search movie: ',id)
-        const token = await AsyncStorage.getItem('authToken'); // Obtiene el token de AsyncStorage de forma asincrónica
+        const token = await AsyncStorage.getItem('authToken') // Obtiene el token de AsyncStorage de forma asincrónica
         if (!token) {
-            throw new Error('No se pudo encontrar el token de autenticación');
+            throw new Error('No se pudo encontrar el token de autenticación')
         }
         const response = await fetch(`${URI}/movies/${id}`,{
             headers: {
@@ -124,5 +125,66 @@ export const deleteAccount = async({id} : {id: string}) => {
         })
     }catch{
         throw new Error('Error Loging Out')
+    }
+}
+
+
+//* FAVORITES
+//* ADD
+export const addFavorite = async(id: string, poster: string) => {  
+    try{
+        await fetch(`${URI}/favorites`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body:JSON.stringify({
+                id: id,
+                poster: poster
+            })
+        })
+    } catch (error){
+        throw new Error('no se puedo calificar la pelicula')
+    }
+}
+
+//* REMOVE FAVORITE
+export const removeFavorite = async(movieId: string) => {
+    try{
+        await fetch(`${URI}/favorites/${movieId}`,{
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        })
+    }catch (error){ 
+        throw new Error('no se pudo eliminar la película de favoritos ')
+    }
+}
+
+//* GET ALL FAVORITES
+export const getFavorites = async(): Promise<Favorite[]> => {
+    try{
+        const response = await fetch(`${URI}/favorites`,{
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        })
+        if (!response.ok) {
+            throw new Error('No se pudo obtener la lista de favoritos')
+        }
+        const json = await response.json()
+        const favorites = json.data
+        if(favorites){
+            return favorites
+        }
+        else{
+            throw new Error ('no se pudo obtener las peliculas')
+        }
+    }catch{
+        throw new Error('no se pudo obtener lista de favoritos')
     }
 }
