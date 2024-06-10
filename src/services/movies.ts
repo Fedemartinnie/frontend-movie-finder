@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { SearchParams, FullMovie2, Movie2Base } from '../types'
+import { SearchParams, FullMovie2, Movie2Base, Favorite } from '../types'
 
 
 interface Config {
@@ -8,9 +8,11 @@ interface Config {
     }
     // Agrega otras propiedades relevantes según sea necesario
 }
-const URI = 'http://192.168.0.73:8000'
+const URI = 'http://192.168.0.73:8000' //! ip fede
+// const URI = 'http://192.168.1.6:8000' //! ip jere
 // const URI = 'http://18.118.165.190:8000' //* AWS ip
-//*
+
+//* authToken
 const token = async (config: Config = {}): Promise<Config> => {
     try {
         const authToken = await AsyncStorage.getItem('authToken')
@@ -62,11 +64,11 @@ export const search = async (params: SearchParams) : Promise<Movie2Base[] | null
 }
 
 
-//* Function to search a Movie By Id
+//* FUNCTION TO SEARCH MOVIE BY ID
 export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null> => {
     try{
         console.log('search movie: ',id)
-        const response = await fetch(`http://192.168.0.73:8000/movies/${id}`,{
+        const response = await fetch(`${URI}/movies/${id}`,{
             headers: {
                 'Content-Type': 'application/json',                
             }
@@ -88,9 +90,10 @@ export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null
 
 //*TODO
 //* users Service
+//* logout
 export const logout = async({id} : {id: string}) => {
     try {
-        await fetch(`URI/${id}`,{   
+        await fetch(`${URI}/${id}`,{   
             method: 'PUT',         
             headers: {
                 'Content-Type': 'application/json',
@@ -102,10 +105,10 @@ export const logout = async({id} : {id: string}) => {
     }
 }
 
-
+//* delete account
 export const deleteAccount = async({id} : {id: string}) => {
     try {
-        await fetch(`URI/${id}`,{
+        await fetch(`${URI}/${id}`,{
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,5 +117,65 @@ export const deleteAccount = async({id} : {id: string}) => {
         })
     }catch{
         throw new Error('Error Loging Out')
+    }
+}
+
+//* FAVORITES
+//* ADD
+export const addFavorite = async(id: string, poster: string) => {  
+    try{
+        await fetch(`${URI}/favorites`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body:JSON.stringify({
+                id: id,
+                poster: poster
+            })
+        })
+    } catch (error){
+        throw new Error('no se puedo calificar la pelicula')
+    }
+}
+
+//* REMOVE FAVORITE
+export const removeFavorite = async(movieId: string) => {
+    try{
+        await fetch(`${URI}/favorites/${movieId}`,{
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        })
+    }catch (error){ 
+        throw new Error('no se pudo eliminar la película de favoritos ')
+    }
+}
+
+//* GET ALL FAVORITES
+export const getFavorites = async(): Promise<Favorite[]> => {
+    try{
+        const response = await fetch(`${URI}/favorites`,{
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        })
+        if (!response.ok) {
+            throw new Error('No se pudo obtener la lista de favoritos')
+        }
+        const json = await response.json()
+        const favorites = json.data
+        if(favorites){
+            return favorites
+        }
+        else{
+            throw new Error ('no se pudo obtener las peliculas')
+        }
+    }catch{
+        throw new Error('no se pudo obtener lista de favoritos')
     }
 }

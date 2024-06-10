@@ -106,3 +106,10 @@ export interface Params {
 export type SearchParams = Pick<Params, 'name' | 'page' | 'sortByDate' | 'sortByRating'>
 
 export type HomeParams = Pick<Params, 'page' | 'sortByDate' | 'genre'>
+
+//* FAVORITES
+export type Favorite = {
+    userdId: 'string',
+    movieId: 'string',
+    poster: 'string'
+}
