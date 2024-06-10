@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "676309797007",
+    "project_id": "movie-finder-pro",
+    "storage_bucket": "movie-finder-pro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676309797007:android:26a7ed281d36eb61a708fa",
+        "android_client_info": {
+          "package_name": "com.frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "676309797007-de7qqql6ufsvvlc9cmaa51f58p9diu6n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.frontend",
+            "certificate_hash": "c2ec697d5ffb4372c6b4f858d51b4d434222b9a0"
+          }
+        },
+        {
+          "client_id": "676309797007-b73o5re6gnpb17vtbo4is61md6v9d4c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuEzAnFHTo7VuXbmc5yFtrzXldLCNrDEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "676309797007-b73o5re6gnpb17vtbo4is61md6v9d4c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

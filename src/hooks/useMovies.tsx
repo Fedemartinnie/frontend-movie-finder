@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useRef, useMemo, useCallback } from 'react'
 import { search } from '../services/movies'
-import { Movie, Movie2Base, SearchParams } from '../types'
+import { Movie2Base, SearchParams } from '../types'
 import { Keyboard } from 'react-native'
 
 
