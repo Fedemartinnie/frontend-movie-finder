@@ -43,7 +43,7 @@ export const search = async (params: SearchParams): Promise<Movie2Base[] | null>
         }
     }) 
 
-    const finalUrl = `${URI}/movies/results?${searchParams.toString()}`
+    const finalUrl = `${URI}/movies/?${searchParams.toString()}`
     
     try {
         const token = await AsyncStorage.getItem('authToken')

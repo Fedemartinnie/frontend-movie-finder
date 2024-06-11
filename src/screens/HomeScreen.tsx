@@ -29,7 +29,7 @@ function HomeScreen(): React.JSX.Element {
     const [concatMovies, setConcatMovies] = useState<Movie2Base[]>([])
 
     const backgroundStyle = {
-        backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
+        backgroundColor: colors.blueDark
     }
     
     //* renderiza movies cada vez queu cambien los params (genre or page)
@@ -97,7 +97,7 @@ function HomeScreen(): React.JSX.Element {
             >
                 <View >
                     <Carousel movies={concatMovies?.slice(0, 5) ?? []}/>
-                    <Text style={{position: 'relative', textAlign: 'center', fontSize: 40, fontWeight: 'bold'}}>TOP 5</Text>
+                    <Text style={{position: 'relative', textAlign: 'center', fontSize: 40, fontWeight: 'bold', color: colors.white}}>TOP 5</Text>
                 </View>
                 <View style={styles.stickyButton}>
                     <TouchableOpacity onPress={toggleModal}>                    

@@ -22,13 +22,17 @@ export const logout = async({id} : {id: string}) => {
             throw new Error('No se pudo encontrar el token de autenticación')
         }
 
-        await fetch(`URI/${id}`,{   
+        const response = await fetch(`URI/${id}`,{   
             method: 'PUT',         
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         })
+        if(response.status === 200){
+            return response
+        }
+
     }catch{
         throw new Error('Error Loging Out')
     }
