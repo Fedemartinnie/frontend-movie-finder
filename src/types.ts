@@ -47,7 +47,7 @@ export interface FullMovie2 {
     cast: Cast[];
     images: Images;
     overallRating: number,
-    rating: number,
+    ratingsCount: number,
     trailer: string[]
 }
 

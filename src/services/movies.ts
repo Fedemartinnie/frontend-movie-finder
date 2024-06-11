@@ -89,7 +89,7 @@ export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null
             throw new Error()
         }
         const movies = await response.json()
-
+        console.log(movies)
         return movies
     } catch (e) {
         throw new Error('Error opening Movie data')

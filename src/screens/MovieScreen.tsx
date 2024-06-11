@@ -16,6 +16,7 @@ import { Year } from '../assets/year'
 import { Genre } from '../assets/genre'
 import { Time } from '../assets/time'
 import { ShareSvg } from '../assets/share'
+import { AddFav } from '../assets/addFav'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
 import { Actors, Details, Sinopsis } from '../components/movieInfo'
@@ -38,7 +39,21 @@ export const MovieScreen: React.FC = () => {
     const actualTrailerNumber = useRef<number>(0)
     const [trailerId, setTrailerId] = useState<string | undefined>(movie.trailer[actualTrailerNumber.current])
     const directors = Array.from(new Set(movie.director))
+    // const [isFavorite, setIsFavorite] = useState<boolean>(false)
 
+    // useEffect(() => {
+    //     const checkFavorite = async() => {
+    //         const favoriteMovies = await getFavorites()
+
+    //         if(favoriteMovies.some((favMovie: Favorite) => favMovie.movieId === movie._id)){
+    //             setIsFavorite(true)
+    //         }
+    //         else{
+    //             setIsFavorite(false)
+    //         }
+    //     }
+    //     checkFavorite()
+    // },[])
 
     //* SHARE
     const handleShare = async () => {
@@ -134,6 +149,7 @@ export const MovieScreen: React.FC = () => {
                         <Text style={styles.subtitle}>{subtitle}</Text>
                     )}             
                     <Text style={styles.rating}><Star/>   {movie.overallRating}</Text>
+                    <Text style={styles.ratingsCount}>(votos: {movie.ratingsCount})</Text>
                     <View style={styles.microDetails}>
                         <Text style={styles.menuInfo}><Year/>  {movie.releaseYear}  -    </Text>
                         <Text style={styles.menuInfo}><Time/>  {movie.duration} min.   -   </Text>
@@ -145,9 +161,11 @@ export const MovieScreen: React.FC = () => {
                     <TouchableOpacity onPress={handleTrailer}>
                         <Trailer/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleFavorite}>                    
+                    <TouchableOpacity onPress={handleFavorite}>
+                        {/* {isFavorite ? <AddFav /> : <HeartFav />} */}
                         <HeartFav/>
                     </TouchableOpacity>
+                    
                     <TouchableOpacity onPress={handleShare}>
                         <ShareSvg/>
                     </TouchableOpacity>
@@ -248,18 +266,23 @@ const styles= StyleSheet.create({
     },
     subtitle: {
         fontSize: 22,
+        color: colors.white
     },
     rating: {
-        padding: 25,
+        paddingTop: 25,
         fontSize: 25,
+        color: colors.white
+    },
+    ratingsCount:{
+        paddingBottom: 25,
+        fontSize: 16,
+        color: colors.white
     },
     microDetails: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingBottom: 20
+        paddingBottom: 20,        
     },
-
-
     interactions: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -282,32 +305,32 @@ const styles= StyleSheet.create({
         paddingTop: 0,
         paddingBottom: 0,     
         width: '100%',
-        color: colors.white
+        color: colors.white,
+        borderColor: colors.white,
+        borderWidth: 2,
     },
     items:{
         justifyContent: 'center',
-        fontSize: 19,
-        borderColor: '#EDE3E3',
+        fontSize: 19,        
         padding: 10,
-        // borderRightWidth: 1,
-        borderBottomWidth:2,
         width: '100%',
-        paddingHorizontal: '7%', 
+        paddingHorizontal: '7%',
         textAlign: 'center',
         color: colors.white
     },
     selectedItem:{
         justifyContent: 'center',
         fontSize: 19,
-        backgroundColor: '#EDE3E3',
+        backgroundColor: colors.white,
         color: colors.blueDark,
         padding: 10,
         borderRightWidth: 2,
         borderBottomWidth:2,
-        borderColor: '#EDE3E3',
+        borderColor: colors.white,
         paddingHorizontal: '7%',
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold'
     },
     menuInfo:{
         color: colors.white,

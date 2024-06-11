@@ -1,13 +1,8 @@
 import React from 'react'
-import Svg, { Line, Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg'
 
-export const addFav = () => (
-    <Svg aria-label="Nueva publicación" color='#f9f9f9' fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
-        <Path d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-        </Path>
-        <Line fill="none" stroke="#f9f9f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="6.545" x2="17.455" y1="12.001" y2="12.001">
-        </Line>
-        <Line fill="none" stroke="#f9f9f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.003" x2="12.003" y1="6.545" y2="17.455">
-        </Line>
+export const AddFav = () => (
+    <Svg width="29" height="26" viewBox="0 0 29 26" fill="none">
+        <Path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 3.95886C11.8009 0.807134 7.29066 -0.166886 3.90885 2.71915C0.527019 5.60519 0.0509037 10.4305 2.70667 13.8438C4.91476 16.6817 11.5972 22.6672 13.7874 24.6045C14.0323 24.8213 14.1549 24.9296 14.2978 24.9722C14.4225 25.0093 14.559 25.0093 14.6838 24.9722C14.8267 24.9296 14.9491 24.8213 15.1942 24.6045C17.3844 22.6672 24.0667 16.6817 26.2749 13.8438C28.9306 10.4305 28.5126 5.57483 25.0726 2.71915C21.6327 -0.136526 17.1991 0.807134 14.5 3.95886Z" fill="#FE4040" stroke="#052539" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </Svg>
 )
