@@ -135,9 +135,9 @@ export const MovieScreen: React.FC = () => {
                     )}             
                     <Text style={styles.rating}><Star/>   {movie.overallRating}</Text>
                     <View style={styles.microDetails}>
-                        <Text><Year/>  {movie.releaseYear}  -    </Text>
-                        <Text><Time/>  {movie.duration} min.   -   </Text>
-                        <Text><Genre/>  {movie.genres[0]}</Text>
+                        <Text style={styles.menuInfo}><Year/>  {movie.releaseYear}  -    </Text>
+                        <Text style={styles.menuInfo}><Time/>  {movie.duration} min.   -   </Text>
+                        <Text style={styles.menuInfo}><Genre/>  {movie.genres[0]}</Text>
                     </View>
                 </View>
 
@@ -309,16 +309,10 @@ const styles= StyleSheet.create({
         width: '100%',
         textAlign: 'center'
     },
-    // detailsInfo: {
-    //     fontSize: 20, 
-    //     paddingTop: 20,
-    //     paddingBottom: 20,
-    //     // paddingHorizontal: '7%', 
-    //     marginHorizontal: '5%', 
-    //     borderColor: '#EDE3E3', 
-    //     // borderWidth: 2,
-    //     // marginBottom: 60,
-    // },
+    menuInfo:{
+        color: colors.white,
+        fontSize: 15
+    },
     navbar: {
         flex: 1,
         justifyContent: 'flex-end'

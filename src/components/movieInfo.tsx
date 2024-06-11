@@ -23,7 +23,7 @@ export function Details({movie}: {movie: FullMovie2}) {
                 <View style={{flexDirection: 'row', paddingLeft: 15, paddingBottom: 25}}>
                     {movie.genres.map ((genre, index) => 
                         <View key={index}>
-                            <Text style={{fontSize: 15}}>{genre}, </Text>
+                            <Text style={{fontSize: 15, color: colors.white}}>{genre}, </Text>
                         </View>
                     )}
                 </View>
@@ -92,7 +92,7 @@ export function Actors({ actors, directors }: Props) {
                             style={styles.actorImage}
                             accessibilityLabel={actor.name}  // Replacing `alt` with `accessibilityLabel`
                         />
-                        <Text>{actor.name}</Text>
+                        <Text style={styles.actorName}>{actor.name}</Text>
                     </View>
                 ))}
             </View>
@@ -108,14 +108,13 @@ export function Actors({ actors, directors }: Props) {
                             style={styles.actorImage}
                             accessibilityLabel={director.name}  // Replacing `alt` with `accessibilityLabel`
                         />
-                        <Text>{director.name}</Text>
+                        <Text style={styles.actorName}>{director.name}</Text>
                     </View>
                 ))}
             </View>
         </View>
     )
 }
-
 
 
 
@@ -144,4 +143,7 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
     },
+    actorName: {
+        color: colors.white
+    }
 })
