@@ -20,7 +20,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
 import { Actors, Details, Sinopsis } from '../components/movieInfo'
 import YoutubePlayer from 'react-native-youtube-iframe'
-import {addFavorite, removeFavorite, getFavorites} from '../services/movies'
+import {addFavorite, removeFavorite, getFavorites} from '../services/favorites'
 
 
 
@@ -37,7 +37,7 @@ export const MovieScreen: React.FC = () => {
     const items = ['Sinópsis', 'Actores', 'Detalles']
     const [showTrailer, setShowTrailer] = useState<boolean>(false)
     const actualTrailerNumber = useRef<number>(0)
-    const [trailerId, setTrailerId] = useState<string>(movie.trailer[actualTrailerNumber.current])
+    const [trailerId, setTrailerId] = useState<string | undefined>(movie.trailer[actualTrailerNumber.current])
 
     const directors = Array.from(new Set(movie.director))
 
@@ -45,6 +45,7 @@ export const MovieScreen: React.FC = () => {
         console.log(movie.trailer)
     })
 
+    //* SHARE
     const handleShare = async () => {
         try{
             //const currentURL = await Linking.getInitialURL()
@@ -61,34 +62,45 @@ export const MovieScreen: React.FC = () => {
         setSelectedItem(item)
     }
 
-
+    //* TRAILER VIDEOS
     const handleTrailer = () => {
-        setShowTrailer(true)
-        console.log('showtrailer? ',showTrailer)
+        console.log('trailers : \n',movie.trailer.length)
+        console.log('\n----------------------------------------------------------------\nTrailerId --> \n', trailerId)
+        if(movie.trailer.length > 0){
+            setShowTrailer(true)
+            console.log('showtrailer? ',showTrailer)
+        }
+        else {
+            Alert.alert('No hay trailers disponibles')
+        }
     }
 
     //* inrementa indice para pasar al siguiente trailer
-    const handleNextVideo = () => {
+    const handleNextVideo = () => {        
         actualTrailerNumber.current = actualTrailerNumber.current + 1
         if(actualTrailerNumber.current === movie.trailer.length){
             actualTrailerNumber.current = 0
-        }
-        setTrailerId(movie.trailer[actualTrailerNumber.current])
+        }        
+        setTrailerId(movie.trailer[actualTrailerNumber.current])        
     }
 
     //* FAVORITES ----> ADD - REMOVE - GET ALL
     const handleFavorite = async() => {
-        const favorites: Favorite[] = await getFavorites() //* obtener user favs --> exists ? remove : add
-        const isFavorite = favorites.some(favorite => favorite.movieId === movie._id)
         try{
-            if(isFavorite){
-                await removeFavorite(movie._id)
-                Alert.alert('se eliminó la película de la lista de favoritos')
-            }
-            else{
-                await addFavorite(movie._id, movie.images.posters[0])
+            
+            console.log('AGREGAR A FAVORITOS: \n')
+            console.log(movie)
+            const response = await addFavorite(movie._id, movie.images.posters[0])
+            const json = await response.json()
+            console.log(json)
+            if (response.status === 201) {
                 Alert.alert('Se agregó la película a la lista de favoritos')
-            }
+            } else if (response.status === 409) {
+                const responseRemove = await removeFavorite(movie._id)
+                if (responseRemove.status === 200){
+                    Alert.alert('Se eliminó la película de la lista de favoritos')
+                }
+            } 
         }catch{
             Alert.alert('Ocurrió un error al actualizar la lista de favoritos')
         }
@@ -99,7 +111,7 @@ export const MovieScreen: React.FC = () => {
         <View style={styles.container}>            
             <ScrollView>
                 <View>    
-                    {showTrailer 
+                    {showTrailer && movie.trailer.length > 0
                         ? (<View style={[styles.image]}>
                             <YoutubePlayer
                                 height={Dimensions.get('window').height}
@@ -231,10 +243,10 @@ const styles= StyleSheet.create({
         color: '#EDE3E3'
     },
     subtitle: {
-        fontSize: 18,
+        fontSize: 22,
     },
     rating: {
-        padding: 15,
+        padding: 25,
         fontSize: 25,
     },
     microDetails: {
@@ -271,7 +283,7 @@ const styles= StyleSheet.create({
         fontSize: 19,
         borderColor: '#EDE3E3',
         padding: 10,
-        borderRightWidth: 2,
+        // borderRightWidth: 1,
         borderBottomWidth:2,
         width: '100%',
         paddingHorizontal: '7%', 

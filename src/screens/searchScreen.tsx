@@ -6,15 +6,15 @@ import { SafeAreaView, ScrollView,
     from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import SearchBar from '../components/home/searcher'
-import NavBar from '../components/home/navBar.tsx'
-import { Movies } from '../components/home/movies.tsx'
-import { useMovies } from '../hooks/useMovies.tsx'
-import { useSearch } from '../hooks/useSearch.tsx'
-import { useScrollNavBar } from '../hooks/useNavBar.tsx'
-import { Movie2Base, SearchParams } from '../types.ts'
+import NavBar from '../components/home/navBar'
+import { Movies } from '../components/home/movies'
+import { useMovies } from '../hooks/useMovies'
+import { useSearch } from '../hooks/useSearch'
+import { useScrollNavBar } from '../hooks/useNavBar'
+import { Movie2Base, SearchParams } from '../types'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { SortAsc } from '../assets/sortAsc.tsx'
-import { SortDesc } from '../assets/sortDesc.tsx'
+import { SortAsc } from '../assets/sortAsc'
+import { SortDesc } from '../assets/sortDesc'
 
 interface ScrollEvent {
     layoutMeasurement: {
