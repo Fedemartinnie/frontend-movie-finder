@@ -169,6 +169,7 @@ const colors = {
     red: '#993333', 
     white: '#F2F2F2',
     blueDark: '#052539',
+    violet: '#3C0C79'
 }
 
 const styles = StyleSheet.create({    

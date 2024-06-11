@@ -24,7 +24,6 @@ import {addFavorite, removeFavorite, getFavorites} from '../services/favorites'
 
 
 
-
 type MovieScreenProps = RouteProp<{
     MovieScreen: { movie: FullMovie2 }
 }, 'MovieScreen'>
@@ -38,12 +37,8 @@ export const MovieScreen: React.FC = () => {
     const [showTrailer, setShowTrailer] = useState<boolean>(false)
     const actualTrailerNumber = useRef<number>(0)
     const [trailerId, setTrailerId] = useState<string | undefined>(movie.trailer[actualTrailerNumber.current])
-
     const directors = Array.from(new Set(movie.director))
 
-    useEffect(() => {
-        console.log(movie.trailer)
-    })
 
     //* SHARE
     const handleShare = async () => {
@@ -51,13 +46,14 @@ export const MovieScreen: React.FC = () => {
             //const currentURL = await Linking.getInitialURL()
             //if(currentURL){
             await Share.share({
-                message: `*Movie Finder*\nMira esta película: \n\n *${movie.title}* \n*Sinópsis:* ${movie.plot}`
+                message: `*Movie Finder*\nMira esta película: \n${movie.trailer[0]}\n *${movie.title}* \n*Sinópsis:* ${movie.plot}`
             })            
         }catch(error){
             console.log('Error Sharing: ', error)
         }
     }
 
+    //* SINOPSIS - CAST - DETAILS
     const handleSelectedItem = (item: string) => {
         setSelectedItem(item)
     }
@@ -204,6 +200,7 @@ const colors = {
     red: '#993333', 
     white: '#F2F2F2',
     blueDark: '#052539',
+    violet: '#3C0C79'
 }
 
 const styles= StyleSheet.create({

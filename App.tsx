@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { useNetInfo } from '@react-native-community/netinfo'
 // import SplashScreen from './src/screens/SplashScreen'
 import SplashScreen from './src/screens/splashScreen'
 import LoginScreen from './src/screens/loginScreen'
@@ -12,6 +13,8 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import requestNotificationPermission from './src/utils/requestNotificationPermission'
 import { FavsScreen } from './src/screens/FavsScreen'
 import { MovieScreen } from './src/screens/MovieScreen'
+import { NoConnectionScreen } from './src/screens/NoConnectionScreen'
+
 
 const Stack = createStackNavigator()
 
@@ -22,7 +25,7 @@ GoogleSignin.configure({
 })
 
 const App = () => {
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)    
 
     useEffect(() => {
         requestNotificationPermission() // Solicitar permisos de notificaciones
@@ -42,10 +45,22 @@ const App = () => {
 
 const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
     const { isLoggedIn } = useAuth()
+    const netInfo = useNetInfo()
+    const [isConnected, setIsConnected] = useState(netInfo.isConnected)
+    // const [isConnected, setIsConnected] = useState(true)
+
+
+    useEffect(() => {
+        setIsConnected(netInfo.isConnected)
+        console.log('netInfo: isConnected ??? --> \n',netInfo.isConnected)
+    }, [netInfo.isConnected])
+
 
     return (
         <Stack.Navigator>
-            {isLoading ? (
+            {!isConnected ? (
+                <Stack.Screen name="NoConnection" component={NoConnectionScreen} options={{ headerShown: false }} />
+            ) : isLoading ? (            
                 <Stack.Screen name="Splash" component={SplashScreen} />
             ) : isLoggedIn ? (
                 <>
