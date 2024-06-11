@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
         padding: 5,
         paddingHorizontal: 20,
         backgroundColor: '#3C0C79',
-        borderColor: 'white',
+        borderColor: colors.white,
         borderWidth: 2,
         borderRadius: 10,        
     },
@@ -239,6 +239,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         paddingTop: 10,
         paddingBottom: 10,
+        color: colors.white
     },
     sectionContainer: {
         marginTop: 32,

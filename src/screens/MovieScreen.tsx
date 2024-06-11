@@ -198,6 +198,13 @@ export const MovieScreen: React.FC = () => {
 }
 
 
+const colors = {
+    black: '#282828',
+    blue: '#336699', 
+    red: '#993333', 
+    white: '#F2F2F2',
+    blueDark: '#052539',
+}
 
 const styles= StyleSheet.create({
     modal: {
@@ -221,7 +228,7 @@ const styles= StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#052539'
+        backgroundColor: colors.blueDark
     },    
     image: {
         width: '100%',
@@ -232,7 +239,7 @@ const styles= StyleSheet.create({
         flexDirection: 'column',      
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#052539',
+        backgroundColor: colors.blueDark,
         paddingBottom: 20
     },
     title: {
@@ -269,14 +276,16 @@ const styles= StyleSheet.create({
         borderColor: '#EDE3E3',
         margin: '5%',
         marginBottom: 60,
-        width: '90%'
+        width: '90%',
+        color: colors.white
     },
     details:{
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingTop: 0,
         paddingBottom: 0,     
-        width: '100%' 
+        width: '100%',
+        color: colors.white
     },
     items:{
         justifyContent: 'center',
@@ -287,13 +296,14 @@ const styles= StyleSheet.create({
         borderBottomWidth:2,
         width: '100%',
         paddingHorizontal: '7%', 
-        textAlign: 'center'
+        textAlign: 'center',
+        color: colors.white
     },
     selectedItem:{
         justifyContent: 'center',
         fontSize: 19,
         backgroundColor: '#EDE3E3',
-        color: 'black',
+        color: colors.blueDark,
         padding: 10,
         borderRightWidth: 2,
         borderBottomWidth:2,

@@ -1,4 +1,4 @@
-import { SearchParams, FullMovie2, Movie2Base, Favorite } from '../types'
+import { Favorite } from '../types'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 interface Config {

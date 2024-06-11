@@ -2,6 +2,13 @@ import React from 'react'
 import { View, Image, Text, StyleSheet } from 'react-native'
 import { Cast, Director, FullMovie2 } from '../types'
 
+const colors = {
+    black: '#282828',
+    blue: '#336699', 
+    red: '#993333', 
+    white: '#F2F2F2',
+    blueDark: '#052539',
+}
 
 //* Details
 export function Details({movie}: {movie: FullMovie2}) {
@@ -30,12 +37,14 @@ const detailsStyles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         paddingTop: 15,
-        paddingLeft: 15
+        paddingLeft: 15,
+        color: colors.white
     },
     text:{
         fontSize: 15,
         paddingLeft: 15,
         paddingBottom: 15,
+        color: colors.white
     }
 })
 
@@ -53,9 +62,11 @@ const plotStyle = StyleSheet.create({
     plot: {
         padding: 15,
         paddingHorizontal: 25,
+        color: colors.white
     },
     plotText: {
         fontSize: 19,
+        color: colors.white
 
     }
 })
@@ -105,13 +116,18 @@ export function Actors({ actors, directors }: Props) {
     )
 }
 
+
+
+
 const styles = StyleSheet.create({
     title:{
-        padding: 20,        
+        padding: 20,  
+        color: colors.white      
     },
     titleText:{
         fontSize: 20,
         fontWeight:'bold',
+        color: colors.white
     },
     actorContainer: {
         flex : 1,
