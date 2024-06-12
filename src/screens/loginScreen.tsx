@@ -6,7 +6,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// const URI = 'http://192.168.0.73a:8000' //! ip fede
+//const URI = 'http://192.168.0.73:8000' //! ip fede
 // const URI = 'http://192.168.1.6:8000'     //!jere
 const URI = 'http://18.221.46.103:8000' //* AWS ip
 
