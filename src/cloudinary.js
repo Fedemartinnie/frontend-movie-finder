@@ -1,0 +1,5 @@
+const CLOUDINARY_URL='cloudinary://187851378689789:y4TsRDQJeWiYxY1Sxd5cJx-iz40@ddy10tgci'
+const apikey = '187851378689789'
+const secretkey = 'y4TsRDQJeWiYxY1Sxd5cJx-iz40'
+const cloudname = 'ddy10tgci'
+const uploadir = 'imagenes/'

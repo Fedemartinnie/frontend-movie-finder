@@ -84,7 +84,7 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file("./movie-finder.keystore")
+            storeFile file("movie-finder.keystore")
             storePassword "123456789"
             keyAlias "movie-finder-pro"
             keyPassword "123456789"

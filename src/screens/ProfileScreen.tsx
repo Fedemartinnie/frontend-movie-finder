@@ -5,58 +5,71 @@ import { CamAvatar } from '../assets/camAvatar'
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { EditProfile } from '../assets/lapiz'
 import { Asset, CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker'
-import { getUser } from '../services/users'
+import { getUser, updateUser } from '../services/users'
+import { User } from '../types'
+import { RouteProp, useRoute } from '@react-navigation/native'
+
+type ProfileScreenProp = RouteProp<{
+    ProfileScreen: { user: User }
+}, 'ProfileScreen'>
 
 function ProfileScreen(): React.JSX.Element {
+    const route = useRoute<ProfileScreenProp>()
+    const {user} = route.params
     const[edit, setEdit] = useState<boolean>(false)
-    const [firstName, setFirstName] = useState('María José')
-    const [lastName, setLastName] = useState('Diaz')
-    const [email, setEmail] = useState<string>('DiazCapo91@gmail.com')
-    const [nickname, setNickname] = useState<string>('Diaz Capo')
+    const [firstName, setFirstName] = useState(user.name)
+    const [lastName, setLastName] = useState(user.lastname)
+    const [email, setEmail] = useState(user.email)
+    const [splitEmail, ...rest] = user.email.split('@')
+    const [nickname, setNickname] = useState(user.nickname ? (user.nickname) : (splitEmail))
     const [image, setImage] = useState<string | undefined>(undefined)
-    // const [nickname, setNickname] = useState<string>({user.nickname})
-    // const [firstName, setFirstName] = useState({user.name})
-    // const [lastName, setLastName] = useState({user.lastname})
-    // const [email, setEmail] = useState<string>({user.email})
-    const previousFirst = useRef(firstName)
-    const previousLast = useRef(lastName)
-    const previousNick = useRef(nickname)
+    const previousFirst = useRef<string>(user.name)
+    const previousLast = useRef<string>(user.lastname)
+    const previousNick = useRef<string>(user.nickname ? (user.nickname) : (splitEmail))
+    const [error, setError] = useState<boolean>(false)
+    const hasNumberOrSymbol = (str: string) => /[0-9!@#$%^&*(),.?":{}|<>]/g.test(str)
 
-
-    useEffect(() => {
-        const userData = async() => {
-            try{
-
-                const user = await getUser()
-                console.log(user)
-            }catch{
-                throw new Error('error al buscar user')
-            }
-        }
-        userData()
-    },[])
-
-    const handleEdit = () => {
-        previousFirst.current = firstName
-        previousLast.current = lastName
-        previousNick.current = nickname
+    
+    //* ACTUALIZA EDICION CON CADA TIPEO
+    const handleEdit = () => { 
+        previousFirst.current = user?.name
+        previousLast.current = user?.lastname
+        previousNick.current = user?.nickname
         setEdit(!edit)
     }
 
+    //* CANCELA LA EDICION REALIZADA
     const handleCancel = () => {
         setFirstName(previousFirst.current)
         setLastName(previousLast.current)
-        setNickname(previousNick.current)        
+        setNickname(previousNick.current)
         setEdit(false)
     }
 
     //!!!TODO
-    const handleSubmit = () => {       
-        previousFirst.current = firstName
-        previousLast.current = lastName
-        previousNick.current = nickname 
-        //TODO hacer llamado service para actualizar datos en db
-        setEdit(false)
+    //* ACTUALIZA USUARIO --> PERSISTE EN DB + MANEJO ERROR SI ES NULL
+    const handleSubmit = async() => {  
+        if(firstName === '' || lastName === '' || nickname === '' || hasNumberOrSymbol(firstName) || 
+        hasNumberOrSymbol(lastName)){
+            setError(true)
+            console.log('no se permite campo vacio')
+            return
+        }
+        else{
+            previousFirst.current = firstName
+            previousLast.current = lastName
+            previousNick.current = nickname 
+            //! envío los datos del user con los cambios que necesito pero no persiste en la bd
+            const newUser = {
+                ...user,
+                name: previousFirst.current,
+                lastname: previousLast.current,
+                nickname: previousNick.current,
+            }
+            await updateUser(newUser)
+            setError(false)
+            setEdit(false)
+        }
     }
 
     //* seleccionar camara o galeria para la foto 
@@ -121,6 +134,10 @@ function ProfileScreen(): React.JSX.Element {
         }    
     }
 
+
+    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/ddy10tgci/image/upload'
+    const UPLOAD_PRESET = 'y4skh10n'
+
     const uploadImageToCloudinary = async (imageUri: string | undefined) => {
         const data = new FormData()
         data.append('file', {
@@ -128,8 +145,28 @@ function ProfileScreen(): React.JSX.Element {
             type: 'image/jpeg', // or 'image/png'
             name: 'upload.jpg',
         })
-        data.append('upload_preset', 'YOUR_UPLOAD_PRESET') // Replace with your upload preset
-        data.append('cloud_name', 'YOUR_CLOUD_NAME')
+        data.append('upload_preset', UPLOAD_PRESET) // Replace with your upload preset
+        data.append('cloud_name', 'ddy10tgci')
+        console.log('ingresando a cloudinary ----> ',data)
+        try {
+            const response = await fetch(CLOUDINARY_URL, {
+                method: 'POST',
+                body: data,
+            })
+            const result = await response.json()
+            console.log('RESULTADO CLOUDINARY: ----------------> \n',result.url)
+            setImage(result.url)
+            const newUser = {
+                ...user,
+                profileImage: result.url 
+            }
+            console.log('NEW USER -----> ', newUser)
+            await updateUser(newUser)
+            return result.secure_url
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            throw error
+        }
     }
 
 
@@ -170,7 +207,7 @@ function ProfileScreen(): React.JSX.Element {
                         : (
                             <View style={[styles.userInfo, {marginLeft: '5%'}]}>
                                 <TextInput 
-                                    style={[styles.userName, {backgroundColor: colors.white,borderRadius: 5, color: colors.red, padding: 0}]}
+                                    style={[styles.userName, {backgroundColor: colors.white,borderRadius: 5, color: colors.red, padding: 0, borderColor: colors.red, borderWidth: error ? 1 : 0}]}
                                     value={nickname}
                                     onChangeText={setNickname}
                                 />
@@ -194,13 +231,13 @@ function ProfileScreen(): React.JSX.Element {
                         )
                         : (<View >
                             <TextInput 
-                                style={[styles.optionTextInput, {backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10}]}
+                                style={[styles.optionTextInput, {backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10, borderColor: colors.red, borderWidth: error ? 1 : 0}]}
                                 value={firstName}
                                 onChangeText={setFirstName}                            
                             />
                             
                             <TextInput 
-                                style={[styles.optionTextInput, {backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10}]}
+                                style={[styles.optionTextInput, {backgroundColor:colors.white, color: colors.red, padding: 0, paddingHorizontal: 10, borderColor: colors.red, borderWidth: error ? 1 : 0}]}
                                 value={lastName}
                                 onChangeText={setLastName}                                
                             />                            

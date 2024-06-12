@@ -58,50 +58,51 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
 
     return (
         <Stack.Navigator>
-            {!isConnected ? (
+            {isLoading ? (            
+                <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
+            ) : !isConnected ? (
                 <Stack.Screen name="NoConnection" component={NoConnectionScreen} options={{ headerShown: false }} />
-            ) : isLoading ? (            
-                <Stack.Screen name="Splash" component={SplashScreen} />
-            ) : isLoggedIn ? (
-                <>
-                    <Stack.Screen
-                        name='Home'
-                        component={HomeScreen}
-                        options={{
-                            title: 'Home',
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name='Search'
-                        component={SearchScreen}
-                        options={{
-                            title: 'Search',
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name='Profile'
-                        component={ProfileScreen}
-                        options={{ title: 'Profile' }}
-                    />
-                    <Stack.Screen
-                        name='Favs'
-                        component={FavsScreen}
-                        options={{ title: 'Favs' }}
-                    />
-                    <Stack.Screen
-                        name='MovieScreen'
-                        component={MovieScreen}
-                        options={{
-                            title: 'Movie',
-                            headerShown: false
-                        }}
-                    />
-                </>
-            ) : (
-                <Stack.Screen name="Login" component={LoginScreen} />
-            )}
+            )
+                : isLoggedIn ? (
+                    <>
+                        <Stack.Screen
+                            name='Home'
+                            component={HomeScreen}
+                            options={{
+                                title: 'Home',
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name='Search'
+                            component={SearchScreen}
+                            options={{
+                                title: 'Search',
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name='Profile'
+                            component={ProfileScreen}
+                            options={{ title: 'Profile' }}
+                        />
+                        <Stack.Screen
+                            name='Favs'
+                            component={FavsScreen}
+                            options={{ title: 'Favs' }}
+                        />
+                        <Stack.Screen
+                            name='MovieScreen'
+                            component={MovieScreen}
+                            options={{
+                                title: 'Movie',
+                                headerShown: false
+                            }}
+                        />
+                    </>
+                ) : (
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                )}
         </Stack.Navigator>
     )
 }

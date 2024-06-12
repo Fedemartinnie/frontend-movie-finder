@@ -9,7 +9,8 @@ export interface InputRefProps {
 export type RootStackParamList = {
     Home: undefined
     Search: undefined
-    Profile: undefined
+    // Profile: undefined
+    Profile: {user: User | null}
     Favs: undefined
     MovieScreen: {movie: FullMovie2 | null}
     Splash: undefined,
@@ -72,4 +73,15 @@ export type Favorite = {
     userdId: 'string',
     movieId: 'string',
     poster: 'string'
+}
+
+
+export interface User {
+    name: string;
+    lastname: string;
+    nickname: string; // Campo opcional
+    email: string;
+    profileImage?: string;
+    accessToken?: string;
+    refreshTokens?: string[];
 }
