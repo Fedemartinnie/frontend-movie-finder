@@ -84,6 +84,12 @@ android {
     }
     signingConfigs {
         debug {
+            storeFile file("./movie-finder.keystore")
+            storePassword "123456789"
+            keyAlias "movie-finder-pro"
+            keyPassword "123456789"
+        }
+        release {
             storeFile file("movie-finder.keystore")
             storePassword "123456789"
             keyAlias "movie-finder-pro"
@@ -97,7 +103,8 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
