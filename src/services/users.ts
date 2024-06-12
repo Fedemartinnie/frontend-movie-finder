@@ -8,9 +8,9 @@ interface Config {
     // Agrega otras propiedades relevantes según sea necesario
 }
 
-const URI = 'http://192.168.0.73:8000' //! ip fede
+// const URI = 'http://192.168.0.73:8000' //! ip fede
 // const URI = 'http://192.168.1.6:8000'     //! ip jere
-// const URI = 'http://18.118.165.190:8000' //* AWS ip
+const URI = 'http://18.221.46.103:8000' //* AWS ip
 
 //TODO
 //* users Service
@@ -56,5 +56,28 @@ export const deleteAccount = async({id} : {id: string}) => {
         })
     }catch{
         throw new Error('Error Loging Out')
+    }
+}
+
+
+export const getUser = async() => {
+    try{
+        const token = await AsyncStorage.getItem('authToken')
+        
+        if (!token) {
+            throw new Error('No se pudo encontrar el token de autenticación')
+        }
+
+        const response = await fetch(`${URI}/users`,{
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        const user = await response.json()
+        return user
+
+    }catch{
+        throw new Error('error al obtener datos del usuario')
     }
 }

@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import NavBar from '../components/home/navBar'
 import { CamAvatar } from '../assets/camAvatar'
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { EditProfile } from '../assets/lapiz'
 import { Asset, CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker'
-
+import { getUser } from '../services/users'
 
 function ProfileScreen(): React.JSX.Element {
     const[edit, setEdit] = useState<boolean>(false)
@@ -22,6 +22,19 @@ function ProfileScreen(): React.JSX.Element {
     const previousLast = useRef(lastName)
     const previousNick = useRef(nickname)
 
+
+    useEffect(() => {
+        const userData = async() => {
+            try{
+
+                const user = await getUser()
+                console.log(user)
+            }catch{
+                throw new Error('error al buscar user')
+            }
+        }
+        userData()
+    },[])
 
     const handleEdit = () => {
         previousFirst.current = firstName
