@@ -45,7 +45,7 @@ export function SearchScreen(): React.JSX.Element {
     const [moviesConcat, setMoviesConcat] = useState<Movie2Base[]>([])
     
     const backgroundStyle = {
-        backgroundColor: isDarkMode ? colors.blueDark : Colors.lighter,
+        backgroundColor: colors.blueDark
     }
 
     //* get movies onPress Search
