@@ -84,12 +84,28 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
                         <Stack.Screen
                             name='Profile'
                             component={ProfileScreen}
-                            options={{ title: 'Profile' }}
+                            options={{ title: 'Profile',
+                                headerStyle: {
+                                    backgroundColor: '#3C0C79', // Color de fondo del header
+                                },
+                                headerTintColor: '#fff', // Color del título y de los íconos del header
+                                headerTitleStyle: {
+                                    fontWeight: 'bold', // Ejemplo de estilo adicional para el título
+                                },
+                            }}
                         />
                         <Stack.Screen
                             name='Favs'
                             component={FavsScreen}
-                            options={{ title: 'Favs' }}
+                            options={{ title: 'Favs',
+                                headerStyle: {
+                                    backgroundColor: '#3C0C79', // Color de fondo del header
+                                },
+                                headerTintColor: '#fff', // Color del título y de los íconos del header
+                                headerTitleStyle: {
+                                    fontWeight: 'bold', // Ejemplo de estilo adicional para el título
+                                },
+                            }}
                         />
                         <Stack.Screen
                             name='MovieScreen'
@@ -101,7 +117,10 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
                         />
                     </>
                 ) : (
-                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen 
+                        name="Login" 
+                        component={LoginScreen} 
+                        options={{headerShown: false}} />
                 )}
         </Stack.Navigator>
     )

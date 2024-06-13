@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, TextInput, Button, Text, 
-    StyleSheet, KeyboardAvoidingView,}
+import { View, TextInput, Text, 
+    StyleSheet, KeyboardAvoidingView,
+    TouchableOpacity,}
     //NativeSyntheticEvent,
     //TextInputKeyPressEventData} 
     from 'react-native'
@@ -17,6 +18,9 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({onSearch}) => {
     const { search, updateSearch, error } = useSearch()
     
+    const handleClear = () =>{
+        updateSearch('')
+    }
 
     const handleChange = (text: string) => {
         updateSearch(text)
@@ -38,14 +42,18 @@ const SearchBar: React.FC<SearchBarProps> = ({onSearch}) => {
             <KeyboardAvoidingView style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
                 <TextInput
                     // ref={inputRef}
-                    style={{ flex: 1, height: 40, backgroundColor: colors.white , borderColor: error ? 'red' : 'grey', borderRadius: 10, borderWidth: 1,marginRight: 10, paddingHorizontal: 10, color: colors.black }}
+                    style={{ flex: 1, marginTop: 15, height: 60,paddingLeft: 30, backgroundColor: colors.white , borderColor: error ? 'red' : 'grey', borderRadius: 10, borderWidth: 1,marginRight: 10, paddingHorizontal: 10, color: colors.black }}
                     placeholder="Avengers, The Matrix, Shrek ..."
                     placeholderTextColor={colors.black}
                     value={search}
-                    onChangeText={handleChange}
-                    // onKeyPress={handleKeyPress}
+                    onChangeText={handleChange}                    
+                    onSubmitEditing={handleSearch}
                 />
-                <Button title="Search" onPress={handleSearch} />
+                {search.length > 0 && (
+                    <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
+                        <Text style={styles.clearButtonText}>x</Text>
+                    </TouchableOpacity>
+                )}
             </KeyboardAvoidingView>
             <View style={styles.sectionError}>
                 {error && <Text style={{color: colors.red}}>{error}</Text>}
@@ -66,7 +74,21 @@ const colors = {
 const styles = StyleSheet.create({
     sectionError:{
         alignItems: 'center'
-    }
+    },
+    clearButton: {
+        position: 'absolute',
+        right: 30,
+        top: 25,
+        height: 50,
+        width: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+    },
+    clearButtonText: {
+        color: 'grey',
+        fontSize: 38,
+    },
 })
 
 export default SearchBar

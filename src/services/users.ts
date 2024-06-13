@@ -6,15 +6,16 @@ interface Config {
     headers?: {
         [key: string]: string
     }
-    // Agrega otras propiedades relevantes según sea necesario
+    
 }
 
 // const URI = 'http://192.168.0.73:8000' //! ip fede
-// const URI = 'http://192.168.1.6:8000'     //! ip jere
+// const URI = 'http://192.168.1.6:8000' //! ip jere
 const URI = 'http://18.221.46.103:8000' //* AWS ip
 
 //TODO
-//* users Service
+//! users Service
+//* LOGOUT USER
 export const logout = async({id} : {id: string}) => {
     try {
         const token = await AsyncStorage.getItem('authToken')
@@ -39,15 +40,18 @@ export const logout = async({id} : {id: string}) => {
     }
 }
 
-
-export const deleteAccount = async({id} : {id: string}) => {
+//* DELETE ACCOUNT
+export const deleteAccount = async() => {
+    const id = '8875871348718238498' //! id del user
+    console.log('DELETING ACCOUNT -----------> ')
     try {
         const token = await AsyncStorage.getItem('authToken')
         
         if (!token) {
             throw new Error('No se pudo encontrar el token de autenticación')
         }
-
+        console.log('DELETING ACCOUNT -----------> ')
+        
         await fetch(`${URI}/${id}`,{
             method: 'DELETE',
             headers: {
@@ -55,12 +59,14 @@ export const deleteAccount = async({id} : {id: string}) => {
                 'Authorization': `Bearer ${token}`
             }
         })
+        console.log('DELETING ACCOUNT -----------> ')
+
     }catch{
         throw new Error('Error Loging Out')
     }
 }
 
-
+//* GET USER
 export const getUser = async() => {
     try{
         const token = await AsyncStorage.getItem('authToken')
@@ -83,6 +89,7 @@ export const getUser = async() => {
     }
 }
 
+//* UPDATE USER
 export const updateUser = async(user: User) => {
     console.log('profileImage service: -------> \n',user.profileImage)
     try{
@@ -98,7 +105,6 @@ export const updateUser = async(user: User) => {
                 'Authorization' : `Bearer ${token}`
             },
             body: JSON.stringify({
-                // _id,
                 accessToken, 
                 email, 
                 name, 

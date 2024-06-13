@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import NavBar from '../components/home/navBar'
 import { CamAvatar } from '../assets/camAvatar'
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { EditProfile } from '../assets/lapiz'
-import { Asset, CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker'
-import { getUser, updateUser } from '../services/users'
+import { CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker'
+import { deleteAccount, updateUser } from '../services/users'
 import { User } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 
@@ -22,7 +22,7 @@ function ProfileScreen(): React.JSX.Element {
     const [email, setEmail] = useState(user.email)
     const [splitEmail, ...rest] = user.email.split('@')
     const [nickname, setNickname] = useState(user.nickname ? (user.nickname) : (splitEmail))
-    const [image, setImage] = useState<string | undefined>(undefined)
+    const [image, setImage] = useState<string | undefined>(user.profileImage)
     const previousFirst = useRef<string>(user.name)
     const previousLast = useRef<string>(user.lastname)
     const previousNick = useRef<string>(user.nickname ? (user.nickname) : (splitEmail))
@@ -30,11 +30,12 @@ function ProfileScreen(): React.JSX.Element {
     const hasNumberOrSymbol = (str: string) => /[0-9!@#$%^&*(),.?":{}|<>]/g.test(str)
 
     
-    //* ACTUALIZA EDICION CON CADA TIPEO
+    //* ACTUALIZA DATOS DE PERFIL DURANTE EDICION
     const handleEdit = () => { 
-        previousFirst.current = user?.name
-        previousLast.current = user?.lastname
-        previousNick.current = user?.nickname
+        // previousFirst.current = user?.name
+        // previousLast.current = user?.lastname
+        // previousNick.current = user?.nickname
+        
         setEdit(!edit)
     }
 
@@ -59,6 +60,9 @@ function ProfileScreen(): React.JSX.Element {
             previousFirst.current = firstName
             previousLast.current = lastName
             previousNick.current = nickname 
+            setFirstName(previousFirst.current)
+            setLastName(previousLast.current)
+            setNickname(previousNick.current)
             //! envío los datos del user con los cambios que necesito pero no persiste en la bd
             const newUser = {
                 ...user,
@@ -72,7 +76,7 @@ function ProfileScreen(): React.JSX.Element {
         }
     }
 
-    //* seleccionar camara o galeria para la foto 
+    //* seleccionar camara o galeria para la foto
     const openPicker = () => {
         Alert.alert(            
             'Select Image',
@@ -94,7 +98,7 @@ function ProfileScreen(): React.JSX.Element {
             { cancelable: true }
         )
     }
-        
+    //* CAMERA
     const openCamera = () => {
         const options: CameraOptions = {
             mediaType: 'photo',
@@ -107,7 +111,7 @@ function ProfileScreen(): React.JSX.Element {
             handleResponse(response)
         })
     }
-
+    //* GALERIA
     const openGallery = () => {
         const options: ImageLibraryOptions = {
             mediaType: 'photo',
@@ -142,7 +146,7 @@ function ProfileScreen(): React.JSX.Element {
         const data = new FormData()
         data.append('file', {
             uri: imageUri,
-            type: 'image/jpeg', // or 'image/png'
+            type: 'image/jpeg',
             name: 'upload.jpg',
         })
         data.append('upload_preset', UPLOAD_PRESET) // Replace with your upload preset
@@ -169,6 +173,15 @@ function ProfileScreen(): React.JSX.Element {
         }
     }
 
+    //* ELIMINAR CUENTA
+    const handleDeleteAccount = async() => {
+        try{
+            await deleteAccount()
+        }
+        catch{
+            throw new Error
+        }
+    }
 
     return (
         <SafeAreaView style={styles.safeContainer}>
@@ -223,10 +236,7 @@ function ProfileScreen(): React.JSX.Element {
                     {!edit 
                         ? (<>
                             <Text style={styles.optionText}>{firstName}</Text>
-                            <Text style={styles.optionText}>{lastName}</Text>
-                            {/* <Text style={styles.optionText}>{user.name}</Text>
-                            <Text style={styles.optionText}>{user.lastname}</Text>
-                            */}                    
+                            <Text style={styles.optionText}>{lastName}</Text>                                                
                         </>
                         )
                         : (<View >
@@ -244,12 +254,11 @@ function ProfileScreen(): React.JSX.Element {
                         </View>
                         )                        
                     }
-                    <Text style={styles.optionText}>{email}</Text>
-                    {/* <Text style={styles.optionText}>{user.email}</Text>  */}
+                    <Text style={styles.optionText}>{email}</Text>                  
                     <TouchableWithoutFeedback>
                         <Text style={styles.optionText}>Cerrar Sesión</Text>
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={handleDeleteAccount}>
                         <Text style={styles.optionTextDanger}>Eliminar Cuenta</Text>
                     </TouchableWithoutFeedback>
                     

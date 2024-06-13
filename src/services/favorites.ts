@@ -14,8 +14,6 @@ const URI = 'http://18.221.46.103:8000' //* AWS ip
 
 
 //*TODO
-
-
 //* FAVORITES
 //* ADD
 export const addFavorite = async(movieId: string, poster: string) => { 
@@ -80,8 +78,9 @@ export const getFavorites = async(): Promise<Favorite[]> => {
         if (!response.ok) {
             throw new Error('No se pudo obtener la lista de favoritos')
         }
-        const json = await response.json()
-        const favorites = json.data
+        const favorites = await response.json()
+
+        console.log('favorites --------->\n',favorites)
         if(favorites){
             return favorites
         }

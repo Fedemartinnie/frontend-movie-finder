@@ -39,21 +39,22 @@ export const MovieScreen: React.FC = () => {
     const actualTrailerNumber = useRef<number>(0)
     const [trailerId, setTrailerId] = useState<string | undefined>(movie.trailer[actualTrailerNumber.current])
     const directors = Array.from(new Set(movie.director))
-    // const [isFavorite, setIsFavorite] = useState<boolean>(false)
+    const [isFavorite, setIsFavorite] = useState<boolean>(false)
 
-    // useEffect(() => {
-    //     const checkFavorite = async() => {
-    //         const favoriteMovies = await getFavorites()
-
-    //         if(favoriteMovies.some((favMovie: Favorite) => favMovie.movieId === movie._id)){
-    //             setIsFavorite(true)
-    //         }
-    //         else{
-    //             setIsFavorite(false)
-    //         }
-    //     }
-    //     checkFavorite()
-    // },[])
+    useEffect(() => {
+        const checkFavorite = async() => {
+            const favoriteMovies = await getFavorites()
+            if(favoriteMovies.some((favMovie: Favorite) => favMovie.movieId === movie._id)){
+                setIsFavorite(true)
+                console.log('ES UNA MOVIE FAVORITA')
+            }
+            else{
+                setIsFavorite(false)
+                console.log('NO ESTA INCLUIDA EN FAVS')
+            }
+        }
+        checkFavorite()
+    },[])
 
     //* SHARE
     const handleShare = async () => {
@@ -106,12 +107,14 @@ export const MovieScreen: React.FC = () => {
             console.log(json)
             if (response.status === 201) {
                 Alert.alert('Se agregó la película a la lista de favoritos')
+                setIsFavorite(true)
             } else if (response.status === 409) {
                 const responseRemove = await removeFavorite(movie._id)
                 if (responseRemove.status === 200){
                     Alert.alert('Se eliminó la película de la lista de favoritos')
+                    setIsFavorite(false)
                 }
-            } 
+            }             
         }catch{
             Alert.alert('Ocurrió un error al actualizar la lista de favoritos')
         }
@@ -162,8 +165,8 @@ export const MovieScreen: React.FC = () => {
                         <Trailer/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleFavorite}>
-                        {/* {isFavorite ? <AddFav /> : <HeartFav />} */}
-                        <HeartFav/>
+                        {isFavorite ? <AddFav /> : <HeartFav />}
+                        {/* <HeartFav/> */}
                     </TouchableOpacity>
                     
                     <TouchableOpacity onPress={handleShare}>
