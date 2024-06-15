@@ -6,6 +6,15 @@ import { useNavigation } from '@react-navigation/native'
 import { searchMovie } from '../../services/movies'
 import { ProfileScreenNavigationProp } from '../../types'
 
+//* COLORS
+const colors = {
+    black: '#282828',
+    blue: '#336699', 
+    red: '#993333', 
+    white: '#F2F2F2',
+    blueDark: '#052539',
+    violet: '#3C0C79'
+}
 
 //* With Results
 function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
@@ -56,7 +65,10 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
                     </TouchableOpacity>
                 ))
             ) : (
-                <ActivityIndicator size={200} color="#0000ff" />
+                <View style={{flexDirection: 'column', margin: 30}}>
+                    <Text style={{textAlign: 'center', marginBottom: 100}}>Cargando película...</Text>
+                    <ActivityIndicator size={200} color={colors.violet} />
+                </View>
             )}
         </View>
     )

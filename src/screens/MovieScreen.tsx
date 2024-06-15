@@ -28,15 +28,11 @@ type MovieScreenProps = RouteProp<{
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
     const { movie } = route.params
-    const { rotateValueHolder, selectedItem, isFavorite, setIsFavorite, showTrailer, setShowTrailer, trailerId, handleShare, handleSelectedItem, handleTrailer, handleNextVideo, handleFavorite } = useMovieScreen (movie)
+    const { scaleAnim, selectedItem, isFavorite, setIsFavorite, showTrailer, setShowTrailer, trailerId, handleShare, handleSelectedItem, handleTrailer, handleNextVideo, handleFavorite } = useMovieScreen (movie)
     const [title, subtitle] = movie.title.split(':')
     const items = ['Sinópsis', 'Actores', 'Detalles']
     const[isPressed, setIsPressed] = useState<boolean>(false)
 
-    const rotation = rotateValueHolder.interpolate({
-        inputRange: [-1, 0, 1],
-        outputRange: ['180deg', '0deg', '-180deg']
-    })
 
     //* GET ALL FAVS
     useEffect(() => {
@@ -105,8 +101,7 @@ export const MovieScreen: React.FC = () => {
                         <Trailer/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleFavorite}  onPressIn={onPressInHandler} onPressOut={onPressOutHandler}>
-                        {/* {(isFavorite || isPressed) ? <AddFav /> : <HeartFav />} */}
-                        <Animated.View style={{ transform: [{ rotate: rotation }] }}>
+                        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                             {isFavorite || isPressed ? <AddFav /> : <HeartFav />}
                         </Animated.View>
                     </TouchableOpacity>
@@ -210,7 +205,8 @@ const styles= StyleSheet.create({
     rating: {
         paddingTop: 25,
         fontSize: 25,
-        color: colors.white
+        color: colors.white,
+        fontWeight: 'bold'
     },
     ratingsCount:{
         paddingBottom: 25,
@@ -273,7 +269,7 @@ const styles= StyleSheet.create({
     },
     menuInfo:{
         color: colors.white,
-        fontSize: 15
+        fontSize: 15,
     },
     navbar: {
         flex: 1,

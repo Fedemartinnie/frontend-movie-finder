@@ -9,7 +9,7 @@ export default function useMovieScreen (movie : FullMovie2) {
     const actualTrailerNumber = useRef<number>(0)
     const [trailerId, setTrailerId] = useState<string | undefined>(movie.trailer[actualTrailerNumber.current])
     const [isFavorite, setIsFavorite] = useState<boolean>(false)
-    const rotateValueHolder = useRef(new Animated.Value(0)).current    
+    const scaleAnim = useRef(new Animated.Value(1)).current  // Comienza con el tamaño normal (escala 1)
     
 
     //* Effect to reset selectedItem when movie changes
@@ -20,6 +20,7 @@ export default function useMovieScreen (movie : FullMovie2) {
 
     //* SHARE
     const handleShare = async () => {
+        animateTransition()
         try{
             const currentURL = await Linking.getInitialURL()
             const message = currentURL 
@@ -62,6 +63,8 @@ export default function useMovieScreen (movie : FullMovie2) {
 
     //* FAVORITES ----> ADD - REMOVE - GET ALL
     const handleFavorite = async() => {
+        const movieImage = movie.images.posters.length > 0 ? movie.images.posters[0] : movie.title
+        
         try{            
             if(!isFavorite){
                 setIsFavorite(true)
@@ -70,7 +73,7 @@ export default function useMovieScreen (movie : FullMovie2) {
                 setIsFavorite(false)
                 animateTransition()
             }
-            const response = await addFavorite(movie._id, movie.images.posters[0])
+            const response = await addFavorite(movie._id, movieImage)
             if (response.status === 201) {
                 return
             } else if (response.status === 409) {
@@ -87,24 +90,24 @@ export default function useMovieScreen (movie : FullMovie2) {
         }
     }
 
+    //* TRANSITION BUTTON
     const animateTransition = () => {
-        Animated.timing(rotateValueHolder, {
-            toValue: 1,
-            duration: 150,
-            useNativeDriver: true
-        }).start(() => {
-            setIsFavorite(!isFavorite)
-            rotateValueHolder.setValue(-1)  // Inicia desde -90 grados
-            Animated.timing(rotateValueHolder, {
-                toValue: 0,
+        Animated.sequence([
+            Animated.timing(scaleAnim, {
+                toValue: 1.5,  // Aumenta la escala
                 duration: 150,
                 useNativeDriver: true
-            }).start()
-        })
+            }),
+            Animated.timing(scaleAnim, {
+                toValue: 1, // Vuelve al tamaño normal
+                duration: 150,
+                useNativeDriver: true
+            })
+        ]).start()
     }
 
     return {
-        rotateValueHolder,
+        scaleAnim,
         selectedItem,
         isFavorite,
         setIsFavorite,
