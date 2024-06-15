@@ -70,6 +70,7 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
                     <ActivityIndicator size={200} color={colors.violet} />
                 </View>
             )}
+            {placeholders}
         </View>
     )
 }
