@@ -55,7 +55,6 @@ export const Carousel: React.FC<CarouselProps> = ({ movies }) => {
 
     const handleImagePress = async(item: Movie2Base | string, index: number) => {
         if(typeof item === 'string' ){
-            // setSelectedImage(movies)
             setIsModalVisible(true)
         }
         else{
@@ -66,7 +65,6 @@ export const Carousel: React.FC<CarouselProps> = ({ movies }) => {
 
     const closeModal = () => {
         setIsModalVisible(false)
-        // setSelectedImage([])
     }
 
     return (

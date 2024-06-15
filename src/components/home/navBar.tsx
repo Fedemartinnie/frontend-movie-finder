@@ -47,13 +47,23 @@ const NavBar: React.FC = () => {
     )
 }
 
+const colors = {
+    black: '#282828',
+    blue: '#336699', 
+    red: '#993333', 
+    white: '#F2F2F2',
+    blueDark: '#052539',
+    violet: '#3C0C79'
+}
+
 const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
         height: 56,
-        backgroundColor: '#201E1E',                
+        backgroundColor: '#201E1E',              
+        // backgroundColor: colors.violet,              
         borderColor: '#F2F2F2',
         borderStyle: 'solid',
         borderTopWidth: 1, 

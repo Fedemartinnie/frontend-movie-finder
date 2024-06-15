@@ -22,6 +22,7 @@ import { CloseButton } from '../assets/closeButton'
 import { Actors, Details, Sinopsis } from '../components/movieInfo'
 import YoutubePlayer from 'react-native-youtube-iframe'
 import {addFavorite, removeFavorite, getFavorites} from '../services/favorites'
+import useMovieScreen from '../hooks/useMovieScreen'
 
 
 
@@ -32,94 +33,25 @@ type MovieScreenProps = RouteProp<{
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
     const { movie } = route.params
-    const [selectedItem, setSelectedItem] = useState<string>('Sinópsis')    
+    const { selectedItem, isFavorite, setIsFavorite, showTrailer, setShowTrailer, trailerId, handleShare, handleSelectedItem, handleTrailer, handleNextVideo, handleFavorite } = useMovieScreen (movie)
     const [title, subtitle] = movie.title.split(':')
     const items = ['Sinópsis', 'Actores', 'Detalles']
-    const [showTrailer, setShowTrailer] = useState<boolean>(false)
-    const actualTrailerNumber = useRef<number>(0)
-    const [trailerId, setTrailerId] = useState<string | undefined>(movie.trailer[actualTrailerNumber.current])
     const directors = Array.from(new Set(movie.director))
-    const [isFavorite, setIsFavorite] = useState<boolean>(false)
 
+    //* GET ALL FAVS
     useEffect(() => {
         const checkFavorite = async() => {
             const favoriteMovies = await getFavorites()
             if(favoriteMovies.some((favMovie: Favorite) => favMovie.movieId === movie._id)){
                 setIsFavorite(true)
-                console.log('ES UNA MOVIE FAVORITA')
             }
             else{
                 setIsFavorite(false)
-                console.log('NO ESTA INCLUIDA EN FAVS')
             }
         }
         checkFavorite()
     },[])
-
-    //* SHARE
-    const handleShare = async () => {
-        try{
-            //const currentURL = await Linking.getInitialURL()
-            //if(currentURL){
-            await Share.share({
-                message: `*Movie Finder*\nMira esta película: \n${movie.trailer[0]}\n *${movie.title}* \n*Sinópsis:* ${movie.plot}`
-            })            
-        }catch(error){
-            console.log('Error Sharing: ', error)
-        }
-    }
-
-    //* SINOPSIS - CAST - DETAILS
-    const handleSelectedItem = (item: string) => {
-        setSelectedItem(item)
-    }
-
-    //* TRAILER VIDEOS
-    const handleTrailer = () => {
-        console.log('trailers : \n',movie.trailer.length)
-        console.log('\n----------------------------------------------------------------\nTrailerId --> \n', trailerId)
-        if(movie.trailer.length > 0){
-            setShowTrailer(true)
-            console.log('showtrailer? ',showTrailer)
-        }
-        else {
-            Alert.alert('No hay trailers disponibles')
-        }
-    }
-
-    //* inrementa indice para pasar al siguiente trailer
-    const handleNextVideo = () => {        
-        actualTrailerNumber.current = actualTrailerNumber.current + 1
-        if(actualTrailerNumber.current === movie.trailer.length){
-            actualTrailerNumber.current = 0
-        }        
-        setTrailerId(movie.trailer[actualTrailerNumber.current])        
-    }
-
-    //* FAVORITES ----> ADD - REMOVE - GET ALL
-    const handleFavorite = async() => {
-        try{
-            
-            console.log('AGREGAR A FAVORITOS: \n')
-            console.log(movie)
-            const response = await addFavorite(movie._id, movie.images.posters[0])
-            const json = await response.json()
-            console.log(json)
-            if (response.status === 201) {
-                Alert.alert('Se agregó la película a la lista de favoritos')
-                setIsFavorite(true)
-            } else if (response.status === 409) {
-                const responseRemove = await removeFavorite(movie._id)
-                if (responseRemove.status === 200){
-                    Alert.alert('Se eliminó la película de la lista de favoritos')
-                    setIsFavorite(false)
-                }
-            }             
-        }catch{
-            Alert.alert('Ocurrió un error al actualizar la lista de favoritos')
-        }
-    }
-
+    
 
     return(
         <View style={styles.container}>            

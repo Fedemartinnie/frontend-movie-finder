@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { logout as logoutt } from '../services/users'
 
 interface AuthContextType {
     isLoggedIn: boolean
@@ -33,7 +34,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     const logout = async () => {
+        console.log('ASYNC STORAGE TOKEN --> \n',AsyncStorage.getItem('authToken'))
+        console.log('TOKEN --> \n',authToken)
+        await logoutt()
         await AsyncStorage.removeItem('authToken')
+        console.log('ASYNC STORAGE TOKEN --> \n',AsyncStorage.getItem('authToken'))
+
         setAuthToken(null)
         setIsLoggedIn(false)
     }

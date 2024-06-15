@@ -8,12 +8,15 @@ import { CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, 
 import { deleteAccount, updateUser } from '../services/users'
 import { User } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
+import { useAuth } from '../utils/authContext'
 
 type ProfileScreenProp = RouteProp<{
     ProfileScreen: { user: User }
 }, 'ProfileScreen'>
 
 function ProfileScreen(): React.JSX.Element {
+    // const { handleScreen } = useScrollNavBar()
+    const { logout } = useAuth()
     const route = useRoute<ProfileScreenProp>()
     const {user} = route.params
     const[edit, setEdit] = useState<boolean>(false)
@@ -32,15 +35,11 @@ function ProfileScreen(): React.JSX.Element {
     
     //* ACTUALIZA DATOS DE PERFIL DURANTE EDICION
     const handleEdit = () => { 
-        // previousFirst.current = user?.name
-        // previousLast.current = user?.lastname
-        // previousNick.current = user?.nickname
-        
         setEdit(!edit)
     }
 
     //* CANCELA LA EDICION REALIZADA
-    const handleCancel = () => {
+    const hancleCancelEdit = () => {
         setFirstName(previousFirst.current)
         setLastName(previousLast.current)
         setNickname(previousNick.current)
@@ -176,12 +175,17 @@ function ProfileScreen(): React.JSX.Element {
     //* ELIMINAR CUENTA
     const handleDeleteAccount = async() => {
         try{
-            await deleteAccount()
+            const response = await deleteAccount()
+            if (response.status === 200){
+                // handleScreen('LoginScreen')
+                logout()
+            }
         }
         catch{
             throw new Error
         }
     }
+
 
     return (
         <SafeAreaView style={styles.safeContainer}>
@@ -255,7 +259,7 @@ function ProfileScreen(): React.JSX.Element {
                         )                        
                     }
                     <Text style={styles.optionText}>{email}</Text>                  
-                    <TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={logout}>
                         <Text style={styles.optionText}>Cerrar Sesión</Text>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={handleDeleteAccount}>
@@ -266,7 +270,7 @@ function ProfileScreen(): React.JSX.Element {
                 {edit && (
                     //!* aca poner el button cancelar con space-between
                     <View style={styles.saveContainer}>
-                        <TouchableOpacity onPress={handleCancel}>
+                        <TouchableOpacity onPress={hancleCancelEdit}>
                             <Text style={styles.saveButton}>Cancelar</Text>
                         </TouchableOpacity>
 

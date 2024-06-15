@@ -1,32 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Animated, FlatList, Modal, SafeAreaView, StatusBar,
+import { Animated, Modal, SafeAreaView, StatusBar,
     StyleSheet, Text, TouchableOpacity, 
     useColorScheme, View, ScrollView,
     ActivityIndicator,
     NativeSyntheticEvent,
     NativeScrollEvent} 
     from 'react-native'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
 import NavBar from '../components/home/navBar.tsx'
 import { Movies } from '../components/home/movies.tsx'
 import { useMovies } from '../hooks/useMovies.tsx'
-import { useSearch } from '../hooks/useSearch.tsx'
 import { Carousel } from '../components/carrusel.tsx'
 import { useScrollNavBar } from '../hooks/useNavBar.tsx'
 import { Filter } from '../assets/filtrar.tsx'
 import { CloseButton } from '../assets/closeButton.tsx'
 import { HomeParams, Movie2Base } from '../types.ts'
+import useAnimatedHome from '../hooks/useAnimatedHome.tsx'
 
 function HomeScreen(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark'
-    const [params, setParams] = useState<HomeParams>({ sortByDate: -1 })
+    const [params, setParams] = useState<HomeParams>({ page: 1, sortByDate: -1 })
     const { movies, loading, getMovies } = useMovies({params})
     // const { panResponder, navbarTranslateY } = useScrollNavBar()
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
     const genres = ['Genres', 'Action', 'Animation', 'Adventure', 'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'History', 'Horror','Music','Mystery', 'Romance', 'Science Fiction', 'Thriller', 'War']
     const [genreType, setGenreType] = useState<string>('Genres')
     const pageRef = useRef<number>(1)
     const [concatMovies, setConcatMovies] = useState<Movie2Base[]>([])
+    const { rotation, isModalVisible, setIsModalVisible} = useAnimatedHome()    
 
     const backgroundStyle = {
         backgroundColor: colors.blueDark
@@ -68,7 +67,7 @@ function HomeScreen(): React.JSX.Element {
         toggleModal()
     }
 
-
+    //* INFINITE SCROLL
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent
         const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 50
@@ -150,12 +149,11 @@ function HomeScreen(): React.JSX.Element {
                             </TouchableOpacity>
                         ))}
                     </ScrollView>
-
-                    <View style={styles.closeButton}>
-                        <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                            <CloseButton/>
+                    <Animated.View style={[styles.closeButton, { transform: [{ rotate: rotation }] }]}>
+                        <TouchableOpacity onPress={toggleModal}>
+                            <CloseButton />
                         </TouchableOpacity>
-                    </View>
+                    </Animated.View>                    
 
                 </View>
             </Modal>             
@@ -204,8 +202,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 15,
         padding: 5,
-        backgroundColor: '#3C0C79',
-        // backgroundColor: 'yellow',
+        backgroundColor: colors.violet,
         borderColor: 'white',
         borderWidth: 2,
         borderRadius: 15,
@@ -238,6 +235,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
+        backgroundColor: 'transparent'
     },
     genres:{
         paddingTop: 150,
