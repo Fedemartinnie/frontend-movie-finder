@@ -11,7 +11,7 @@ const colors = {
 }
 
 //* Details
-export function Details({movie}: {movie: FullMovie2}) {
+function Details({movie}: {movie: FullMovie2}) {
     return(
         <View>
             <View>
@@ -50,7 +50,7 @@ const detailsStyles = StyleSheet.create({
 
 
 //* Plot
-export function Sinopsis({plot} : {plot: string}){
+function Sinopsis({plot} : {plot: string}){
     return (
         <View style={plotStyle.plot}>
             <Text style={plotStyle.plotText}>{plot}</Text>
@@ -75,9 +75,9 @@ const plotStyle = StyleSheet.create({
 type Props = {
     actors: Cast[];
     directors: Director[]; // Agregando el tipo de director aquí
-};
+}
 
-export function Actors({ actors, directors }: Props) {
+function Actors({ actors, directors }: Props) {
     return (
         <View>
             <View style={styles.title}>
@@ -147,3 +147,18 @@ const styles = StyleSheet.create({
         color: colors.white
     }
 })
+
+//* MovieInfo --> Render: Sinópsis || Cast || Details
+export default function MovieInfo({ movie, selectedItem }: { movie: FullMovie2, selectedItem: string}) {
+
+    return (
+        <View>
+            {selectedItem === 'Sinópsis' 
+                ? <Sinopsis plot={movie.plot} />
+                : (selectedItem === 'Actores') 
+                    ? <Actors actors={movie.cast} directors={movie.director} />
+                    : <Details movie={movie} />
+            }
+        </View>
+    )
+}

@@ -251,7 +251,7 @@ function ProfileScreen(): React.JSX.Element {
                             />
                             
                             <TextInput 
-                                style={[styles.optionTextInput, {backgroundColor:colors.white, color: colors.red, padding: 0, paddingHorizontal: 10, borderColor: colors.red, borderWidth: error ? 1 : 0}]}
+                                style={[styles.optionTextInput, {backgroundColor:colors.white, color: colors.red, padding: 0, paddingHorizontal: 10, borderColor: error ? colors.red : colors.white}]}
                                 value={lastName}
                                 onChangeText={setLastName}                                
                             />                            
@@ -341,10 +341,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         fontSize: 16,
         color: colors.red,
-        paddingVertical: 10,
+        paddingVertical: 7,
         marginHorizontal: 25,
-        borderBottomColor: colors.red,
+        borderBottomColor: colors.black,
         borderWidth: 1,
+        marginVertical: 5
     },
     optionText: {
         

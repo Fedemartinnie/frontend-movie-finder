@@ -181,7 +181,7 @@ export function SearchScreen(): React.JSX.Element {
                             {loading && (
                                 <View style={styles.sectionMovies}>
                                     <Text>Loading...</Text>
-                                    <ActivityIndicator size={150} color="#0000ff" />
+                                    <ActivityIndicator size={200} color="#0000ff" />
                                 </View>
                             )}
                         </>

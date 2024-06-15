@@ -1,9 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Share, ScrollView, StyleSheet, 
-    Text, TouchableOpacity, View, 
-    Dimensions,
-    Alert} 
-    from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Animated} from 'react-native'
 import { Favorite, FullMovie2 } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { Carousel } from '../components/carrusel'
@@ -19,11 +15,10 @@ import { ShareSvg } from '../assets/share'
 import { AddFav } from '../assets/addFav'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CloseButton } from '../assets/closeButton'
-import { Actors, Details, Sinopsis } from '../components/movieInfo'
+import MovieInfo from '../components/movieInfo'
 import YoutubePlayer from 'react-native-youtube-iframe'
-import {addFavorite, removeFavorite, getFavorites} from '../services/favorites'
+import { getFavorites } from '../services/favorites'
 import useMovieScreen from '../hooks/useMovieScreen'
-
 
 
 type MovieScreenProps = RouteProp<{
@@ -33,10 +28,15 @@ type MovieScreenProps = RouteProp<{
 export const MovieScreen: React.FC = () => {
     const route = useRoute<MovieScreenProps>()
     const { movie } = route.params
-    const { selectedItem, isFavorite, setIsFavorite, showTrailer, setShowTrailer, trailerId, handleShare, handleSelectedItem, handleTrailer, handleNextVideo, handleFavorite } = useMovieScreen (movie)
+    const { rotateValueHolder, selectedItem, isFavorite, setIsFavorite, showTrailer, setShowTrailer, trailerId, handleShare, handleSelectedItem, handleTrailer, handleNextVideo, handleFavorite } = useMovieScreen (movie)
     const [title, subtitle] = movie.title.split(':')
     const items = ['Sinópsis', 'Actores', 'Detalles']
-    const directors = Array.from(new Set(movie.director))
+    const[isPressed, setIsPressed] = useState<boolean>(false)
+
+    const rotation = rotateValueHolder.interpolate({
+        inputRange: [-1, 0, 1],
+        outputRange: ['180deg', '0deg', '-180deg']
+    })
 
     //* GET ALL FAVS
     useEffect(() => {
@@ -52,11 +52,19 @@ export const MovieScreen: React.FC = () => {
         checkFavorite()
     },[])
     
+    const onPressInHandler = () => {
+        setIsPressed(true)
+    }
+
+    const onPressOutHandler = () => {
+        setIsPressed(false)
+    }
 
     return(
         <View style={styles.container}>            
             <ScrollView>
                 <View>    
+                    {/* RENDER --> TRAILER || CAROUSEL */}
                     {showTrailer && movie.trailer.length > 0
                         ? (<View style={[styles.image]}>
                             <YoutubePlayer
@@ -77,7 +85,7 @@ export const MovieScreen: React.FC = () => {
                         : (<Carousel movies={movie.images.backdrops}/>)
                     }                
                 </View>
-
+                {/* MOVIE INFO OF THE TOP */}
                 <View style={styles.movieInfo}>
                     <Text style={styles.title}>{title}</Text>
                     {subtitle && (
@@ -91,14 +99,16 @@ export const MovieScreen: React.FC = () => {
                         <Text style={styles.menuInfo}><Genre/>  {movie.genres[0]}</Text>
                     </View>
                 </View>
-
+                {/* OPTION BUTTONS --> TRAILER || FAVS || SHARE || RATE */}
                 <View style={styles.interactions}>
                     <TouchableOpacity onPress={handleTrailer}>
                         <Trailer/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleFavorite}>
-                        {isFavorite ? <AddFav /> : <HeartFav />}
-                        {/* <HeartFav/> */}
+                    <TouchableOpacity onPress={handleFavorite}  onPressIn={onPressInHandler} onPressOut={onPressOutHandler}>
+                        {/* {(isFavorite || isPressed) ? <AddFav /> : <HeartFav />} */}
+                        <Animated.View style={{ transform: [{ rotate: rotation }] }}>
+                            {isFavorite || isPressed ? <AddFav /> : <HeartFav />}
+                        </Animated.View>
                     </TouchableOpacity>
                     
                     <TouchableOpacity onPress={handleShare}>
@@ -110,6 +120,7 @@ export const MovieScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.info}>
+                    {/* OPTIONS --> SINOPSIS && CAST && DETAILS*/}
                     <View style={styles.details}>
                         {items.map((item, index) => (
                             <TouchableWithoutFeedback
@@ -122,16 +133,9 @@ export const MovieScreen: React.FC = () => {
                             </TouchableWithoutFeedback>
                         ))}
                     </View>
-
+                    {/* RENDER SINOPSIS || CAST || DETAILS*/}
                     <View > 
-                        <View>
-                            {selectedItem === 'Sinópsis' 
-                                ? <Sinopsis plot={movie.plot}/>
-                                : (selectedItem === 'Actores') 
-                                    ? <Actors actors={movie.cast} directors={directors}/>
-                                    : <Details movie={movie}/>
-                            }
-                        </View>                    
+                        <MovieInfo movie={movie} selectedItem={selectedItem}/>                        
                     </View>
                 </View>
 

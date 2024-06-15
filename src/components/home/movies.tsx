@@ -1,5 +1,5 @@
-import React, {  } from 'react'
-import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native'
+import React, { useState } from 'react'
+import { View, Image, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native'
 import { Movie2Base } from '../../types'
 import { MovieNotFound } from '../../assets/movieNotFound'
 import { useNavigation } from '@react-navigation/native'
@@ -10,10 +10,20 @@ import { ProfileScreenNavigationProp } from '../../types'
 //* With Results
 function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     
     const handlePress = async (id: string) => {
-        const movie = await searchMovie({id})
-        navigation.navigate('MovieScreen', {movie})
+        try{
+            setIsLoading(true)
+            const movie = await searchMovie({id})
+            navigation.navigate('MovieScreen', {movie})
+        }
+        catch{
+            throw new Error
+        }
+        finally{
+            setIsLoading(false)
+        }
     }
 
     const remainder = movies.length % 3
@@ -25,26 +35,29 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
 
     return (
         <View style={styles.container}>
-            {movies.flatMap((movie) => (
-                <TouchableOpacity 
-                    key={movie._id}                    
-                    style={styles.movieContainer}
-                    onPress={() => handlePress(movie._id)}
-                >
-                    {movie.images.posters.length > 0 ? (
-                        <Image 
-                            source={{ uri: 'https://image.tmdb.org/t/p/w500'+movie.images.posters[0] }} 
-                            style={styles.movieImage} 
-                            alt={movie.title}/>
-                    ) : (
-                        <View style={styles.defaultImageContainer}>
-                            <Text style={styles.defaultImageText}>{movie.title}</Text>
-                        </View>
-                    )}
-                    
-                </TouchableOpacity>
-            ))}
-            {placeholders}
+            {!isLoading ? (
+                movies.flatMap((movie) => (
+                    <TouchableOpacity 
+                        key={movie._id}                    
+                        style={styles.movieContainer}
+                        onPress={() => handlePress(movie._id)}
+                    >
+                        {movie.images.posters.length > 0 ? (
+                            <Image 
+                                source={{ uri: 'https://image.tmdb.org/t/p/w500' + movie.images.posters[0] }}
+                                style={styles.movieImage}
+                                alt={movie.title}
+                            />
+                        ) : (
+                            <View style={styles.defaultImageContainer}>
+                                <Text style={styles.defaultImageText}>{movie.title}</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                ))
+            ) : (
+                <ActivityIndicator size={200} color="#0000ff" />
+            )}
         </View>
     )
 }

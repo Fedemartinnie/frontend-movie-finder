@@ -111,10 +111,12 @@ function HomeScreen(): React.JSX.Element {
                     ? (
                         <>
                             <Movies movies={concatMovies ?? []}/>
-                            <View style={styles.sectionMovies}>
-                                <Text>Loading...</Text>
-                                <ActivityIndicator size={200} color="#0000ff" />
-                            </View>
+                            {loading && (
+                                <View style={styles.sectionMovies}>
+                                    <Text>Loading...</Text>
+                                    <ActivityIndicator size={200} color="#0000ff" />
+                                </View>
+                            )}
                         </>
                     )
                     : (loading 
