@@ -70,9 +70,10 @@ export type HomeParams = Pick<Params, 'page' | 'sortByDate' | 'genre'>
 
 //* FAVORITES
 export type Favorite = {
+    _id: string,
     userdId: 'string',
     movieId: 'string',
-    poster: 'string'
+    moviePosterURL: 'string'
 }
 
 

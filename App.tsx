@@ -14,6 +14,7 @@ import requestNotificationPermission from './src/utils/requestNotificationPermis
 import { FavsScreen } from './src/screens/FavsScreen'
 import { MovieScreen } from './src/screens/MovieScreen'
 import { NoConnectionScreen } from './src/screens/NoConnectionScreen'
+import FavsProvider, { useFavs } from './src/hooks/useFavs'
 
 
 const Stack = createStackNavigator()
@@ -96,7 +97,11 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
                         />
                         <Stack.Screen
                             name='Favs'
-                            component={FavsScreen}
+                            component={() =>  (
+                                <FavsProvider>
+                                    <FavsScreen />
+                                </FavsProvider>
+                            )}
                             options={{ title: 'Favs',
                                 headerStyle: {
                                     backgroundColor: '#3C0C79', // Color de fondo del header

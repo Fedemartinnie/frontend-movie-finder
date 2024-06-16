@@ -96,37 +96,3 @@ export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null
     }
 
 }
-
-
-//*TODO
-//* users Service
-//* logout
-export const logout = async({id} : {id: string}) => {
-    try {
-        await fetch(`${URI}/${id}`,{   
-            method: 'PUT',         
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-    }catch{
-        throw new Error('Error Loging Out')
-    }
-}
-
-//* delete account
-export const deleteAccount = async({id} : {id: string}) => {
-    try {
-        await fetch(`${URI}/${id}`,{
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-    }catch{
-        throw new Error('Error Loging Out')
-    }
-}
-
