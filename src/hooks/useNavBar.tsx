@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Animated, PanResponder } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 // import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { ProfileScreenNavigationProp, User } from '../types'
+import { Favorite, ProfileScreenNavigationProp, User } from '../types'
 import { getUser } from '../services/users'
+import { getFavorites } from '../services/favorites'
 
 
 export function useScrollNavBar() {
@@ -11,16 +12,36 @@ export function useScrollNavBar() {
     const navbarTranslateY = useRef(new Animated.Value(0)).current
     const [isNavBarHidden, setIsNavBarHidden] = useState<boolean>(false)
 
-    const handleScreen = async(screenName: 'Profile' | 'Home' | 'Search' | 'Favs') => {
+    const handleScreen = async (screenName: 'Profile' | 'Home' | 'Search' | 'Favs') => {
         setIsNavBarHidden(false)
-        if(screenName === 'Profile'){
-            const user: User = await getUser()            
-            navigation.navigate(screenName, {user})
-        }
-        else{
+        
+        switch(screenName) {
+        case 'Profile':
+            try {
+                const user: User = await getUser()
+                navigation.navigate(screenName, { user })
+            } catch (error) {
+                console.error('Error fetching user:', error)
+            }
+            break
+            
+        case 'Favs':
+            try {
+                const favorites: Favorite[] = await getFavorites()
+                navigation.navigate(screenName, { favorites })
+            } catch (error) {
+                console.error('Error fetching favorites:', error)
+            }
+            break
+    
+        case 'Home':
+        case 'Search':
+        default:
             navigation.navigate(screenName)
+            break
         }
     }
+    
     
     const hideNavBar = () => {
         setIsNavBarHidden(true)

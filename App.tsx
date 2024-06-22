@@ -11,10 +11,9 @@ import ProfileScreen from './src/screens/ProfileScreen'
 import { AuthProvider, useAuth } from './src/utils/authContext'
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin'
 import requestNotificationPermission from './src/utils/requestNotificationPermission'
-import { FavsScreen } from './src/screens/FavsScreen'
 import { MovieScreen } from './src/screens/MovieScreen'
 import { NoConnectionScreen } from './src/screens/NoConnectionScreen'
-import FavsProvider, { useFavs } from './src/hooks/useFavs'
+import {FavsWithProvider} from './src/context/favsWithProvider'
 
 
 const Stack = createStackNavigator()
@@ -48,7 +47,6 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
     const { isLoggedIn } = useAuth()
     const netInfo = useNetInfo()
     const [isConnected, setIsConnected] = useState(netInfo.isConnected)
-    // const [isConnected, setIsConnected] = useState(true)
 
 
     useEffect(() => {
@@ -97,11 +95,8 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
                         />
                         <Stack.Screen
                             name='Favs'
-                            component={() =>  (
-                                <FavsProvider>
-                                    <FavsScreen />
-                                </FavsProvider>
-                            )}
+                            component={FavsWithProvider}
+                            
                             options={{ title: 'Favs',
                                 headerStyle: {
                                     backgroundColor: '#3C0C79', // Color de fondo del header

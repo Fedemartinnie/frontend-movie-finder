@@ -1,35 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, SafeAreaView, Animated, TouchableOpacity, Text, TouchableWithoutFeedback, Image, StyleSheet, PanResponder, ActivityIndicator } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
-import { getFavorites } from '../services/favorites' // Ajusta las importaciones según tu estructura de archivos
-// import FavoriteItem from './FavoriteItem' // Ajusta la ruta según tu estructura de archivos
-// import { styles } from './styles' // Ajusta la ruta según tu estructura de archivos
-// import { Favorite } from '../types'
+import { View, Animated,SafeAreaView, TouchableOpacity, Text, 
+    TouchableWithoutFeedback, Image, StyleSheet, PanResponder, 
+    ActivityIndicator, Dimensions, Alert} 
+    from 'react-native'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { getFavorites, removeFavorite } from '../services/favorites'
 import { searchMovie } from '../services/movies'
 import { Favorite, ProfileScreenNavigationProp } from '../types'
 import {useFavs} from '../hooks/useFavs'
-import NavBar from '../components/home/navBar'
+// import NavBar from '../components/home/navBar'
+import { Trash } from '../assets/trash'
 
+
+type FavoriteProps = RouteProp<{
+    FavsScreen: { favorites: Favorite[] }
+}, 'FavsScreen'>
 
 export function FavsScreen(): React.JSX.Element {
-    const [favorites, setFavorites] = useState<Favorite[]>([])
-    const navigation = useNavigation()
-    const {showTrash, deletePosition, } = useFavs()
-    
+    const route = useRoute<FavoriteProps>()
+    const { favorites } = route.params
+    const { page, setPage, showTrash, deletePosition, actualFavorites, setActualFavorites } = useFavs()
+    const trashRef = useRef<View>(null)
+    // const [page, setPage] = useState(1)
+    const itemsPerPage = 9
+
+    const startIndex = (page - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const favoritesToShow = actualFavorites.slice(startIndex, endIndex)
+
     useEffect(() => {
-        const fetchFavorites = async () => {
-            try {
-                const actualFavorites = await getFavorites()
-                setFavorites(actualFavorites)
-            } catch (error) {
-                console.error('Error fetching favorites:', error)
-            }
+        if (favorites) {
+            setActualFavorites(favorites)
+            // if(actualFavorites.length/9 < page && page > 1){
+            //     setPage(page-1)
+            // }
         }
+    }, [favorites, setActualFavorites])
 
-        fetchFavorites()
-    }, [])
-
-    const remainder = favorites.length % 3
+    const remainder = actualFavorites.length % 3
     const placeholders = Array.from({ length: remainder === 0 ? 0 : 3 - remainder }, (_, i) => (
         <View key={`placeholder-${i}`} style={styles.movieContainer}>
             <View style={styles.placeholderImage}></View>
@@ -39,42 +47,97 @@ export function FavsScreen(): React.JSX.Element {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
-                {favorites.map((favorite) => (
-                    <View key={favorite.movieId} style={styles.movieContainer}>
-                        <FavoriteItem key={favorite._id} favorite={favorite} />
-                    </View>
-                ))}
+                {actualFavorites
+                    .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                    .map((favorite) => (
+                    // {favoritesToShow.map((favorite) => (
+                        <View key={favorite.movieId} style={styles.movieContainer}>
+                            <FavoriteItem key={favorite._id} favorite={favorite} />
+                        </View>                    
+                    ))}
                 {placeholders}
             </View>
-            {showTrash && (
-                <Animated.View style={[styles.deleteContainer, { bottom: deletePosition }]}>
-                    <TouchableOpacity>
-                        <Text style={styles.deleteText}>DELETE</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-            )}
-            <View>
-                <NavBar />
+            <View style={styles.paginationContainer}>                
+                {page > 1 
+                    ? (
+                        <TouchableOpacity onPress={() => setPage(page - 1)} style={styles.pageButton}>
+                            <Text style={styles.pageButtonText}>{'<'}</Text>
+                        </TouchableOpacity>
+                    )
+
+                    : (
+                        <View style={styles.pageButton}>
+                            <Text style={styles.pageButtonText}></Text>
+                        </View>
+                    )
+                }                
+                <View style={styles.pageButton}>
+                    <Text style={styles.pageButtonText}>{page}</Text>
+                </View>
+                {endIndex < actualFavorites.length                 
+                    ? (
+                        <TouchableOpacity onPress={() => setPage(page + 1)} style={styles.pageButton}>
+                            <Text style={styles.pageButtonText}>{'>'}</Text>
+                        </TouchableOpacity>)
+                    : (
+                        <View style={styles.pageButton}>
+                            <Text style={styles.pageButtonText}></Text>
+                        </View>
+                    )}
+                
             </View>
+            {showTrash && (
+                <View
+                    ref={trashRef}
+                    style={[styles.deleteContainer, { bottom: deletePosition }]}
+                >
+                    <TouchableOpacity>
+                        <Trash />
+                    </TouchableOpacity>
+                </View>
+            )}
         </SafeAreaView>
     )
 }
-
-
-
-
-// Ajusta la ruta según tu estructura de archivos
 
 type FavoriteItemProps = {
     favorite: Favorite
 }
 
+const { width: maxWidthScreenDimension, height: maxHeightScreenDimension } = Dimensions.get('window')
+const trashIconWidth = 75
+const trashIconHeight = 75
+const trashIconX = (maxWidthScreenDimension - trashIconWidth) / 2
+const trashIconY = maxHeightScreenDimension - trashIconHeight
+
 const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const { setShowTrash } = useFavs()
+    const { setShowTrash, actualFavorites, setActualFavorites, page, setPage } = useFavs()
     const pan = useRef(new Animated.ValueXY()).current
     const [zIndex, setZIndex] = useState(1)
+
+    const handleDelete = async (movieId: string) => {
+        try {
+            const response = await removeFavorite(movieId)
+            if (response.status === 404) {
+                Alert.alert('No se ha encontrado la película en favoritos')
+            } else {
+                const favorites = await getFavorites()
+                setActualFavorites(favorites)
+                console.log('favorites length --> ', favorites.length/9)
+                console.log('page number ---> ',page)
+                console.log('true or false --->', favorites.length /9 < page)
+                if(favorites.length/9 < page && favorites.length%9 === 0 && page > 1){
+                    setPage(page-1)
+                    console.log(page)
+                }
+                // setActualFavorites(actualFavorites.filter(fav => fav._id !== movieId))
+            }
+        } catch {
+            Alert.alert('No se pudo eliminar la película de favoritos')
+        }
+    }
 
     const panResponder = useRef(
         PanResponder.create({
@@ -83,17 +146,34 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
                 setShowTrash(true)
                 setZIndex(10)
             },
-            onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-                useNativeDriver: false,
-            }),
-            onPanResponderRelease: () => {
+            onPanResponderMove: (event, gestureState) => {
+                pan.setValue({ x: gestureState.dx, y: gestureState.dy })
+            },
+            onPanResponderRelease: (event, gestureState) => {
+                const currentX = gestureState.moveX
+                const currentY = gestureState.moveY
+                const trashIconLayout = {
+                    x: trashIconX,
+                    y: trashIconY,
+                    width: trashIconWidth,
+                    height: trashIconHeight,
+                }
+                if (
+                    currentX < trashIconLayout.x + trashIconWidth &&
+                    currentX > trashIconLayout.x &&
+                    currentY < trashIconLayout.y + trashIconLayout.height &&
+                    currentY > trashIconLayout.y
+                ) {
+                    handleDelete(favorite.movieId)
+                } else {
+                    Animated.spring(pan, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: true,
+                    }).start(() => {
+                        setZIndex(1)
+                    })
+                }
                 setShowTrash(false)
-                Animated.spring(pan, {
-                    toValue: { x: 0, y: 0 },
-                    useNativeDriver: true,
-                }).start(() => {
-                    setZIndex(1)
-                })
             },
         })
     ).current
@@ -129,35 +209,33 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
                         </View>
                     )}
                 </TouchableWithoutFeedback>
-            ) 
-                : (<View style={{ flexDirection: 'column', margin: 30 }}>
-                    <Text style={{ textAlign: 'center', fontSize: 13, paddingVertical: '20%'}}>Loading...</Text>
+            ) : (
+                <View style={{ flexDirection: 'column', margin: 30 }}>
+                    <Text style={{ textAlign: 'center', fontSize: 13, paddingVertical: '20%' }}>Loading...</Text>
                     <ActivityIndicator size='large' color={colors.blue} />
-                </View>)}
+                </View>
+            )}
         </Animated.View>
     )
 }
 
 export default FavoriteItem
 
-
-//* COLORS
 const colors = {
-    
     black: '#282828',
-    blue: '#336699', 
-    red: '#993333', 
+    blue: '#336699',
+    red: '#993333',
     white: '#F2F2F2',
     blueDark: '#052539',
     violet: '#3C0C79'
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
     loadingContainer: {
         paddingTop: '55%',
     },
     container: {
-        flex : 1,
+        flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
@@ -177,14 +255,13 @@ const styles = StyleSheet.create ({
     placeholderImage: {
         width: '100%',
         height: 200,
-        backgroundColor: '#052539', // Color de fondo para los rectángulos placeholder
+        backgroundColor: '#052539',
     },
     movieTitle: {
         marginTop: 5,
         textAlign: 'center',
     },
-    noResult:{
-    },
+    noResult: {},
     defaultImageContainer: {
         width: '100%',
         height: 200,
@@ -201,17 +278,28 @@ const styles = StyleSheet.create ({
     },
     deleteContainer: {
         position: 'absolute',
-        // bottom: 100, // Empieza fuera de la pantalla
-        left: 0,
-        right: 0,
-        backgroundColor: 'red',
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignSelf: 'center',
+        height: '100%',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
     },
-    deleteText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white',
+    paginationContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        // padding: 20,
+        backgroundColor: colors.blueDark,
+        // paddingHorizontal: 10,
+    },
+    pageButton: {
         padding: 10,
+        color: colors.white,
+        borderRadius: 5,
+        // paddingHorizontal: 20,
+    },
+    pageButtonText: {
+        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: 25,
+        // paddingHorizontal: 10,
     },
 })
