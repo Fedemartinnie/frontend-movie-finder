@@ -24,8 +24,7 @@ export const logout = async() => {
             throw new Error('No se pudo encontrar el token de autenticación')
         }
 
-        // const response = await fetch(`${URI}/${id}`,{   
-        const response = await fetch(`${URI}/users/`,{
+        const response = await fetch(`${URI}/users/id`,{
             method: 'PUT',         
             headers: {
                 'Content-Type': 'application/json',
@@ -33,6 +32,9 @@ export const logout = async() => {
             }
         })
         if(response.status === 200){
+            await AsyncStorage.clear()
+            console.log('CERRANDO SESION')
+            console.log(AsyncStorage.getItem('authToken'))
             return response
         }
 
@@ -50,15 +52,20 @@ export const deleteAccount = async() => {
             throw new Error('No se pudo encontrar el token de autenticación')
         }
         
-        const response = await fetch(`${URI}/users/`,{
+        const response = await fetch(`${URI}/users/id`,{
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         })
+        if (response.ok) {
+            await AsyncStorage.clear() 
+        } else {
+            throw new Error('Error eliminando la cuenta')
+        }
+        
         return response
-
     }catch{
         throw new Error('Error Loging Out')
     }
@@ -73,7 +80,7 @@ export const getUser = async() => {
             throw new Error('No se pudo encontrar el token de autenticación')
         }
 
-        const response = await fetch(`${URI}/users`,{
+        const response = await fetch(`${URI}/users/id`,{
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -96,7 +103,7 @@ export const updateUser = async(user: User) => {
             throw new Error('No se pudo encontrar el token de autenticación')
         }
         const {accessToken, email, name, lastname, profileImage, refreshTokens, nickname } = user
-        const response = await fetch(`${URI}/users/`,{
+        const response = await fetch(`${URI}/users/id`,{
             method: 'PUT',
             headers: {
                 'Content-Type' : 'application/json',

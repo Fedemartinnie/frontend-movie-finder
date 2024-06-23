@@ -10,7 +10,6 @@ export type RootStackParamList = {
     Home: undefined
     Search: undefined
     Profile: {user: User | null}
-    // Favs: undefined
     Favs: {favorites: Favorite[] | null }
     MovieScreen: {movie: FullMovie2 | null}
     Splash: undefined,

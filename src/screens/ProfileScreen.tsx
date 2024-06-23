@@ -186,6 +186,14 @@ function ProfileScreen(): React.JSX.Element {
         }
     }
 
+    const handleLogout = async() => {
+        try{
+            await logout()
+        } catch{
+            throw new Error('no se pudo cerrar sesión')
+        }
+    }
+
 
     return (
         <SafeAreaView style={styles.safeContainer}>
@@ -259,7 +267,7 @@ function ProfileScreen(): React.JSX.Element {
                         )                        
                     }
                     <Text style={styles.optionText}>{email}</Text>                  
-                    <TouchableWithoutFeedback onPress={logout}>
+                    <TouchableWithoutFeedback onPress={handleLogout}>
                         <Text style={styles.optionText}>Cerrar Sesión</Text>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={handleDeleteAccount}>

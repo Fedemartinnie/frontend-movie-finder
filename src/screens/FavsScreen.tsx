@@ -8,8 +8,8 @@ import { getFavorites, removeFavorite } from '../services/favorites'
 import { searchMovie } from '../services/movies'
 import { Favorite, ProfileScreenNavigationProp } from '../types'
 import {useFavs} from '../hooks/useFavs'
-// import NavBar from '../components/home/navBar'
 import { Trash } from '../assets/trash'
+import NavBar from '../components/home/navBar'
 
 
 type FavoriteProps = RouteProp<{
@@ -21,19 +21,52 @@ export function FavsScreen(): React.JSX.Element {
     const { favorites } = route.params
     const { page, setPage, showTrash, deletePosition, actualFavorites, setActualFavorites } = useFavs()
     const trashRef = useRef<View>(null)
-    // const [page, setPage] = useState(1)
     const itemsPerPage = 9
-
     const startIndex = (page - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
-    const favoritesToShow = actualFavorites.slice(startIndex, endIndex)
+    const deleteBounce = useRef(new Animated.Value(0)).current
+
+    useEffect(() => {
+        if (showTrash) {
+            Animated.sequence([
+                Animated.timing(deletePosition, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.loop(
+                    Animated.sequence([
+                        Animated.timing(deleteBounce, {
+                            toValue: 10,
+                            duration: 100,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(deleteBounce, {
+                            toValue: -10,
+                            duration: 100,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(deleteBounce, {
+                            toValue: 0,
+                            duration: 100,
+                            useNativeDriver: true,
+                        })
+                    ]),
+                    { iterations: 3 } // Ajusta el número de rebotes aquí
+                )
+            ]).start()
+        } else {
+            Animated.timing(deletePosition, {
+                toValue: 100,
+                duration: 500,
+                useNativeDriver: true,
+            }).start()
+        }
+    }, [showTrash])
 
     useEffect(() => {
         if (favorites) {
             setActualFavorites(favorites)
-            // if(actualFavorites.length/9 < page && page > 1){
-            //     setPage(page-1)
-            // }
         }
     }, [favorites, setActualFavorites])
 
@@ -50,52 +83,55 @@ export function FavsScreen(): React.JSX.Element {
                 {actualFavorites
                     .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                     .map((favorite) => (
-                    // {favoritesToShow.map((favorite) => (
                         <View key={favorite.movieId} style={styles.movieContainer}>
                             <FavoriteItem key={favorite._id} favorite={favorite} />
                         </View>                    
                     ))}
                 {placeholders}
             </View>
-            <View style={styles.paginationContainer}>                
-                {page > 1 
-                    ? (
-                        <TouchableOpacity onPress={() => setPage(page - 1)} style={styles.pageButton}>
-                            <Text style={styles.pageButtonText}>{'<'}</Text>
+            
+            {showTrash 
+                ? (
+                    <Animated.View
+                        ref={trashRef}
+                        style={[styles.deleteContainer, { transform: [{translateY: deletePosition }, { translateX: deleteBounce }]}]}
+                    >
+                        <TouchableOpacity>
+                            <Trash />
                         </TouchableOpacity>
-                    )
+                    </Animated.View>
+                )
+                : (<View style={styles.paginationContainer}>                
+                    {page > 1 
+                        ? (
+                            <TouchableOpacity onPress={() => setPage(page - 1)} style={styles.pageButton}>
+                                <Text style={styles.pageButtonText}>{'<'}</Text>
+                            </TouchableOpacity>
+                        )
 
-                    : (
-                        <View style={styles.pageButton}>
-                            <Text style={styles.pageButtonText}></Text>
-                        </View>
-                    )
-                }                
-                <View style={styles.pageButton}>
-                    <Text style={styles.pageButtonText}>{page}</Text>
-                </View>
-                {endIndex < actualFavorites.length                 
-                    ? (
-                        <TouchableOpacity onPress={() => setPage(page + 1)} style={styles.pageButton}>
-                            <Text style={styles.pageButtonText}>{'>'}</Text>
-                        </TouchableOpacity>)
-                    : (
-                        <View style={styles.pageButton}>
-                            <Text style={styles.pageButtonText}></Text>
-                        </View>
-                    )}
-                
-            </View>
-            {showTrash && (
-                <View
-                    ref={trashRef}
-                    style={[styles.deleteContainer, { bottom: deletePosition }]}
-                >
-                    <TouchableOpacity>
-                        <Trash />
-                    </TouchableOpacity>
-                </View>
-            )}
+                        : (
+                            <View style={styles.pageButton}>
+                                <Text style={styles.pageButtonText}></Text>
+                            </View>
+                        )
+                    }                
+                    <View style={styles.pageButton}>
+                        <Text style={styles.pageButtonText}>{page}</Text>
+                    </View>
+                    {endIndex < actualFavorites.length                 
+                        ? (
+                            <TouchableOpacity onPress={() => setPage(page + 1)} style={styles.pageButton}>
+                                <Text style={styles.pageButtonText}>{'>'}</Text>
+                            </TouchableOpacity>)
+                        : (
+                            <View style={styles.pageButton}>
+                                <Text style={styles.pageButtonText}></Text>
+                            </View>
+                        )}
+                    
+                </View>)
+            }
+            {/* <NavBar/> */}
         </SafeAreaView>
     )
 }
@@ -132,7 +168,6 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
                     setPage(page-1)
                     console.log(page)
                 }
-                // setActualFavorites(actualFavorites.filter(fav => fav._id !== movieId))
             }
         } catch {
             Alert.alert('No se pudo eliminar la película de favoritos')

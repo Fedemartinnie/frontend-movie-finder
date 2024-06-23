@@ -4,7 +4,6 @@ import { SafeAreaView, ScrollView,
     useColorScheme, View,
     ActivityIndicator} 
     from 'react-native'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
 import SearchBar from '../components/home/searcher'
 import NavBar from '../components/home/navBar'
 import { Movies } from '../components/home/movies'
@@ -41,7 +40,6 @@ export function SearchScreen(): React.JSX.Element {
     const { panResponder } = useScrollNavBar()
     const scrollViewRef = useRef<ScrollView>(null)
     const previousParamName = useRef(params.name)
-    //!TODO
     const [moviesConcat, setMoviesConcat] = useState<Movie2Base[]>([])
     
     const backgroundStyle = {
@@ -50,6 +48,8 @@ export function SearchScreen(): React.JSX.Element {
 
     //* get movies onPress Search
     const handleSearch = (searchText: string) => {
+        if(previousParamName.current === searchText) return
+
         setMoviesConcat([])
         if (scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ y: 0, animated: false })
@@ -190,7 +190,7 @@ export function SearchScreen(): React.JSX.Element {
                         ? (
                             <View style={styles.sectionMovies}>
                                 <Text>Loading...</Text>
-                                <ActivityIndicator size={200} color="#0000ff" />
+                                <ActivityIndicator size={200} color={colors.blue} />
                             </View>
                         ) 
                         : (<Movies movies={moviesConcat ?? []}/>)) 

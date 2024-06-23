@@ -65,9 +65,9 @@ function ListOfMovies({ movies }: { movies: Movie2Base[] }) {
                     </TouchableOpacity>
                 ))
             ) : (
-                <View style={{flexDirection: 'column', margin: 30}}>
-                    <Text style={{textAlign: 'center', marginBottom: 100}}>Cargando película...</Text>
-                    <ActivityIndicator size={200} color={colors.violet} />
+                <View style={[{flexDirection: 'column', margin: 30}]}>
+                    <Text style={{textAlign: 'center', marginBottom: 100}}>Loading Movie...</Text>
+                    <ActivityIndicator size={200} color={colors.blue} />
                 </View>
             )}
             {placeholders}

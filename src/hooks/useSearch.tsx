@@ -5,12 +5,19 @@ export function useSearch (){
     const [search, updateSearch] = useState<string>('')
     const [error, setError] = useState<null | string>(null)
     const isFirstInput = useRef(true)
+    const lastSearch = useRef<string>('')
 
 
     useEffect(() => {
+        console.log('new Search --> ', search)
         if(isFirstInput.current){
             isFirstInput.current = search === ''
             // console.log('isFirstInput? ',isFirstInput)
+            return
+        }
+
+        if(search === lastSearch.current){
+            setError('Búsqueda repetida... intenta con una nueva')
             return
         }
 
@@ -33,7 +40,8 @@ export function useSearch (){
             setError('La búsqueda debe tener al menos 3 caracteres')
             return
         }
-
+        lastSearch.current = search
+        console.log('last Search --> ', lastSearch.current)
         setError(null)
     }, [search])
 
