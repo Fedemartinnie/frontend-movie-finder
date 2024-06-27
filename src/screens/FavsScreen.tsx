@@ -9,7 +9,7 @@ import { searchMovie } from '../services/movies'
 import { Favorite, ProfileScreenNavigationProp } from '../types'
 import {useFavs} from '../hooks/useFavs'
 import { Trash } from '../assets/trash'
-import NavBar from '../components/home/navBar'
+// import NavBar from '../components/home/navBar'
 
 
 type FavoriteProps = RouteProp<{
@@ -19,12 +19,21 @@ type FavoriteProps = RouteProp<{
 export function FavsScreen(): React.JSX.Element {
     const route = useRoute<FavoriteProps>()
     const { favorites } = route.params
-    const { page, setPage, showTrash, deletePosition, actualFavorites, setActualFavorites } = useFavs()
+    const { page, setPage, showTrash, setShowTrash, deletePosition, actualFavorites, setActualFavorites } = useFavs()
     const trashRef = useRef<View>(null)
     const itemsPerPage = 9
     const startIndex = (page - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
     const deleteBounce = useRef(new Animated.Value(0)).current
+
+    // useEffect para establecer showTrash en true al iniciar la pantalla
+    useEffect(() => {
+        setShowTrash(true)
+        const timer = setTimeout(() => {
+            setShowTrash(false)
+        }, 2000)
+        return () => clearTimeout(timer)
+    }, [setShowTrash])
 
     useEffect(() => {
         if (showTrash) {
@@ -79,17 +88,24 @@ export function FavsScreen(): React.JSX.Element {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                {actualFavorites
-                    .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                    .map((favorite) => (
-                        <View key={favorite.movieId} style={styles.movieContainer}>
-                            <FavoriteItem key={favorite._id} favorite={favorite} />
-                        </View>                    
-                    ))}
-                {placeholders}
-            </View>
-            
+            {actualFavorites.length > 0 
+                ? (<View style={styles.container}>
+                    {actualFavorites
+                        .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                        .map((favorite) => (
+                            <View key={favorite.movieId} style={styles.movieContainer}>
+                                <FavoriteItem key={favorite._id} favorite={favorite} />
+                            </View>                    
+                        ))}
+                    {placeholders}
+                </View>)
+                : (
+                    <View style={[styles.container, {padding: 40, justifyContent: 'center', alignItems: 'center'}]}>
+                        <Text style={{textAlign: 'center', fontSize: 20, color: colors.white}}>Aún no tienes películas agregadas a tu lista de favoritos ...</Text>
+                    </View>
+                )
+            }
+
             {showTrash 
                 ? (
                     <Animated.View
@@ -146,12 +162,21 @@ const trashIconHeight = 75
 const trashIconX = (maxWidthScreenDimension - trashIconWidth) / 2
 const trashIconY = maxHeightScreenDimension - trashIconHeight
 
+type ImageStyle = {
+    width: number | string
+    height: number | string
+    borderRadius: number
+}
+
+
 const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const { setShowTrash, actualFavorites, setActualFavorites, page, setPage } = useFavs()
+    const { setShowTrash, setActualFavorites, page, setPage } = useFavs()
     const pan = useRef(new Animated.ValueXY()).current
     const [zIndex, setZIndex] = useState(1)
+    // const [imageStyle, setImageStyle] = useState<ImageStyle>(styles.movieImage)
+    const [imageGrow, setImageGrow] = useState<boolean>(true)
 
     const handleDelete = async (movieId: string) => {
         try {
@@ -161,12 +186,8 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
             } else {
                 const favorites = await getFavorites()
                 setActualFavorites(favorites)
-                console.log('favorites length --> ', favorites.length/9)
-                console.log('page number ---> ',page)
-                console.log('true or false --->', favorites.length /9 < page)
-                if(favorites.length/9 < page && favorites.length%9 === 0 && page > 1){
-                    setPage(page-1)
-                    console.log(page)
+                if (favorites.length / 9 < page && favorites.length % 9 === 0 && page > 1) {
+                    setPage(page - 1)
                 }
             }
         } catch {
@@ -183,6 +204,33 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
             },
             onPanResponderMove: (event, gestureState) => {
                 pan.setValue({ x: gestureState.dx, y: gestureState.dy })
+
+                const currentX = gestureState.moveX
+                const currentY = gestureState.moveY
+
+                const trashIconLayout = {
+                    x: trashIconX,
+                    y: trashIconY,
+                    width: trashIconWidth,
+                    height: trashIconHeight,
+                }
+
+                if (
+                    currentX < trashIconLayout.x + trashIconWidth &&
+                    currentX > trashIconLayout.x &&
+                    currentY < trashIconLayout.y + trashIconLayout.height &&
+                    currentY > trashIconLayout.y
+                ) {
+                    setImageGrow(false)
+                    // setImageStyle({
+                    //     width: 75,
+                    //     height: 75,
+                    //     borderRadius: 50,
+                    // })                    
+                } else {
+                    setImageGrow(true)
+                    // setImageStyle(styles.movieImage)
+                }
             },
             onPanResponderRelease: (event, gestureState) => {
                 const currentX = gestureState.moveX
@@ -193,21 +241,27 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
                     width: trashIconWidth,
                     height: trashIconHeight,
                 }
+
                 if (
                     currentX < trashIconLayout.x + trashIconWidth &&
-                    currentX > trashIconLayout.x &&
-                    currentY < trashIconLayout.y + trashIconLayout.height &&
-                    currentY > trashIconLayout.y
+        currentX > trashIconLayout.x &&
+        currentY < trashIconLayout.y + trashIconLayout.height &&
+        currentY > trashIconLayout.y
                 ) {
                     handleDelete(favorite.movieId)
                 } else {
+                    setImageGrow(true)
                     Animated.spring(pan, {
                         toValue: { x: 0, y: 0 },
                         useNativeDriver: true,
                     }).start(() => {
                         setZIndex(1)
                     })
-                }
+                }                
+                // setTimeout(() => {
+                //     // setImageGrow(true)
+                //     setImageStyle(styles.movieImage) // Restablece el estilo de la imagen con retraso
+                // }, 2000)
                 setShowTrash(false)
             },
         })
@@ -235,7 +289,8 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
                     {favorite.moviePosterURL && favorite.moviePosterURL.slice(-4) === '.jpg' ? (
                         <Image
                             source={{ uri: 'https://image.tmdb.org/t/p/w500' + favorite.moviePosterURL }}
-                            style={styles.movieImage}
+                            // style={imageStyle}
+                            style={imageGrow ? styles.movieImage : styles.imageReduce}
                             alt={favorite.moviePosterURL}
                         />
                     ) : (
@@ -247,7 +302,7 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ favorite }) => {
             ) : (
                 <View style={{ flexDirection: 'column', margin: 30 }}>
                     <Text style={{ textAlign: 'center', fontSize: 13, paddingVertical: '20%' }}>Loading...</Text>
-                    <ActivityIndicator size='large' color={colors.blue} />
+                    <ActivityIndicator size="large" color={colors.blue} />
                 </View>
             )}
         </Animated.View>
@@ -275,7 +330,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         padding: 10,
-        backgroundColor: colors.blueDark
+        backgroundColor: colors.blueDark,
     },
     movieContainer: {
         width: '30%',
@@ -297,6 +352,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     noResult: {},
+    imageReduce:{
+        width: 75,
+        height: 75,
+        borderRadius: 50,
+    },
     defaultImageContainer: {
         width: '100%',
         height: 200,
@@ -321,20 +381,17 @@ const styles = StyleSheet.create({
     paginationContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        // padding: 20,
+        paddingBottom: '5%',
         backgroundColor: colors.blueDark,
-        // paddingHorizontal: 10,
     },
     pageButton: {
         padding: 10,
         color: colors.white,
         borderRadius: 5,
-        // paddingHorizontal: 20,
     },
     pageButtonText: {
         fontWeight: 'bold',
         color: colors.white,
         fontSize: 25,
-        // paddingHorizontal: 10,
     },
 })

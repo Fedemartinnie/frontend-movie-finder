@@ -1,3 +1,4 @@
+import { Alert } from 'react-native'
 import { Favorite } from '../types'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -75,8 +76,8 @@ export const getFavorites = async(): Promise<Favorite[]> => {
                 'Authorization': `Bearer ${token}`
             },
         })
-        if (!response.ok) {
-            throw new Error('No se pudo obtener la lista de favoritos')
+        if (!response.ok) {            
+            return []
         }
         const favorites = await response.json()
 
