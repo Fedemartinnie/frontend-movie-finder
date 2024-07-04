@@ -48,7 +48,7 @@ export const Carousel: React.FC<CarouselProps> = ({ movies }) => {
             return item
         } else {
             // console.log(item.images.backdrops)
-            return item.images.posters[index]
+            return item.images.posters[0]
         }
     }
 
