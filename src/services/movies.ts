@@ -7,10 +7,10 @@ interface Config {
     }
     // Agrega otras propiedades relevantes según sea necesario
 }
-//const URI = 'http://192.168.0.73:8000' //! ip fede
+const URI = 'http://192.168.0.73:8000' //! ip fede
 // const URI = 'http://192.168.1.6:8000' //! ip jere
 // const URI = 'http://18.221.46.103:8000' //* AWS ip
-const URI = 'http://192.168.1.48:8000' //* ip ivan
+// const URI = 'http://192.168.1.48:8000' //* ip ivan
 
 //* authToken
 const token = async (config: Config = {}): Promise<Config> => {
@@ -96,4 +96,28 @@ export const searchMovie = async ({id}: {id: string}): Promise<FullMovie2 | null
         throw new Error('Error opening Movie data')
     }
 
+}
+
+
+export const rateMovie = async (_id: string, rate: number) => {
+    try{
+        const token = await AsyncStorage.getItem('authToken')
+        if (!token) {
+            throw new Error('No se pudo encontrar el token de autenticación')
+        }
+        const response = await fetch(`${URI}/movies/rating/${_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                rate: rate
+            }),
+            headers: {
+                'Content-Type': 'application/json',                    
+                'Authorization': `Bearer ${token}`                 
+            }
+        })
+        return response
+    }
+    catch{
+        throw new Error
+    }
 }

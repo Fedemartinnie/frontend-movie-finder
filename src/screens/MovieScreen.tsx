@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Animated} from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Animated, Modal} from 'react-native'
 import { Favorite, FullMovie2 } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { Carousel } from '../components/carrusel'
@@ -7,7 +7,7 @@ import NavBar from '../components/home/navBar'
 import { Trailer } from '../assets/trailer'
 import { HeartFav } from '../assets/heartFav'
 import { Rate } from '../assets/rate'
-import { Star } from '../assets/star'
+import { Star, StarCalif, StarNotCalif } from '../assets/star'
 import { Year } from '../assets/year'
 import { Genre } from '../assets/genre'
 import { Time } from '../assets/time'
@@ -19,6 +19,7 @@ import MovieInfo from '../components/movieInfo'
 import YoutubePlayer from 'react-native-youtube-iframe'
 import { getFavorites } from '../services/favorites'
 import useMovieScreen from '../hooks/useMovieScreen'
+import { rateMovie } from '../services/movies'
 
 
 type MovieScreenProps = RouteProp<{
@@ -32,7 +33,10 @@ export const MovieScreen: React.FC = () => {
     const [title, subtitle] = movie.title.split(':')
     const items = ['Sinópsis', 'Actores', 'Detalles']
     const[isPressed, setIsPressed] = useState<boolean>(false)
-
+    const [modal, setModal] = useState<boolean>(false)
+    const stars = [Star, Star, Star, Star, Star]
+    const [starSelected, setStarSelected] = useState<number | null>(null)
+    const [votes, setVotes] = useState<number>(movie.ratingsCount)
 
     //* GET ALL FAVS
     useEffect(() => {
@@ -55,6 +59,23 @@ export const MovieScreen: React.FC = () => {
     const onPressOutHandler = () => {
         setIsPressed(false)
     }
+
+    const toggleModal = () => {
+        setModal(!modal)
+    }
+
+    const handleRate = (index: number) => {
+        if(index!== starSelected){
+            setStarSelected(index)
+            const rate = index + 1
+            rateMovie(movie._id, rate)
+            console.log('stars selected --> ', rate)
+        }
+        console.log(index)
+
+        // setModal(!modal)
+    }
+
 
     return(
         <View style={styles.container}>            
@@ -87,8 +108,8 @@ export const MovieScreen: React.FC = () => {
                     {subtitle && (
                         <Text style={styles.subtitle}>{subtitle}</Text>
                     )}             
-                    <Text style={styles.rating}><Star/>   {movie.overallRating}</Text>
-                    <Text style={styles.ratingsCount}>(votos: {movie.ratingsCount})</Text>
+                    <Text style={styles.rating}><Star/>   {movie.overallRating.toString().slice(0, 4)}</Text>
+                    <Text style={styles.ratingsCount}>(votos: {(movie.ratingsCount)})</Text>
                     <View style={styles.microDetails}>
                         <Text style={styles.menuInfo}><Year/>  {movie.releaseYear}  -    </Text>
                         <Text style={styles.menuInfo}><Time/>  {movie.duration} min.   -   </Text>
@@ -109,7 +130,7 @@ export const MovieScreen: React.FC = () => {
                     <TouchableOpacity onPress={handleShare}>
                         <ShareSvg/>
                     </TouchableOpacity>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={toggleModal}>
                         <Rate/>
                     </TouchableOpacity>
                 </View>
@@ -139,6 +160,37 @@ export const MovieScreen: React.FC = () => {
             <View style={styles.navbar}>
                 <NavBar/>
             </View>
+
+            <Modal 
+                animationType='fade'
+                visible={modal} 
+                style={styles.modal} 
+                transparent={true}>
+                <View style={styles.modalBackground}>
+                    <View style={styles.starsModal}>
+                        <View style={{paddingTop: 10}}>
+                            <Text style={{textAlign: 'center',fontSize: 18,color: colors.white}}>Califica la película</Text>
+                        </View>
+                        <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingTop: '10%'}}>
+                            {stars.map ((star, index) => (
+                                <TouchableOpacity key={index} onLongPress={() => handleRate(index)} onPress={() => handleRate(index)}>
+                                    <View style={{paddingHorizontal: 10}}>
+                                        {starSelected !== null && index <= starSelected 
+                                            ? (<StarCalif/>)
+                                            : (<StarNotCalif/>)
+                                        }
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+                    <Animated.View style={[styles.closeButtonModal]}>
+                        <TouchableOpacity onPress={toggleModal}>
+                            <CloseButton />
+                        </TouchableOpacity>
+                    </Animated.View>
+                </View>
+            </Modal>
             
         </View>
 
@@ -156,13 +208,43 @@ const colors = {
 }
 
 const styles= StyleSheet.create({
+    starsModal:{
+        borderColor: colors.white,
+        borderWidth: 1,
+        borderRadius: 10,
+        backgroundColor: colors.blueDark,
+        paddingBottom: '20%',
+        flexDirection: 'column',
+    },
     modal: {
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalBackground: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 0,
-        resizeMode: 'contain'
+        backgroundColor: '#1F2224DD',
     },
+    closeButtonModal: {
+        position: 'absolute',
+        top: 5,
+        right: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    // modal: {
+    //     flex: 1,
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    //     margin: 0,
+    //     resizeMode: 'contain'
+    // },
     closeButton: {
         position: 'absolute',
         top: 5,
