@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Modal } from 'react-native'
 import NavBar from '../components/home/navBar'
 import { CamAvatar } from '../assets/camAvatar'
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler'
@@ -9,6 +9,8 @@ import { deleteAccount, updateUser } from '../services/users'
 import { User } from '../types'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useAuth } from '../utils/authContext'
+import Svg, { Path } from 'react-native-svg'
+import { Camera, Gallery } from '../assets/photo'
 
 type ProfileScreenProp = RouteProp<{
     ProfileScreen: { user: User }
@@ -31,6 +33,7 @@ function ProfileScreen(): React.JSX.Element {
     const previousNick = useRef<string>(user.nickname ? (user.nickname) : (splitEmail))
     const [error, setError] = useState<boolean>(false)
     const hasNumberOrSymbol = (str: string) => /[0-9!@#$%^&*(),.?":{}|<>]/g.test(str)
+    const [isModalVisible, setModalVisible] = useState<boolean>(false)
 
     
     //* ACTUALIZA DATOS DE PERFIL DURANTE EDICION
@@ -46,7 +49,7 @@ function ProfileScreen(): React.JSX.Element {
         setEdit(false)
     }
 
-    //!!!TODO
+    
     //* ACTUALIZA USUARIO --> PERSISTE EN DB + MANEJO ERROR SI ES NULL
     const handleSubmit = async() => {  
         if(firstName === '' || lastName === '' || nickname === '' || hasNumberOrSymbol(firstName) || 
@@ -75,30 +78,31 @@ function ProfileScreen(): React.JSX.Element {
         }
     }
 
-    //* seleccionar camara o galeria para la foto
-    const openPicker = () => {
-        Alert.alert(            
-            'Select Image',
-            'Choose your image source',
-            [
-                {
-                    text: 'Camera',
-                    onPress: () => openCamera()
-                },
-                {
-                    text: 'Gallery',
-                    onPress: () => openGallery()
-                },
-                {
-                    text: 'Cancel',
-                    style: 'cancel'
-                }
-            ],
-            { cancelable: true }
-        )
-    }
+    // //* seleccionar camara o galeria para la foto
+    // const openPicker = () => {
+    //     Alert.alert(            
+    //         'Select Image',
+    //         '',            
+    //         [
+    //             {
+    //                 text: 'Camera',
+    //                 onPress: () => openCamera()
+    //             },
+    //             {
+    //                 text: 'Gallery',
+    //                 onPress: () => openGallery()
+    //             },
+    //             {
+    //                 text: 'Cancel',
+    //                 style: 'cancel'
+    //             }
+    //         ],
+    //         { cancelable: true }
+    //     )
+    // }
     //* CAMERA
     const openCamera = () => {
+        setModalVisible(false)
         const options: CameraOptions = {
             mediaType: 'photo',
             quality: 1,
@@ -112,6 +116,7 @@ function ProfileScreen(): React.JSX.Element {
     }
     //* GALERIA
     const openGallery = () => {
+        setModalVisible(false)
         const options: ImageLibraryOptions = {
             mediaType: 'photo',
             quality: 1,
@@ -177,8 +182,10 @@ function ProfileScreen(): React.JSX.Element {
         try{
             const response = await deleteAccount()
             if (response.status === 200){
-                // handleScreen('LoginScreen')
-                logout()
+                await logout()
+                handleScreen('LoginScreen')
+                // setIsLoggedIn(false)
+
             }
         }
         catch{
@@ -212,7 +219,8 @@ function ProfileScreen(): React.JSX.Element {
                             style={styles.image}
                         />
                         <View style={styles.cameraIcon}>
-                            <TouchableOpacity onPress={openPicker}>
+                            {/* <TouchableOpacity onPress={openPicker}> */}
+                            <TouchableOpacity onPress={() => setModalVisible(true)}>
                                 <CamAvatar />
                             </TouchableOpacity>
                         </View>
@@ -290,6 +298,33 @@ function ProfileScreen(): React.JSX.Element {
                 
             </View>
             <NavBar />
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <View style={{flexDirection: 'row'}}>
+                            <TouchableOpacity onPress={openCamera} style={styles.optionButton}>
+                                <Camera/>
+                                {/* <Text style={styles.optionText}>Camera</Text> */}
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={openGallery} style={styles.optionButton}>
+                                <Gallery/>
+                                {/* <Text style={styles.optionText}>Gallery</Text> */}
+                            </TouchableOpacity>
+                        </View>
+
+                        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.optionButton}>
+                            <Text style={styles.optionText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -389,12 +424,33 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         paddingVertical: 5,
         paddingHorizontal: 15
-    }
-    
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+        width: 300,
+        padding: 20,
+        backgroundColor: colors.blueDark,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    optionButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
 })
 
 
 
 export default ProfileScreen
 
+
+function handleScreen(arg0: string) {
+    throw new Error('Function not implemented.')
+}
 

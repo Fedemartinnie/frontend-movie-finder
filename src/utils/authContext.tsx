@@ -38,6 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('TOKEN --> \n',authToken)
         await logoutt()
         await AsyncStorage.removeItem('authToken')
+        // await AsyncStorage.setItem('authToken', '')
         console.log('ASYNC STORAGE TOKEN --> \n',AsyncStorage.getItem('authToken'))
 
         setAuthToken(null)

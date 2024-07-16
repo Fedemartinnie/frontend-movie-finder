@@ -1,6 +1,7 @@
 import { Alert } from 'react-native'
 import { User } from '../types'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
 
 interface Config {
     headers?: {
@@ -20,6 +21,7 @@ const URI = 'http://192.168.0.73:8000' //! ip fede
 export const logout = async() => {
     try {
         const token = await AsyncStorage.getItem('authToken')
+        console.log('TOKEN -------------> ', token)
         
         if (!token) {
             throw new Error('No se pudo encontrar el token de autenticación')
@@ -34,8 +36,13 @@ export const logout = async() => {
         })
         if(response.status === 200){
             await AsyncStorage.clear()
+            await AsyncStorage.removeItem('authToken')
+            const token = await AsyncStorage.getItem('authToken')
             console.log('CERRANDO SESION')
-            console.log(AsyncStorage.getItem('authToken'))
+            console.log('-----------> ' ,token)
+            // Desconectar del servicio de Google Sign-In
+            // await GoogleSignin.revokeAccess()
+            await GoogleSignin.signOut()
             return response
         }
 
@@ -60,13 +67,18 @@ export const deleteAccount = async() => {
                 'Authorization': `Bearer ${token}`
             }
         })
+        console.log('RESPONSE ------------>', response)
+        console.log(response.status)
+        console.log(response.ok)
         if (response.ok) {
-            await AsyncStorage.clear() 
+            await AsyncStorage.clear()
+            await GoogleSignin.signOut()
+            return response
+
         } else {
             throw new Error('Error eliminando la cuenta')
         }
         
-        return response
     }catch{
         throw new Error('Error Loging Out')
     }
@@ -123,7 +135,7 @@ export const updateUser = async(user: User) => {
         }) 
 
         if(response.ok){
-            Alert.alert('cambios impactaron correctamente')
+            console.log('cambios impactaron correctamente')
         }
     }catch {
         throw new Error('error al obtener datos del usuario')

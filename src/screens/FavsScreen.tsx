@@ -133,7 +133,7 @@ export function FavsScreen(): React.JSX.Element {
     ))
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 , backgroundColor: colors.blueDark}}>
             {actualFavorites.length > 0 
                 ? (
                     <ScrollView>
