@@ -320,7 +320,7 @@ function ProfileScreen(): React.JSX.Element {
                         </View>
 
                         <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.optionButton}>
-                            <Text style={styles.optionText}>Cancel</Text>
+                            <Text style={styles.saveButton}>Cancelar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
