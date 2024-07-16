@@ -112,7 +112,7 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
                             component={MovieScreen}
                             options={{
                                 title: 'Movie',
-                                headerShown: false
+                                headerShown: true
                             }}
                         />
                     </>
