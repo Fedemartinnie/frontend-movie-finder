@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useNetInfo } from '@react-native-community/netinfo'
-// import SplashScreen from './src/screens/SplashScreen'
 import SplashScreen from './src/screens/splashScreen'
 import LoginScreen from './src/screens/loginScreen'
 import HomeScreen from './src/screens/HomeScreen'
@@ -44,7 +43,7 @@ const App = () => {
 }
 
 const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
-    const { isLoggedIn } = useAuth()
+    const { isLoggedIn,isDeleted } = useAuth()
     const netInfo = useNetInfo()
     const [isConnected, setIsConnected] = useState(netInfo.isConnected)
 
@@ -62,7 +61,7 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
             ) : !isConnected ? (
                 <Stack.Screen name="NoConnection" component={NoConnectionScreen} options={{ headerShown: false }} />
             )
-                : isLoggedIn ? (
+                : isLoggedIn && !isDeleted? (
                     <>
                         <Stack.Screen
                             name='Home'

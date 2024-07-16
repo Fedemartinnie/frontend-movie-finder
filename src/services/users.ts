@@ -10,14 +10,15 @@ interface Config {
     
 }
 
-const URI = 'http://192.168.0.73:8000' //! ip fede
-// const URI = 'http://192.168.1.6:8000' //! ip jere
+//const URI = 'http://192.168.0.73:8000' //! ip fede
+const URI = 'http://192.168.1.3:8000' //! ip jere
 // const URI = 'http://18.221.46.103:8000' //* AWS ip
 // const URI = 'http://192.168.1.48:8000' //* ip ivan
 
 //TODO
 //! users Service
 //* LOGOUT USER
+
 export const logout = async() => {
     try {
         const token = await AsyncStorage.getItem('authToken')
@@ -35,6 +36,7 @@ export const logout = async() => {
             }
         })
         if(response.status === 200){
+            
             await AsyncStorage.clear()
             await AsyncStorage.removeItem('authToken')
             const token = await AsyncStorage.getItem('authToken')
@@ -72,9 +74,11 @@ export const deleteAccount = async() => {
         console.log(response.ok)
         if (response.ok) {
             await AsyncStorage.clear()
+            await AsyncStorage.removeItem('authToken')
+            const token = null;
+            console.log('ELIMINACION CUENTA')
             await GoogleSignin.signOut()
             return response
-
         } else {
             throw new Error('Error eliminando la cuenta')
         }
