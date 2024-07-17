@@ -200,6 +200,8 @@ function ProfileScreen(): React.JSX.Element {
         }
     };
 
+    {console.log('imagen aqui', image)}
+
     return (
         <SafeAreaView style={styles.safeContainer}>
             <StatusBar />
@@ -235,7 +237,7 @@ function ProfileScreen(): React.JSX.Element {
                         : (
                             <View style={[styles.userInfo, { marginLeft: '5%' }]}>
                                 <TextInput
-                                    style={[styles.userName, { backgroundColor: colors.white, borderRadius: 5, color: colors.red, padding: 0, borderColor: colors.red, borderWidth: error ? 1 : 0 }]}
+                                    style={[styles.userName, { backgroundColor: colors.white, borderRadius: 5, color: colors.blue, padding: 0, borderColor: colors.blue, borderWidth: error ? 1 : 0 }]}
                                     value={nickname}
                                     onChangeText={setNickname}
                                 />
@@ -256,13 +258,13 @@ function ProfileScreen(): React.JSX.Element {
                         )
                         : (<View >
                             <TextInput
-                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10, borderColor: colors.red, borderWidth: error ? 1 : 0 }]}
+                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: colors.blue, padding: 0, paddingHorizontal: 10, borderColor: colors.blue, borderWidth: error ? 1 : 0 }]}
                                 value={firstName}
                                 onChangeText={setFirstName}
                             />
 
                             <TextInput
-                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: colors.red, padding: 0, paddingHorizontal: 10, borderColor: error ? colors.red : colors.white }]}
+                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: colors.blue, padding: 0, paddingHorizontal: 10, borderColor: error ? colors.blue : colors.white }]}
                                 value={lastName}
                                 onChangeText={setLastName}
                             />
