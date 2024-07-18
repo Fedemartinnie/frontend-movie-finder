@@ -1,206 +1,188 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, Alert, Modal } from 'react-native';
-import NavBar from '../components/home/navBar';
-import { CamAvatar } from '../assets/camAvatar';
-import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { EditProfile } from '../assets/lapiz';
-import { CameraOptions, ImageLibraryOptions, launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
-import { updateUser } from '../services/users';
-import { User } from '../types';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { useAuth } from '../utils/authContext';
-import { Camera, Gallery } from '../assets/photo';
-import LoginScreen from './loginScreen';
+import React, { useRef, useState } from 'react'
+import { View, Text, StatusBar, SafeAreaView, StyleSheet, Image, TouchableOpacity, Alert, Modal } from 'react-native'
+import NavBar from '../components/home/navBar'
+import { CamAvatar } from '../assets/camAvatar'
+import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { EditProfile } from '../assets/lapiz'
+import { CameraOptions, ImageLibraryOptions, launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker'
+import { updateUser } from '../services/users'
+import { User } from '../types'
+import { RouteProp, useRoute } from '@react-navigation/native'
+import { useAuth } from '../utils/authContext'
+import { Camera, Gallery } from '../assets/photo'
+import LoginScreen from './loginScreen'
 
-type ProfileScreenProp = RouteProp<{ ProfileScreen: { user: User } }, 'ProfileScreen'>;
+type ProfileScreenProp = RouteProp<{ ProfileScreen: { user: User } }, 'ProfileScreen'>
 
 function ProfileScreen(): React.JSX.Element {
-    const { logout, deleteAccount } = useAuth();
-    const route = useRoute<ProfileScreenProp>();
-    const { user } = route.params;
-    const [edit, setEdit] = useState<boolean>(false);
-    const [firstName, setFirstName] = useState(user.name);
-    const [lastName, setLastName] = useState(user.lastname);
-    const [email] = useState(user.email);
-    const [splitEmail] = user.email.split('@');
-    const [nickname, setNickname] = useState(user.nickname ? user.nickname : splitEmail[0]);
-    const [image, setImage] = useState<string | undefined>(user.profileImage);
-    const previousFirst = useRef<string>(user.name);
-    const previousLast = useRef<string>(user.lastname);
-    const previousNick = useRef<string>(user.nickname ? user.nickname : splitEmail[0]);
-    const [error, setError] = useState<boolean>(false);
-    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+    const { logout, deleteAccount } = useAuth()
+    const route = useRoute<ProfileScreenProp>()
+    const { user } = route.params
+    const [edit, setEdit] = useState<boolean>(false)
+    const [firstName, setFirstName] = useState(user.name)
+    const [lastName, setLastName] = useState(user.lastname)
+    const [email] = useState(user.email)
+    const [splitEmail] = user.email.split('@')
+    const [nickname, setNickname] = useState(user.nickname ? user.nickname : splitEmail[0])
+    const [image, setImage] = useState<string | undefined>(user.profileImage)
+    const previousFirst = useRef<string>(user.name)
+    const previousLast = useRef<string>(user.lastname)
+    const previousNick = useRef<string>(user.nickname ? user.nickname : splitEmail[0])
+    const [error, setError] = useState<boolean>(false)
+    const [isModalVisible, setModalVisible] = useState<boolean>(false)
+    const [logoutModalIsVisible, setLogoutModalVisible] = useState<boolean>(false)
+    const [isDeleteModal, setDeleteModal] = useState<boolean>(false)
 
-    const hasNumberOrSymbol = (str: string) => /[0-9!@#$%^&*(),.?":{}|<>]/g.test(str);
+    const hasNumberOrSymbol = (str: string) => /[0-9!@#$%^&*(),.?':{}|<>]/g.test(str)
 
     
 
     //* ACTUALIZA DATOS DE PERFIL DURANTE EDICION
     const handleEdit = () => {
-        setEdit(!edit);
-    };
+        setEdit(!edit)
+    }
 
     //* CANCELA LA EDICION REALIZADA
     const handleCancelEdit = () => {
-        setFirstName(previousFirst.current);
-        setLastName(previousLast.current);
-        setNickname(previousNick.current);
-        setEdit(false);
-    };
+        setFirstName(previousFirst.current)
+        setLastName(previousLast.current)
+        setNickname(previousNick.current)
+        setEdit(false)
+    }
 
     //* ACTUALIZA USUARIO --> PERSISTE EN DB + MANEJO ERROR SI ES NULL
     const handleSubmit = async () => {
         if (firstName === '' || lastName === '' || nickname === '' || hasNumberOrSymbol(firstName) || hasNumberOrSymbol(lastName)) {
-            setError(true);
-            console.log('no se permite campo vacio');
-            return;
+            setError(true)
+            console.log('no se permite campo vacio')
+            return
         } else {
-            previousFirst.current = firstName;
-            previousLast.current = lastName;
-            previousNick.current = nickname;
-            setFirstName(previousFirst.current);
-            setLastName(previousLast.current);
-            setNickname(previousNick.current);
+            previousFirst.current = firstName
+            previousLast.current = lastName
+            previousNick.current = nickname
+            setFirstName(previousFirst.current)
+            setLastName(previousLast.current)
+            setNickname(previousNick.current)
 
             const newUser = {
                 ...user,
                 name: previousFirst.current,
                 lastname: previousLast.current,
                 nickname: previousNick.current,
-            };
-            await updateUser(newUser);
-            setError(false);
-            setEdit(false);
+            }
+            await updateUser(newUser)
+            setError(false)
+            setEdit(false)
         }
-    };
+    }
 
     //* CAMERA
     const openCamera = () => {
-        setModalVisible(false);
+        setModalVisible(false)
         const options: CameraOptions = {
             mediaType: 'photo',
             quality: 1,
             includeBase64: false,
             saveToPhotos: true,
-        };
+        }
 
         launchCamera(options, (response) => {
-            handleResponse(response);
-        });
-    };
+            handleResponse(response)
+        })
+    }
 
     //* GALERIA
     const openGallery = () => {
-        setModalVisible(false);
+        setModalVisible(false)
         const options: ImageLibraryOptions = {
             mediaType: 'photo',
             quality: 1,
             includeBase64: false,
             selectionLimit: 1,
-        };
+        }
 
         launchImageLibrary(options, (response) => {
-            handleResponse(response);
-        });
-    };
+            handleResponse(response)
+        })
+    }
 
     //* setImage Uri of mobile
     const handleResponse = (response: ImagePickerResponse) => {
         if (response.didCancel) {
-            console.log('User cancelled the picker');
+            console.log('User cancelled the picker')
         } else if (response.errorCode) {
-            console.log('ImagePicker Error: ', response.errorMessage);
+            console.log('ImagePicker Error: ', response.errorMessage)
         } else if (response.assets && response.assets.length > 0) {
-            setImage(response.assets[0].uri);
-            console.log('Selected image: ', response.assets[0].uri);
-            uploadImageToCloudinary(response.assets[0].uri);
+            setImage(response.assets[0].uri)
+            console.log('Selected image: ', response.assets[0].uri)
+            uploadImageToCloudinary(response.assets[0].uri)
         }
-    };
+    }
 
-    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/ddy10tgci/image/upload';
-    const UPLOAD_PRESET = 'y4skh10n';
+    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/ddy10tgci/image/upload'
+    const UPLOAD_PRESET = 'y4skh10n'
 
     const uploadImageToCloudinary = async (imageUri: string | undefined) => {
-        const data = new FormData();
+        const data = new FormData()
         data.append('file', {
             uri: imageUri,
             type: 'image/jpeg',
             name: 'upload.jpg',
-        });
-        data.append('upload_preset', UPLOAD_PRESET);
-        data.append('cloud_name', 'ddy10tgci');
-        console.log('ingresando a cloudinary ----> ', data);
+        })
+        data.append('upload_preset', UPLOAD_PRESET)
+        data.append('cloud_name', 'ddy10tgci')
+        console.log('ingresando a cloudinary ----> ', data)
         try {
             const response = await fetch(CLOUDINARY_URL, {
                 method: 'POST',
                 body: data,
-            });
-            const result = await response.json();
-            console.log('RESULTADO CLOUDINARY: ----------------> \n', result.url);
-            setImage(result.url);
+            })
+            const result = await response.json()
+            console.log('RESULTADO CLOUDINARY: ----------------> \n', result.url)
+            setImage(result.url)
             const newUser = {
                 ...user,
                 profileImage: result.url,
-            };
-            console.log('NEW USER -----> ', newUser);
-            await updateUser(newUser);
-            return result.secure_url;
+            }
+            console.log('NEW USER -----> ', newUser)
+            await updateUser(newUser)
+            return result.secure_url
         } catch (error) {
-            console.error('Error uploading image:', error);
-            throw error;
+            console.error('Error uploading image:', error)
+            throw error
         }
-    };
+    }
+
 
     //* ELIMINAR CUENTA
     const handleDeleteAccount = async () => {
         try {
-            Alert.alert(
-                "Confirmación eliminación",
-                "¿Estás seguro de que quieres eliminar tu cuenta?",
-                [
-                    {
-                        text: "Cancelar",
-                        style: "cancel"
-                    },
-                    {
-                        text: "Eliminar",
-                        style: "destructive",
-                        onPress: async () => {
-                            await deleteAccount();
-                        }
-                    }
-                ]
-            );
+            await deleteAccount()    
+            setDeleteModal(false)        
         } catch (error) {
-            console.error('Error deleting account:', error);
+            console.error('Error deleting account:', error)
         }
-    };
+    }
 
     //* CERRAR SESION
     const handleLogout = async () => {
-        try {
-            Alert.alert(
-                "Confirmación de Cierre de Sesión",
-                "¿Estás seguro de que quieres cerrar sesión?",
-                [
-                    {
-                        text: "Cancelar",
-                        style: "cancel"
-                    },
-                    {
-                        text: "Cerrar Sesión",
-                        onPress: async () => {
-                            await logout();
-                        }
-                    }
-                ]
-            );
-        } catch {
-            throw new Error('no se pudo cerrar sesión');
+        try{
+            await logout()
+            setLogoutModalVisible(false)
+        } catch{
+            throw new Error('no se pudo cerrar sesión')
         }
-    };
+    }
 
     {console.log('imagen aqui', image)}
+
+    const toggleLogoutModal = () => {
+        setLogoutModalVisible(true)
+    }
+
+    const toggleDeleteModal = () => {
+        setDeleteModal(true)
+    }
 
     return (
         <SafeAreaView style={styles.safeContainer}>
@@ -237,7 +219,7 @@ function ProfileScreen(): React.JSX.Element {
                         : (
                             <View style={[styles.userInfo, { marginLeft: '5%' }]}>
                                 <TextInput
-                                    style={[styles.userName, { backgroundColor: colors.white, borderRadius: 5, color: colors.blue, padding: 0, borderColor: colors.blue, borderWidth: error ? 1 : 0 }]}
+                                    style={[styles.userName, { backgroundColor: colors.white, borderRadius: 5, color: colors.blue, padding: 0, borderColor: colors.red, borderWidth: error ? 1 : 0 }]}
                                     value={nickname}
                                     onChangeText={setNickname}
                                 />
@@ -258,13 +240,13 @@ function ProfileScreen(): React.JSX.Element {
                         )
                         : (<View >
                             <TextInput
-                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: colors.blue, padding: 0, paddingHorizontal: 10, borderColor: colors.blue, borderWidth: error ? 1 : 0 }]}
+                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: error? colors.red : colors.blue, padding: 0, paddingHorizontal: 10, borderColor: colors.red, borderWidth: error ? 1 : 0 }]}
                                 value={firstName}
                                 onChangeText={setFirstName}
                             />
 
                             <TextInput
-                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: colors.blue, padding: 0, paddingHorizontal: 10, borderColor: error ? colors.blue : colors.white }]}
+                                style={[styles.optionTextInput, { backgroundColor: colors.white, color: error? colors.red : colors.blue, padding: 0, paddingHorizontal: 10, borderColor: error ? colors.red : colors.white }]}
                                 value={lastName}
                                 onChangeText={setLastName}
                             />
@@ -272,18 +254,19 @@ function ProfileScreen(): React.JSX.Element {
                         )
                     }
                     <Text style={styles.optionText}>{email}</Text>
-                    <TouchableWithoutFeedback onPress={handleLogout}>
+                    <TouchableOpacity onPress={toggleLogoutModal}>
                         <Text style={styles.optionText}>Cerrar Sesión</Text>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={handleDeleteAccount}>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={toggleDeleteModal}>
                         <Text style={styles.optionTextDanger}>Eliminar Cuenta</Text>
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
 
                 </View>
                 {edit && (
                     <View style={styles.saveContainer}>
                         <TouchableOpacity onPress={handleCancelEdit}>
-                            <Text style={styles.saveButton}>Cancelar</Text>
+                            <Text style={[styles.saveButton, {color: colors.red}]}>Cancelar</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={handleSubmit}>
@@ -295,7 +278,7 @@ function ProfileScreen(): React.JSX.Element {
             <NavBar />
 
             <Modal
-                animationType="slide"
+                animationType='slide'
                 transparent={true}
                 visible={isModalVisible}
                 onRequestClose={() => setModalVisible(false)}
@@ -313,13 +296,57 @@ function ProfileScreen(): React.JSX.Element {
                         </View>
 
                         <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.optionButton}>
-                            <Text style={styles.saveButton}>Cancelar</Text>
+                            <Text style={[styles.saveButton, {color: colors.red}]}>Cancelar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
+
+            <Modal
+                animationType='slide'
+                transparent={true}
+                visible={logoutModalIsVisible}
+                onRequestClose={() => setLogoutModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={{color: colors.white, fontSize: 20}}>¿Estás seguro que deseas cerrar sesión?</Text>
+                        <View style={{ flexDirection: 'row' }}>
+
+                            <TouchableOpacity onPress={() => setLogoutModalVisible(false)} style={styles.optionButton}>
+                                <Text style={[styles.saveButton, {color: colors.red}]}>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleLogout} style={styles.optionButton}>
+                                <Text style={styles.saveButton}>Aceptar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType='slide'
+                transparent={true}
+                visible={isDeleteModal}
+                onRequestClose={() => setDeleteModal(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={{color: colors.white, fontSize: 20}}>¿Estás seguro que deseas eliminar tu cuenta?</Text>
+                        <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+
+                            <TouchableOpacity onPress={() => setDeleteModal(false)} style={styles.optionButton}>
+                                <Text style={[styles.saveButton, {color: colors.red}]}>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleDeleteAccount} style={styles.optionButton}>
+                                <Text style={styles.saveButton}>Aceptar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
-    );
+    )
 }
 
 const colors = {
@@ -328,7 +355,7 @@ const colors = {
     red: '#993333',
     white: '#F2F2F2',
     blueDark: '#052539',
-};
+}
 
 const styles = StyleSheet.create({
     safeContainer: {
@@ -366,6 +393,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 30,
         fontWeight: 'bold',
+        paddingHorizontal: 20,
+        // paddingVertical: 5
     },
     editIcon: {
         marginLeft: 15,
@@ -435,6 +464,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
     },
-});
+})
 
-export default ProfileScreen;
+export default ProfileScreen

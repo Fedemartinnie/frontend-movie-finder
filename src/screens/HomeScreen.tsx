@@ -114,7 +114,7 @@ function HomeScreen(): React.JSX.Element {
                             {loading && (
                                 <View style={styles.sectionMovies}>
                                     <Text>Loading...</Text>
-                                    <ActivityIndicator size={200} color="#0000ff" />
+                                    <ActivityIndicator size='large' color="#0000ff" />
                                 </View>
                             )}
                         </>
