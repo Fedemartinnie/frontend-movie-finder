@@ -1,16 +1,16 @@
-import { Alert } from 'react-native'
+// import { Alert } from 'react-native'
 import { User } from '../types'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
 
-interface Config {
-    headers?: {
-        [key: string]: string
-    }
+// interface Config {
+//     headers?: {
+//         [key: string]: string
+//     }
     
-}
+// }
 
-//const URI = 'http://192.168.0.73:8000' //! ip fede
+// const URI = 'http://192.168.0.73:8000' //! ip fede
 //const URI = 'http://192.168.1.3:8000' //! ip jere
 const URI = 'http://3.140.255.162:8000' //* AWS ip
 //const URI = 'http://192.168.1.48:8000' //* ip ivan
@@ -75,7 +75,7 @@ export const deleteAccount = async() => {
         if (response.ok) {
             await AsyncStorage.clear()
             await AsyncStorage.removeItem('authToken')
-            const token = null;
+            // const token = null
             console.log('ELIMINACION CUENTA')
             await GoogleSignin.signOut()
             return response

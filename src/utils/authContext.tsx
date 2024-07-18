@@ -35,6 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log(AsyncStorage.getItem('authToken'))
         setAuthToken(token)
         setIsLoggedIn(true)
+        setIsDeleted(false)
     }
 
     const logout = async () => {
@@ -52,15 +53,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const deleteAccount = async () => {
         await deleteAccountt()
         await AsyncStorage.removeItem('authToken')
-        setIsLoggedIn(false); // Cerrar sesión al eliminar la cuenta
-        setIsDeleted(true);
+        setIsLoggedIn(false) // Cerrar sesión al eliminar la cuenta
+        setIsDeleted(true)
         console.log(isDeleted)
-    };
+    }
 
     return (
         <AuthContext.Provider
             value={{
+                setIsLoggedIn,
                 isLoggedIn,
+                isDeleted,
                 setIsDeleted,
                 login,
                 deleteAccount,
@@ -69,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         >
             {children}
         </AuthContext.Provider>
-    );
+    )
 }
 
 export const useAuth = (): AuthContextType => {

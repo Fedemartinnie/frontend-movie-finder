@@ -111,7 +111,14 @@ const RootNavigator = ({ isLoading }: { isLoading: boolean }) => {
                             component={MovieScreen}
                             options={{
                                 title: 'Movie',
-                                headerShown: true
+                                headerShown: true,
+                                headerStyle: {
+                                    backgroundColor: '#3C0C79', // Color de fondo del header
+                                },
+                                headerTintColor: '#fff', // Color del título y de los íconos del header
+                                headerTitleStyle: {
+                                    fontWeight: 'bold', // Ejemplo de estilo adicional para el título
+                                },
                             }}
                         />
                     </>
