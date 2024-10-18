@@ -119,8 +119,8 @@ function ProfileScreen(): React.JSX.Element {
         }
     }
 
-    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/ddy10tgci/image/upload'
-    const UPLOAD_PRESET = 'y4skh10n'
+    const CLOUDINARY_URL = '' //aquí va URL de tu cuenta
+    const UPLOAD_PRESET = '' // aquí va tu passwordo
 
     const uploadImageToCloudinary = async (imageUri: string | undefined) => {
         const data = new FormData()
